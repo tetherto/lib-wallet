@@ -8,6 +8,7 @@ BN.config({ EXPONENTIAL_AT: [-20, 40] })
 // Currency is a class that represents a currency
 class Currency { 
 
+  static BN = BN
   constructor() {
     const { amount, type, config } = this._parseConstArg(...arguments)
     if(type !== "base" && type !== "main") throw new Error("Currency type must be either 'base' or 'main'")
