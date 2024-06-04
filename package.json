@@ -9,12 +9,12 @@
   "author": "rbndg",
   "license": "MIT",
   "dependencies": {
+    "bignumber.js": "^9.1.2",
     "lib-wallet-pay-btc": "github:rbndg/lib-wallet-pay-btc",
     "lib-wallet-store": "github:rbndg/lib-wallet-store",
     "wallet-seed-bip39": "github:rbndg/lib-wallet-seed-bip39"
   },
   "devDependencies": {
-    "bignumber.js": "^9.1.2",
     "brittle": "^3.5.0"
   }
 }
