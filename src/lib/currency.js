@@ -163,7 +163,4 @@ class Bitcoin extends Currency {
   }
 }
 
-module.exports = { 
-  Currency,
-  Bitcoin
-}
+module.exports = Currency
