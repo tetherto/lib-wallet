@@ -1,7 +1,8 @@
 "use strict";
 
-const WalletError = require('../../wallet-errors/src/wallet-error')
 const { EventEmitter } = require('events')
+
+const WalletError = Error
 
 class Wallet extends EventEmitter {
   

@@ -1,13 +1,10 @@
 'use strict'; 
 
 const test = require('brittle')
-const Wallet = require('../src/wallet-lib.js')
-const { BitcoinPay } = require('lib-wallet-pay-btc')
-const { regtestNode } = require('lib-wallet-pay-btc/test/test-helpers.js')
-const { WalletStoreHyperbee } = require('lib-wallet-store')
+const newWallet = require('../src/wallet-lib.js')
 
-test('Load wallet with bitcoin', function (t) {
+test('Load wallet with bitcoin', async function (t) {
 
-  console.log(WalletStoreHyperbee)
+  const w = await newWallet({})
 
 })
