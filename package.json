@@ -1,5 +1,5 @@
 {
-  "name": "wallet",
+  "name": "lib-wallet",
   "version": "0.0.1",
   "description": "Multi asset, multi chain wallet libary.",
   "main": "index.js",
