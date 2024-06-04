@@ -1,0 +1,20 @@
+{
+  "name": "wallet",
+  "version": "0.0.1",
+  "description": "Multi asset, multi chain wallet libary.",
+  "main": "index.js",
+  "scripts": {
+    "test": "brittle ./test/wallet.test.js"
+  },
+  "author": "rbndg",
+  "license": "MIT",
+  "dependencies": {
+    "lib-wallet-pay-btc": "github:rbndg/lib-wallet-pay-btc",
+    "lib-wallet-store": "github:rbndg/lib-wallet-store",
+    "wallet-seed-bip39": "github:rbndg/lib-wallet-seed-bip39"
+  },
+  "devDependencies": {
+    "bignumber.js": "^9.1.2",
+    "brittle": "^3.5.0"
+  }
+}

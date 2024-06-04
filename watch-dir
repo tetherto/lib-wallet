@@ -1,0 +1,25 @@
+#!/bin/bash
+
+WATCH_DIR="./src ./test"
+#COMMAND="npm run test:pay"
+#COMMAND="npm run test:send-tx"
+COMMAND=$@
+
+header="#### WATCH DIR ###
+================
+$WATCH_DIR
+$COMMAND
+=================
+"
+
+echo "$header"
+echo "Command : $@"
+run() {
+	inotifywait -mr -e modify $WATCH_DIR |
+		while read -r directory action file; do
+			$COMMAND
+		done
+	run
+}
+
+run
