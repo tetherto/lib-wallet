@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Wallet Lib
 
 Modular multi asset non-custodial wallet library
@@ -9,3 +10,6 @@ Modular multi asset non-custodial wallet library
 ```
 const wallet = new Wallet({})
 ``` 
+=======
+# lib-wallet
+>>>>>>> main
