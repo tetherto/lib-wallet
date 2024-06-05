@@ -23,7 +23,6 @@ async function main (config = {}) {
   // Setup Bitcoin asset
   const btcPay = new BitcoinPay({
     asset_name: 'btc',
-    store,
     network: 'regtest'
   })
 

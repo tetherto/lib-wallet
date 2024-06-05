@@ -2,21 +2,18 @@
 
 Multi asset cryptocurrency wallet library in JavaScript.
 
-### Features
+## Features
 
 - **Composible:** Single facade to interact with multiple assets and wallets
 - **Modular:** All components are modular and can be used independently. 
 - **Extensible:** Easily add new asset, seed, block source.
 
 
-### Default Components
+### Default Components and assets
 
 - `wallet-seed-bip39` - BIP39 seed generation library.
 - `wallet-store-hyperbee` - Hyperbee data store for wallet.
 - `wallet-pay-btc` - Bitcoin payment asset.
-  - Electrum, as block source 
-  - Mempool.space as fee estimation source
-  - Using Bitcoin-js library for transaction creation and signing
 - wallet-pay-usdt-eth - USDT asset on Ethereum network
 - wallet-pay-usdt-trx - USDT asset on Tron network
 - wallet-pay-usdt-ton - USDT asset on TON network
@@ -36,8 +33,6 @@ Multi asset cryptocurrency wallet library in JavaScript.
     // Asset name is used to identify the asset in the wallet.
     // You can have multiple assets of same currency
     asset_name: 'btc',
-    // data store to write data
-    store,
     // Bitcoin network you'll be using
     network: 'regtest'
   })
@@ -50,9 +45,14 @@ Multi asset cryptocurrency wallet library in JavaScript.
   })
 
   // Start wallet and initialize
+  // Connect to block source 
+  // Add asset to wallet registry 
   await wallet.initialize()
 
-  // Get a new bitcoin address
+  // Traverse wallet history of all accounts and sync them. This might take a while depending on wallet size 
+  await wallet.syncHistory(opts)
+
+  // Get a new bitcoin address using api below
   const btcAddress = await wallet.pay.btc.getNewAddress()
 
 ```

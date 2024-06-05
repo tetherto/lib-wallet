@@ -7,7 +7,6 @@ class WalletPay extends EventEmitter {
     super()
 
     if (!config.asset_name) throw new WalletPayError('Asset name is required')
-    if (!config.provider) throw new WalletPayError('Provider is required')
     if (!config.network) throw new WalletPayError('network is required')
     this.assetName = config.asset_name
     this.provider = config.provider
@@ -21,9 +20,13 @@ class WalletPay extends EventEmitter {
   async initialize (ctx = {}) {
     if (!ctx.wallet) return
     const wallet = ctx.wallet
+    // Use wallet's store for asset
     if (!this.store) this.store = wallet.store
+    // Use wallet's network for asset
     if (wallet.network) this.keyManager.setNetwork(this.network)
+    // Use wallet's seed for asset
     this.keyManager.setSeed(wallet.seed)
+    // Add asset to wallet
     await wallet.addAsset(this.assetName, this)
   }
 
