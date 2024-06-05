@@ -1,6 +1,5 @@
-const Wallet = require('./lib/wallet.js')
 const { BitcoinPay, Provider } = require('lib-wallet-pay-btc')
-const { regtestNode } = require('lib-wallet-pay-btc/test/test-helpers.js')
+const Wallet = require('./lib/wallet.js')
 const { WalletStoreHyperbee } = require('lib-wallet-store')
 const BIP39Seed = require('wallet-seed-bip39')
 
@@ -10,37 +9,25 @@ const BIP39Seed = require('wallet-seed-bip39')
 // [] Setup wallet store
 // [] Setup wallet provide
 
+async function main (config = {}) {
 
-
-async function newElectrum (config = {}) {
-  config.host = 'localhost' || config.host
-  config.port = '8001' || config.port
-  config.store = config.store || new WalletStoreHyperbee()
-  let e
-  try {
-    e = new Provider(config)
-    await e.connect()
-  } catch (err) {
-    console.log('Error connecting to electrum', err)
-  }
-  return e
-}
-
-async function main (config) {
-
+  // Generate seed or use provided seed phrase
   const seed = await BIP39Seed.generate(config.seed_phrase)
 
-  const store =  new WalletStoreHyperbee({
-    store_path : config.store_path,
+  // Setup wallet store
+  const store = new WalletStoreHyperbee({
+    store_path: config.store_path,
     hyperbee: config.hyperbee
   })
 
+  // Setup Bitcoin asset
   const btcPay = new BitcoinPay({
     asset_name: 'btc',
     store,
     network: 'regtest'
   })
 
+  // Setup Wallet facade class
   const wallet = new Wallet({
     store,
     seed,
@@ -49,10 +36,7 @@ async function main (config) {
 
   await wallet.initialize()
 
-
   return wallet
-
-
 }
 
 module.exports = main

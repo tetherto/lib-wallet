@@ -4,6 +4,49 @@ const { EventEmitter } = require('events')
 
 const WalletError = Error
 
+class AssetList {
+
+  constructor() {
+    this._define('size', 0)
+    this._define('keys', [])
+  }
+
+  _define(k,v) {
+    Object.defineProperty(this, k, {
+      value: v,
+      writable: true,
+      configurable: true,
+      enumerable: false
+    })
+  }
+
+  set(k,v) {
+    if(this.exists(k)) throw new Error('Asset already exists '+k)
+    this.size++
+    this[k] = v
+    this.keys.push(k)
+    return v
+  }
+
+  exists(k) {
+    return !!this[k]
+  }
+
+  [Symbol.iterator]() {
+    let index = 0;
+    const items = this.keys
+    return {
+    next : () => {
+        if (index < items.length) {
+            return { value: this[items[index++]], done: false };
+        } else {
+            return { done: true };
+        }
+      }
+    }
+  }
+}
+
 class Wallet extends EventEmitter {
   constructor (config) {
     super()
@@ -12,47 +55,34 @@ class Wallet extends EventEmitter {
     if (!Array.isArray(config.assets)) throw new WalletError('Assets must be an array', 'BAD_ARGS')
     this.seed = config.seed
     this.store = config.store
-
     this._assets = config.assets
-    this._pay = null
-    this._store = config.store
-
-    Object.defineProperty(this, 'seed', {
-      value: config.seed,
-      writable: false,
-      enumerable: true
-    })
   }
 
   async initialize (args) {
-    this._pay = new Map()
+    this.pay = new AssetList()
     await Promise.all(this._assets.map(async (asset) => {
       await asset.initialize({ wallet: this })
     }))
+    this._assets = null
     this.emit('ready')
   }
 
   async _eachAsset (fn) {
-    for (const arr of this._pay.entries()) {
-      await fn(arr[1])
+    for (const asset of this.pay) {
+      await fn(asset)
     }
   }
 
   async destroy () {
     await this._eachAsset(asset => asset.destroy())
-    this._pay.clear()
     this.seed = null
-    await this.storer.close()
+    await this.store.close()
+    this.store = null
+    this.pay = null
   }
 
   addAsset (k, assetObj) {
-    const asset = this._pay.get(k)
-    if (asset) throw new WalletError('Asset already exists')
-    this._pay.set(k, assetObj)
-  }
-
-  pay (opts) {
-    return this._getAsset(opts.asset)
+    return this.pay.set(k, assetObj)
   }
 
   async syncHistory (opts) {
@@ -61,16 +91,6 @@ class Wallet extends EventEmitter {
     }
 
     await this._eachAsset(asset => asset.syncTransactions(opts))
-  }
-
-  _getAsset (opts) {
-    let k
-    if (typeof opts === 'string') k = opts
-    else if (typeof opts?.asset === 'string') k = opts.asset
-    else throw new WalletError('wallet asset not passed')
-    const asset = this._pay.get(k)
-    if (!asset) throw new WalletError('asset does not exist ' + k)
-    return asset
   }
 
   exportWallet () {

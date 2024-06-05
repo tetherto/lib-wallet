@@ -18,13 +18,19 @@ class WalletPay extends EventEmitter {
     this.ready = false
   }
 
-  async initialize (ctx = { wallet = {}}) {
-    console.log(123123312)
-    // Not integrated into main wallet lib
+  async initialize (ctx = {}) {
+    if (!ctx.wallet) return
+    const wallet = ctx.wallet
     if (!this.store) this.store = wallet.store
     if (wallet.network) this.keyManager.setNetwork(this.network)
-    this.keyManager.setSeed(wallet.seed || this.seed)
-    wallet.registerAsset(this.assetName, this)
+    this.keyManager.setSeed(wallet.seed)
+    await wallet.addAsset(this.assetName, this)
+  }
+
+  async updateProvider (config) {
+    this.provider = new this.provider.constructor(config)
+    await this.provider.connect()
+    return this.provider
   }
 
   async _postDestroy () {
