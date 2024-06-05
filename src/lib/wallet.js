@@ -1,20 +1,19 @@
-"use strict";
+'use strict'
 
 const { EventEmitter } = require('events')
 
 const WalletError = Error
 
 class Wallet extends EventEmitter {
-  
-  constructor(assets, config) {
+  constructor (config) {
     super()
-    if(!config.store) throw new WalletError('Store not provided', 'BAD_ARGS')
-    if(!config.seed) throw new WalletError('Seed not provided', 'BAD_ARGS')
-    if(!Array.isArray(assets)) throw new WalletError('Assets must be an array', 'BAD_ARGS') 
+    if (!config.store) throw new WalletError('Store not provided', 'BAD_ARGS')
+    if (!config.seed) throw new WalletError('Seed not provided', 'BAD_ARGS')
+    if (!Array.isArray(config.assets)) throw new WalletError('Assets must be an array', 'BAD_ARGS')
     this.seed = config.seed
     this.store = config.store
 
-    this._assets = assets
+    this._assets = config.assets
     this._pay = null
     this._store = config.store
 
@@ -25,80 +24,74 @@ class Wallet extends EventEmitter {
     })
   }
 
-  async initialize(args) {
+  async initialize (args) {
     this._pay = new Map()
     await Promise.all(this._assets.map(async (asset) => {
-      return await asset.initialize({wallet : this})
+      await asset.initialize({ wallet: this })
     }))
     this.emit('ready')
   }
 
-  async _eachAsset(fn) {
-    for (let [k, asset] of this._pay.entries()) {
-      await fn()
+  async _eachAsset (fn) {
+    for (const arr of this._pay.entries()) {
+      await fn(arr[1])
     }
   }
-  
-  async destroy() {
+
+  async destroy () {
     await this._eachAsset(asset => asset.destroy())
     this._pay.clear()
     this.seed = null
     await this.storer.close()
   }
 
-  registerAsset(k, assetObj) {
+  addAsset (k, assetObj) {
     const asset = this._pay.get(k)
-    if(asset) throw new WalletError('Asset already exists')
+    if (asset) throw new WalletError('Asset already exists')
     this._pay.set(k, assetObj)
   }
 
-  _getAsset(k) {
-    return this._pay.get(k)
-  }
-  
-  pay(opts) {
+  pay (opts) {
     return this._getAsset(opts.asset)
   }
 
-  async syncHistory(opts) {
-    if(opts.asset) {
+  async syncHistory (opts) {
+    if (opts.asset) {
       return this._getAsset(opts.asset).syncTransactions(opts)
     }
 
     await this._eachAsset(asset => asset.syncTransactions(opts))
   }
 
-  _getAsset(opts) {
+  _getAsset (opts) {
     let k
-    if(typeof opts === 'string') k = opts
-    else if(typeof opts?.asset === 'string') k.asset
+    if (typeof opts === 'string') k = opts
+    else if (typeof opts?.asset === 'string') k = opts.asset
     else throw new WalletError('wallet asset not passed')
-    let asset = this._pay.get(k)
-    if(!asset) throw new WalletError('asset does not exist '+k)
+    const asset = this._pay.get(k)
+    if (!asset) throw new WalletError('asset does not exist ' + k)
     return asset
   }
 
-  exportWallet() {
+  exportWallet () {
 
   }
 
-  static importWallet(snapshot) {
+  static importWallet (snapshot) {
 
   }
 
-  getBalance() {
+  getBalance () {
 
   }
 
-  getTransactions() {
-    
+  getTransactions () {
+
   }
 
-  isValidAddress() {
-    
-  }
+  isValidAddress () {
 
+  }
 }
-
 
 module.exports = Wallet

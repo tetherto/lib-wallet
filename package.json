@@ -4,7 +4,8 @@
   "description": "Multi asset, multi chain wallet libary.",
   "main": "index.js",
   "scripts": {
-    "test": "brittle ./test/wallet.test.js"
+    "test": "brittle ./test/wallet.test.js",
+    "lint": "standard --fix"
   },
   "author": "rbndg",
   "license": "MIT",
