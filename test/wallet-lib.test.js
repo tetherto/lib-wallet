@@ -23,11 +23,8 @@ test('Load wallet with bitcoin asset', async function (t) {
 
 test('generate bitcoin address', async function (t) {
   const wallet = await newWallet()
-
   const address =  await wallet.pay.btc.getNewAddress()
   const pay = wallet.pay
-  const z = await pay.btc.getNewAddress()
-  console.log(z)
   t.ok(address.address, 'Address generated')
   t.ok(address.WIF, 'WIF generated')
   await wallet.destroy()

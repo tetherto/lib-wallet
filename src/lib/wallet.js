@@ -1,51 +1,8 @@
 'use strict'
 
 const { EventEmitter } = require('events')
-
+const AssetList = require('./asset-list.js')
 const WalletError = Error
-
-class AssetList {
-
-  constructor() {
-    this._define('size', 0)
-    this._define('keys', [])
-  }
-
-  _define(k,v) {
-    Object.defineProperty(this, k, {
-      value: v,
-      writable: true,
-      configurable: true,
-      enumerable: false
-    })
-  }
-
-  set(k,v) {
-    if(this.exists(k)) throw new Error('Asset already exists '+k)
-    this.size++
-    this[k] = v
-    this.keys.push(k)
-    return v
-  }
-
-  exists(k) {
-    return !!this[k]
-  }
-
-  [Symbol.iterator]() {
-    let index = 0;
-    const items = this.keys
-    return {
-    next : () => {
-        if (index < items.length) {
-            return { value: this[items[index++]], done: false };
-        } else {
-            return { done: true };
-        }
-      }
-    }
-  }
-}
 
 class Wallet extends EventEmitter {
   constructor (config) {
@@ -62,9 +19,17 @@ class Wallet extends EventEmitter {
     this.pay = new AssetList()
     await Promise.all(this._assets.map(async (asset) => {
       await asset.initialize({ wallet: this })
+      asset.on('new-tx',this._handleAssetEvent(asset.assetName, 'new-tx'))
+      asset.on('new-block',this._handleAssetEvent(asset.assetName, 'new-block'))
     }))
     this._assets = null
     this.emit('ready')
+  }
+
+  _handleAssetEvent(assetName, evName) {
+    return async (...args) => {
+      this.emit(evName, assetName, ...args)
+    }
   }
 
   async _eachAsset (fn) {
@@ -86,31 +51,14 @@ class Wallet extends EventEmitter {
   }
 
   async syncHistory (opts) {
-    if (opts.asset) {
-      return this._getAsset(opts.asset).syncTransactions(opts)
-    }
-
-    await this._eachAsset(asset => asset.syncTransactions(opts))
+    return await this._eachAsset(async (asset) => {
+      await asset.syncTransactions(opts) 
+      this.emit('asset-synced', asset.assetName)
+    })
   }
 
-  exportWallet () {
-
-  }
-
-  static importWallet (snapshot) {
-
-  }
-
-  getBalance () {
-
-  }
-
-  getTransactions () {
-
-  }
-
-  isValidAddress () {
-
+  exportSeed () {
+    return this.seed.exportSeed()
   }
 }
 

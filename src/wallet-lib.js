@@ -12,13 +12,14 @@ const BIP39Seed = require('wallet-seed-bip39')
 async function main (config = {}) {
 
   // Generate seed or use provided seed phrase
-  const seed = await BIP39Seed.generate(config.seed_phrase)
+  const seed = await BIP39Seed.generate(config?.seed?.mnemonic)
 
   // Setup wallet store
   const store = new WalletStoreHyperbee({
-    store_path: config.store_path,
-    hyperbee: config.hyperbee
+    store_path: config.store_path
   })
+
+  console.log(store.store_path)
 
   // Setup Bitcoin asset
   const btcPay = new BitcoinPay({
