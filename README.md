@@ -41,7 +41,8 @@ Multi asset cryptocurrency wallet library in JavaScript.
   const wallet = new Wallet({
     store,
     seed,
-    assets: [btcPay]
+    // List of assets 
+    assets: [ btcPay, ]
   })
 
   // Start wallet and initialize
@@ -49,7 +50,7 @@ Multi asset cryptocurrency wallet library in JavaScript.
   // Add asset to wallet registry 
   await wallet.initialize()
 
-  // Traverse wallet history of all accounts and sync them. This might take a while depending on wallet size 
+  // Traverse wallet history of all assets and sync them. This might take a while depending on wallet size 
   await wallet.syncHistory(opts)
 
   // Get a new bitcoin address using api below
