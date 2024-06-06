@@ -16,6 +16,7 @@
     "wallet-seed-bip39": "github:rbndg/lib-wallet-seed-bip39"
   },
   "devDependencies": {
-    "brittle": "^3.5.0"
+    "brittle": "^3.5.0",
+    "commander": "^12.1.0"
   }
 }
