@@ -5,6 +5,8 @@ const inspect = Symbol.for('nodejs.util.inspect.custom')
 
 BN.config({ EXPONENTIAL_AT: [-20, 40] })
 
+// Currency class
+// Base class for currency
 class Currency {
   static _BN = BN
   constructor () {
