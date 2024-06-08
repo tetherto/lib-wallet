@@ -1,5 +1,5 @@
 
-// Simple data structure for iterating thourought assets
+// Simple data structure for iterating assets
 class AssetList {
   constructor() {
     this._define('size', 0)
