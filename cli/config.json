@@ -1,7 +1,8 @@
 {
   "store_path": "./data",
+  "network": "regtest",
   "seed": {
-    "seed": "f8b6c62c15596d30c6ce2a377a2c5577d07c5ae63133395a7b1b21aabd4f90b2c54e87226c47a8285bbe3b8ee9757b65bf313ed6cc6f52edbc458a3f6113c451",
-    "mnemonic": "tray scissors cattle company helmet liar gospel gate picnic cement clap pattern"
+    "seed": "f8e2eb8de6d9e516149346c07ab7277cee1ec1f3002d8f130a959e9ff9ec2bf667115cacc825ff7a01a4890d35fa840a61d31fca7b6290b49c7858115202da4d",
+    "mnemonic": "pulp woman media skin thrive cup advice hair denial sail govern attack"
   }
 }

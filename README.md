@@ -2,12 +2,13 @@
 
 Multi asset cryptocurrency wallet library in JavaScript.
 
+**Warning:** This is a work in progress and not tested on mainnet.**
+
 ## Features
 
 - **Composible:** Single facade to interact with multiple assets and wallets
-- **Modular:** All components are modular and can be used independently. 
+- **Modular:** All components are modular and can be used independently.
 - **Extensible:** Easily add new asset, seed, block source.
-
 
 ### Default Components and assets
 
@@ -19,6 +20,7 @@ Multi asset cryptocurrency wallet library in JavaScript.
 - wallet-pay-usdt-ton - USDT asset on TON network
 
 ### Example Usage
+
 ```javascript
 
   const seed = await BIP39Seed.generate(/** seed phrase or leave empty to generate one */)
@@ -56,4 +58,24 @@ Multi asset cryptocurrency wallet library in JavaScript.
   // Get a new bitcoin address using api below
   const btcAddress = await wallet.pay.btc.getNewAddress()
 
+  // Get Tx history
+
+  await wallet.pay.btc.getTransactions((tx) =>{}
+    // do something here 
+  }))
+  //done 
+
 ```
+
+### Sea-shell CLI
+
+sea-shell is a basic terminal wallet built with this library. It supports multiple assets and basic wallet operations.
+
+```bash
+node ./cli/cli.js
+```
+
+### Development Requirements
+
+- Bitcoin Core node running on regtest
+- [ElectrumX](https://electrumx-spesmilo.readthedocs.io/en/latest/)

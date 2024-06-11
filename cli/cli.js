@@ -8,6 +8,7 @@ async function main() {
   if(!config.store_path) {
     config.store_path = './data'
   }
+  config.network = 'regtest'
 
   const wallet = await createWallet(config)
   
@@ -82,7 +83,7 @@ function startcli(wallet) {
     ],
     [
       'send',
-      '.send <asset> <address> <amount> - Send some tokens to an address.\n Usage: .send <asset> <address> <amount in base unit> --reset \n Example: .send btc bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu  100000',
+      '.send <asset> <address> <amount> - Send some tokens to an address.\n Usage: .send <asset> <address> <amount in base unit> \n Example: .send btc bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu  100000',
       async (cmd)=> {
         const [asset, address, amount] = cmd.split(' ')
         if(!asset || !wallet.pay[asset]) return console.log('Please provide valid asset name')
@@ -94,6 +95,16 @@ function startcli(wallet) {
         console.log('amount: ', amount)
         console.log('change address: ', tx.changeAddress.address)
         console.log('Fee paid (sats): ', tx.totalFee)
+      }
+    ],
+    [
+      'history',
+      '.history <asset>  - Get history of transactions in this wallet.\n Usage .history btc',
+      async (cmd) => {
+        console.log(cmd)
+        wallet.pay[cmd].getTransactions((tx) => {
+          console.log(tx)
+        })
       }
     ]
   ]
