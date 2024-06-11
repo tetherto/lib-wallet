@@ -6,18 +6,15 @@ Multi asset cryptocurrency wallet library in JavaScript.
 
 ## Features
 
-- **Composible:** Single facade to interact with multiple assets and wallets
+- **Composable:** Single facade to interact with multiple assets and wallets
 - **Modular:** All components are modular and can be used independently.
-- **Extensible:** Easily add new asset, seed, block source.
+- **Extensible:** Easily add new asset, seed source, block source...etc
 
 ### Default Components and assets
 
 - `wallet-seed-bip39` - BIP39 seed generation library.
 - `wallet-store-hyperbee` - Hyperbee data store for wallet.
-- `wallet-pay-btc` - Bitcoin payment asset.
-- wallet-pay-usdt-eth - USDT asset on Ethereum network
-- wallet-pay-usdt-trx - USDT asset on Tron network
-- wallet-pay-usdt-ton - USDT asset on TON network
+- `wallet-pay-btc` - Bitcoin payment asset with Electrum backend.
 
 ### Example Usage
 

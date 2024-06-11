@@ -27,7 +27,6 @@ async function main() {
 
   wallet.on('new-tx', (asset) => {
     console.log('🟩Wallet state updated for asset: ', asset)
-    
   })
 
   startcli(wallet)
@@ -142,5 +141,3 @@ function startcli(wallet) {
 }
 main()
 
-// update balance states when a new block comes in 
-// get tx history
