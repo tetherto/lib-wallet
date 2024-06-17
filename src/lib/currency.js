@@ -42,11 +42,23 @@ class Currency {
     return `${this.constructor.name} Currency ( ${this.toMainUnit()} ${this.name} - ${this.toBaseUnit()} ${this.base_name} )`
   }
 
-  toMainUnit () {}
+  static toBaseUnit(amount, decimal) {
+    return BN(amount).shiftedBy(decimal).toString()
+  }
 
-  toBaseUnit () {}
+  static toMainUnit(amount, decimal) {
+    return BN(amount).shiftedBy(decimal * -1).dp(decimal).toString()
+  }
 
-  toString () {
+  toString() {
+    return this.amount.toString()
+  }
+
+  toNumber() {
+    return +this.amount
+  }
+  
+  valueOf () {
     return this.amount
   }
 
@@ -58,10 +70,6 @@ class Currency {
     ]
   }
 
-  valueOf () {
-    return this.amount
-  }
-
   isMainUnit () { return this.type === 'main' }
 
   isBaseUnit () { return this.type === 'base' }
@@ -70,7 +78,47 @@ class Currency {
     return this.type === currency.type
   }
 
-  add () {}
+  add(amount) {
+    this.isUnitOf(amount)
+    let thisBase = this.toBaseUnit()
+    let amountBase = amount.toBaseUnit()
+    let total = new BN(thisBase).plus(amountBase)
+    return new this.constructor(total, 'base', this.config)
+  }
+
+  minus(amount) {
+    this.isUnitOf(amount)
+    let thisBase = this.toBaseUnit()
+    let amountBase = amount.toBaseUnit()
+    let total = new BN(thisBase).minus(amountBase)
+    return new this.constructor(total, 'base', this.config)
+  }
+
+  abs() {
+    this.amount = Math.abs(this.amount)
+    return this
+  }
+
+  lte(amount) {
+    this.isUnitOf(amount)
+    let thisBase = this.toBaseUnit()
+    let amountBase = amount.toBaseUnit()
+    return new BN(thisBase).lte(amountBase)
+  }
+
+  eq(amount) {
+    this.isUnitOf(amount)
+    let thisBase = this.toBaseUnit()
+    let amountBase = amount.toBaseUnit()
+    return new BN(thisBase).eq(amountBase)
+  }
+
+  gte(amount) {
+    this.isUnitOf(amount)
+    let thisBase = this.toBaseUnit()
+    let amountBase = amount.toBaseUnit()
+    return new BN(thisBase).gte(amountBase)
+  }
 }
 
 module.exports = Currency
