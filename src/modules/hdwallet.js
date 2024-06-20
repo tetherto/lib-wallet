@@ -95,7 +95,7 @@ class HdWallet {
   }
 
   async setSyncState (state) {
-    return this.store.put('sync_state', state)
+    return this.store.put('sync_state_'+state._addrType, state)
   }
 
 
@@ -200,16 +200,20 @@ class HdWallet {
           return reject(err)
         }
 
-        if(res === _signal.stop) return resolve(syncType)
+        if(res === _signal.stop) return resolve(res)
 
         const hasTx = res === _signal.hasTx
-
         syncType.bump(hasTx)
         await this.setSyncState(syncType)
-        await this.updateLastPath(syncType.path)
+
+        if(hasTx) {
+          // When a path has a transaction we update the last used path
+          // So next time we generate address we get a fresh path
+          await this.updateLastPath(syncType.path)
+        }
 
         if(syncType.isGapLimit()) {
-          return resolve(syncType)
+          return resolve(res)
         }
         run()
       }
@@ -223,19 +227,38 @@ class HdWallet {
     stop: 2,
   }
 
-  async eachAccount (addrType, fn) {
+  async eachAccount (arg1, arg2) {
+    let addrType, fn
+    if(typeof arg1 === 'function') {
+      fn = arg1
+      addrType = await this.store.get('current_sync_addr_type')
+    } else {
+      fn = arg2
+      addrType = arg1
+    }
+
+    if(!addrType) {
+      addrType = 'external'
+      await this.store.put('current_sync_addr_type', addrType)
+    }
     const gapLimit = this._gapLimit
     const accounts = await this.getAccountIndex()
     const syncState = await this.getSyncState(addrType)
     for (const account of accounts) {
       const [purpose, accountIndex] = account
-      let path = addrType === 'external' ? this.INIT_EXTERNAL_PATH : this.INIT_INTERNAL_PATH
       if (!syncState.path) {
+        let path = addrType === 'external' ? this.INIT_EXTERNAL_PATH : this.INIT_INTERNAL_PATH
         path = HdWallet.setPurpose(path, purpose)
         path = HdWallet.setAccount(path, accountIndex)
+        syncState.setPath(path)
       } 
-      syncState.setPath(path)
-      await this._processPath(syncState, fn)
+      const res =  await this._processPath(syncState, fn)
+      if(res === this._signal.stop) return 
+    }
+
+    if(addrType === 'external') {
+      await this.store.put('current_sync_addr_type', 'internal')
+      return this.eachAccount('internal', fn)
     }
   }
 }
