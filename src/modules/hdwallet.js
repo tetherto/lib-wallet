@@ -201,17 +201,15 @@ class HdWallet {
         }
 
         if(res === _signal.stop) return resolve(res)
-
-        const hasTx = res === _signal.hasTx
-        syncType.bump(hasTx)
-        await this.setSyncState(syncType)
-
-        if(hasTx) {
-          // When a path has a transaction we update the last used path
-          // So next time we generate address we get a fresh path
+        else if(res === _signal.hasTx) {
+          syncType.bump(true)
           await this.updateLastPath(syncType.path)
+        } else if (res === _signal.noTx) {
+          syncType.bump(false)
+        } else {
+          throw new Error('Invalid signal returned')
         }
-
+        await this.setSyncState(syncType)
         if(syncType.isGapLimit()) {
           return resolve(res)
         }
