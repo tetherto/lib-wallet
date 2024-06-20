@@ -1,3 +1,38 @@
+class SyncState {
+  constructor (config, gapLimit = 20, addrType){
+    if(!config) config = {}
+    this.gap = config.gap || 0
+    this.gapEnd = config.gapEnd || gapLimit
+    this.path = config.path || null
+    this._gapLimit = gapLimit
+    this._addrType = addrType || null
+  }
+
+  bump(tx) {
+    this.gap += 1
+    this.path = HdWallet.bumpIndex(this.path)
+    if(tx) {
+      this.gapEnd = this.gap + this._gapLimit
+    }
+  }
+
+  isGapLimit() {
+    return this.gap > this.gapEnd
+  }
+
+  setPath(path) {
+    this.path = path
+  }
+
+  toJSON () {
+    return {
+      gap: this.gap,
+      gapEnd: this.gapEnd,
+      path: this.path,
+      _addrType: this._addrType
+    }
+  }
+}
 
 /**
   * @desc: Class to manage HD wallet paths only supports 84' paths'
@@ -12,9 +47,11 @@ class HdWallet {
   constructor (config) {
     this.store = config.store
     this.coinType = config.coinType 
-    if(!this.coinType) throw new Error('coinType is required')
+    this._gapLimit = config.gapLimit || 20
     this.purpose = config.purpose
-    if(!this.purpose) throw new Error('purpose is required')
+    this.coinType = config.coinType
+    this._checkCoinArg(this.coinType)
+    this._checkCoinArg(this.purpose)
 
     this.INIT_EXTERNAL_PATH =  `m/${this.purpose}/${this.coinType}/0'/0/0`
     this.INIT_INTERNAL_PATH =  `m/${this.purpose}/${this.coinType}/0'/1/0`
@@ -28,6 +65,39 @@ class HdWallet {
       await this.store.put('account_index', [this._formatAccountPath(this.INIT_EXTERNAL_PATH)])
     }
   }
+
+  _checkCoinArg(arg) {
+    if(!arg || arg[arg.length - 1] !== "'") throw new Error("coinType is required and must be like: 84' ")
+  }
+
+  async getSyncState (addrType) { 
+    const state = await this.store.get('sync_state_'+addrType)
+    if (!state) {
+      return this._newSyncState(addrType)
+    }
+    return new SyncState(state, this._gapLimit, addrType)
+  }
+
+  _newSyncState (addrType) {
+    let path
+    if(addrType === 'internal') path = this.INIT_INTERNAL_PATH
+    if(addrType === 'external') path = this.INIT_EXTERNAL_PATH
+
+    return new SyncState({ path }, this._gapLimit, addrType)
+  }
+
+  async resetSyncState () {
+    let state = this._newSyncState('internal')
+    await this.store.put('sync_state_internal', state)
+    state = this._newSyncState('external')
+    await this.store.put('sync_state_external', state)
+    return state
+  }
+
+  async setSyncState (state) {
+    return this.store.put('sync_state', state)
+  }
+
 
   async close () {
     return this.store.close()
@@ -117,37 +187,55 @@ class HdWallet {
     }
   }
 
-  async _processPath (addrType, path, fn) {
-    let next = true
+  async _processPath (syncType, fn) {
+    const _signal = this._signal
     return new Promise((resolve, reject) => {
-      const run = () => {
-        if (!next) return resolve()
-        fn(path, () => {
-          next = false
-        }).then(() => {
-          path = HdWallet.bumpIndex(path)
-          process.nextTick(run)
-        }).catch((e) => {
-          console.log(e)
-          throw new Error('Failed to iterate through accounts ' + e)
-        })
+
+      const run = async () => {
+        let res
+        try {
+          res = await fn(syncType, _signal)
+        } catch(err) {
+          console.log('Failed to iterate account:'+ syncType, err)
+          return reject(err)
+        }
+
+        if(res === _signal.stop) return resolve(syncType)
+
+        const hasTx = res === _signal.hasTx
+
+        syncType.bump(hasTx)
+        await this.setSyncState(syncType)
+        await this.updateLastPath(syncType.path)
+
+        if(syncType.isGapLimit()) {
+          return resolve(syncType)
+        }
+        run()
       }
-      process.nextTick(run)
+      run()
     })
   }
+  
+  _signal = {
+    hasTx:0,
+    noTx: 1,
+    stop: 2,
+  }
 
-  async eachAccount (addrType, state, fn) {
+  async eachAccount (addrType, fn) {
+    const gapLimit = this._gapLimit
     const accounts = await this.getAccountIndex()
+    const syncState = await this.getSyncState(addrType)
     for (const account of accounts) {
       const [purpose, accountIndex] = account
       let path = addrType === 'external' ? this.INIT_EXTERNAL_PATH : this.INIT_INTERNAL_PATH
-      if (!state) {
+      if (!syncState.path) {
         path = HdWallet.setPurpose(path, purpose)
         path = HdWallet.setAccount(path, accountIndex)
-      } else {
-        path = HdWallet.bumpIndex(state)
-      }
-      await this._processPath(addrType, path, fn)
+      } 
+      syncState.setPath(path)
+      await this._processPath(syncState, fn)
     }
   }
 }
