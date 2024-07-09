@@ -63,6 +63,7 @@ class HdWallet {
       await this.store.put('current_internal_path', this.INIT_INTERNAL_PATH)
       await this.store.put('current_external_path', this.INIT_EXTERNAL_PATH)
       await this.store.put('account_index', [this._formatAccountPath(this.INIT_EXTERNAL_PATH)])
+      await this.store.put('address_index', [])
     }
   }
 
@@ -103,7 +104,14 @@ class HdWallet {
     return this.store.close()
   }
 
-  addAddress(addr) {
+  getAllAddress() {
+    return this.store.get('address_index')
+  }
+
+  async addAddress(addr) {
+    const addrIndex = await this.getAllAddress()
+    addrIndex.push(addr.address)
+    await this.store.put('address_index', addrIndex)
     return this.store.put('addr:'+ addr.address , addr)
   }
 
@@ -173,6 +181,17 @@ class HdWallet {
     return `m/${path.purpose}/${path.coin_type}/${path.account}/${path.change}/${path.index}`
   }
 
+  async getNewAddress(newAddr){
+    let path = await this.getLastExtPath()
+    const res  = newAddr(path) 
+    if(!res.addr.path) throw new Error('newAddr function returned invalid response')
+    const addr = res.addr
+    path = HdWallet.bumpIndex(addr.path)
+    await this.updateLastPath(path)
+    await this.addAddress(addr)
+    return res
+  }
+
   static parsePath (path) {
     const parts = path.split('/')
     if (parts.length !== 6) {
@@ -239,7 +258,6 @@ class HdWallet {
       addrType = 'external'
       await this.store.put('current_sync_addr_type', addrType)
     }
-    const gapLimit = this._gapLimit
     const accounts = await this.getAccountIndex()
     const syncState = await this.getSyncState(addrType)
     for (const account of accounts) {

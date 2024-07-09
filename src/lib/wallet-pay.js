@@ -2,6 +2,17 @@ const { EventEmitter } = require('events')
 
 const WalletPayError = Error
 
+function createBalance(Currency) {
+  return class Balance {
+    static name=`Balance ${Currency.name}`
+    constructor (confirmed, pending, mempool) {
+      this.confirmed = confirmed || new Currency(0, 'main')
+      this.pending = pending || new Currency(0, 'main')
+      this.mempool = mempool || new Currency(0, 'main')
+    }
+  }
+}
+
 class WalletPay extends EventEmitter {
   constructor (config) {
     super()
@@ -15,6 +26,9 @@ class WalletPay extends EventEmitter {
     this.network = config.network
     this.seed = config.seed || null
     this.ready = false
+    if(config.token) {
+      this.loadToken(config.token)
+    }
   }
 
   async initialize (ctx = {}) {
@@ -40,27 +54,78 @@ class WalletPay extends EventEmitter {
     this.removeAllListeners()
   }
 
-  async getNewAddress (args) {
+  async getNewAddress () {
     throw new WalletPayError('Method not implemented')
   }
 
-  async syncTransactions (args) {
+  async syncTransactions () {
     throw new WalletPayError('Method not implemented')
   }
 
-  async pauseSync (args) {
+  async pauseSync () {
     throw new WalletPayError('Method not implemented')
   }
 
-  async getTransactions (opts) {}
+  async getTransactions () {}
 
-  async getBalance (opts, addr) {}
+  async getBalance () {}
 
-  async sendTransaction (opts) {}
+  async sendTransaction () {}
 
-  async isValidAddress (addr) {}
+  async isValidAddress () {}
 
-  parsePath (path) {}
+  parsePath () {}
+
+  loadToken(tokens){
+    this._tokens = new Map()
+    tokens.forEach((t) => {
+      if(!t.name) throw new Error('token class missing name')
+      this._tokens.set(t.name, t)
+    })
+  }
+
+  async _eachToken(fn){
+    if(!this._tokens) return 
+    for( let [name, token ] of this._tokens) {
+      await fn(token)
+    }
+  }
+
+
+  async callToken(method, tokenName, argArr) {
+    let tokens
+    if(!tokenName) tokens = Array.from(this._tokens.keys()) 
+    else tokens = [tokenName]
+
+    const res = await Promise.all(tokens.map((tName) => {
+      const token = this._tokens.get(tName)
+      if(!token) throw new Error(`token with name: ${tName} does not exist in _tokens`)
+      const fn = token[method]
+      if(typeof fn !== 'function') throw new Error(`Method ${method} does not exist in token ${tName}`)
+      return fn.apply(token,argArr)
+    }))
+    
+    return res.length === 1 ? res.pop() : res
+  }
+
+  async _initTokens(args) {
+
+    return this._eachToken((token) => {
+      return token.init(args)
+    })
+  }
+
+  _setCurrency(curr) {
+    this._Curr = curr
+    this._Balance = createBalance(curr)
+  }
+
+  static createBalance(Currency) {
+    return createBalance(Currency)
+  }
+
 }
 
 module.exports = WalletPay
+
+

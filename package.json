@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "brittle ./test/*.test.js",
+    "test:hdwallet": "brittle ./test/hdwallet.test.js",
     "lint": "standard --fix"
   },
   "author": "rbndg",

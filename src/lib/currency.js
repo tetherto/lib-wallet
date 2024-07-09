@@ -20,15 +20,19 @@ class Currency {
     this.decimal_places = ''
   }
 
-  _parseConstArg (args) {
+  _parseConstArg () {
     let param
-    if (Array.isArray(arguments[0])) {
-      param = arguments[0]
+    const first = arguments[0]
+    if (Array.isArray(first)) {
+      param = first 
+    } else if( first instanceof Currency){
+      param = [ first.amount, first.type, first.config ]
     } else {
       param = arguments
     }
+    const amount = BN(param[0]).toString()
     return {
-      amount: param[0],
+      amount, 
       type: param[1],
       config: param[2]
     }
@@ -82,7 +86,7 @@ class Currency {
     this.isUnitOf(amount)
     let thisBase = this.toBaseUnit()
     let amountBase = amount.toBaseUnit()
-    let total = new BN(thisBase).plus(amountBase)
+    let total = new BN(thisBase).plus(amountBase).toString()
     return new this.constructor(total, 'base', this.config)
   }
 
@@ -90,7 +94,7 @@ class Currency {
     this.isUnitOf(amount)
     let thisBase = this.toBaseUnit()
     let amountBase = amount.toBaseUnit()
-    let total = new BN(thisBase).minus(amountBase)
+    let total = new BN(thisBase).minus(amountBase).toString()
     return new this.constructor(total, 'base', this.config)
   }
 
