@@ -3,10 +3,11 @@ const { WalletStoreHyperbee } = require('lib-wallet-store')
 const BIP39Seed = require('wallet-seed-bip39')
 const { BitcoinPay } = require('lib-wallet-pay-btc')
 const { EthPay, Provider, erc20CurrencyFac, Erc20 } = require('lib-wallet-pay-eth') 
+
 async function main (config = {}) {
 
-  // Generate seed or use provided seed phrase
-  const seed = await BIP39Seed.generate(config?.seed_phrase)
+  const seed = await BIP39Seed.generate(config?.seed?.mnemonic)
+
 
   // Setup wallet store
   const store = new WalletStoreHyperbee({

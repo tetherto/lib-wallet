@@ -9,6 +9,7 @@ function createBalance(Currency) {
       this.confirmed = confirmed || new Currency(0, 'main')
       this.pending = pending || new Currency(0, 'main')
       this.mempool = mempool || new Currency(0, 'main')
+      this.consolidated = this.confirmed.add(this.pending).add(this.mempool)
     }
   }
 }

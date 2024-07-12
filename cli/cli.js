@@ -9,7 +9,7 @@ async function main() {
     config.store_path = './data'
   }
   config.network = 'regtest'
-
+  
   const wallet = await createWallet(config)
   
   if(!config.seed) {
@@ -36,6 +36,31 @@ function clog(msg) {
   console.log('>> '+msg)
 }
 
+function parseArgs(args, wallet) {
+
+  let [name, token] = args.split(" ")
+
+  let err 
+  if(!name || !wallet.pay[name]) {
+    err = true
+    console.log('Please provide valid asset name')
+  }
+
+  if(token && token.indexOf("-") === 0) token = null
+  const addrIndex = args.split(" ").indexOf('--addr')
+  const address =  addrIndex > 0 ? args.split(" ")[addrIndex+1] : null
+  
+  const senderIndex = args.split(" ").indexOf('--sender')
+  const sender =  senderIndex > 0 ? args.split(" ")[senderIndex+1] : null
+
+  const amtIndex = args.split(" ").indexOf('--amt')
+  const amt =  senderIndex > 0 ? args.split(" ")[amtIndex+1] : null
+
+  return {
+    name,token, err, address, amt, sender
+  }
+}
+
 function startcli(wallet) {
   console.log(`Welcome to Seashell Wallet CLI`)
   console.log(`Type help to see available commands\n`)
@@ -60,10 +85,10 @@ function startcli(wallet) {
     ],
     [
       'newaddress',
-      '.newaddress <asset-name> <token-name?> - Get new address  \n Usage: .newaddress <asset-name> <token-name>  \n Example:\n .newaddress btc \n .newaddress eth USDT',
+      '.newaddress <asset> <token?> - Get new address  \n Usage: .newaddress <asset> <token>  \n Example:\n .newaddress btc \n .newaddress eth USDT',
       async (args) => {
-        const [name, token] = args.split(" ")
-        if(!name || !wallet.pay[name]) return console.log('Please provide valid asset name')
+        const {token,name, err} = parseArgs(args, wallet)
+        if(err) return 
         const opts = {}
         if(token) opts.token = token
         const addr = await wallet.pay[name].getNewAddress(opts)
@@ -74,8 +99,8 @@ function startcli(wallet) {
       'sync',
       '.sync --reset - Sync wallet history  \n Usage: .sync --reset \n Example: .sync',
       async (reset)=> {
-        const handler = (name) => {
-          clog(`Synced ${name} asset`)
+        const handler = (name, token) => {
+          clog(`Synced ${name} ${token ? ': token: '+token : ""} asset`)
         }
         wallet.on('asset-synced', handler)
         await wallet.syncHistory({reset : reset === '--reset', all:true})
@@ -85,43 +110,59 @@ function startcli(wallet) {
     ],
     [
       'balance',
-      '.balance <asset> <address> - Get balance of entire asset or address of an asset.\n Usage: . --reset \n Example: .sync',
-      async (cmd)=> {
-        const [asset, address] = cmd.split(' ')
-        if(!asset || !wallet.pay[asset]) return console.log('Please provide valid asset name')
+      '.balance <asset> <token> --addr <address> - Get balance of entire asset or address of an asset.\n Usage: .balance ',
+      async (args)=> {
+        const {token,name,address,err} = parseArgs(args, wallet)
+        if(err) return 
+        const opts = {}
+        if(token) opts.token = token
         if(!address) {
-          const balance = await wallet.pay[asset].getBalance()
-          clog(`Balance of ${asset}:`)
+          const balance = await wallet.pay[name].getBalance(opts)
+          clog(`Balance of ${name}:`)
           console.log(balance)
         } else {
-          const balance = await wallet.pay[asset].getBalance({}, address)
-          clog(`Balance of ${asset} at ${address}:`)
+          const balance = await wallet.pay[name].getBalance(opts, address)
+          clog(`Balance of ${name} at ${address}:`)
           console.log(balance)
         }
       }
     ],
     [
+      'addr-bal',
+      '.addr-bal <asset> <token> - list of address and their balances\n Usage: .addr-bal ',
+      async (args)=> {
+        const {token,name, err} = parseArgs(args, wallet)
+        if(err) return 
+        if(token) {
+          const bal = await wallet.pay[name].getFundedTokenAddresses({token})
+          console.log(bal)
+        } else {
+          const bal = await wallet.pay[name].getFundedTokenAddresses({})
+          console.log(bal)
+        }
+      }
+    ],
+    [
       'send',
-      '.send <asset> <token> <address> <amount> - Send some tokens to an address.\n Usage: .send <asset> <address> <amount in base unit> \n Example: .send btc bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu  100000',
-      async (cmd)=> {
-        const [asset, address, amount] = cmd.split(' ')
-        if(!asset || !wallet.pay[asset]) return console.log('Please provide valid asset name')
-        if(!address) return console.log('Please provide valid address')
-        if(!amount) return console.log('Please provide valid amount')
-        const tx = await wallet.pay[asset].sendTransaction({}, {address, amount, unit: 'base', fee: 10})
-        console.log(`Transaction sent: ${tx.txid}`)
-        console.log('sent to : ', address)
-        console.log('amount: ', amount)
-        console.log('change address: ', tx.changeAddress.address)
-        console.log('Fee paid (sats): ', tx.totalFee)
+      '.send <asset> <token> --addr <receiver> --sender <sender> --amt <amount>  - Send some tokens to an address.\n Usage: .send <asset> <address> <amount in main unit> \n Example: .send btc bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu  100000',
+      async (args)=> {
+        const {token,name,address,sender, amt, err} = parseArgs(args, wallet)
+        if(err) return 
+        let opts = {}
+        if(token) opts.token = token
+        const tx = await wallet.pay[name].sendTransaction(opts, {address, amount:amt, unit: 'main', sender})
+        console.log('sent')
+        console.log(tx)
       }
     ],
     [
       'history',
       '.history <asset> <token> - Get history of transactions in this wallet.\n Usage .history btc',
-      async (cmd) => {
-        console.log(cmd)
-        wallet.pay[cmd].getTransactions((tx) => {
+      async (args) => {
+        const {token,name, err} = parseArgs(args, wallet)
+        const opts = {}
+        if(token) opts.token = token 
+        wallet.pay[name].getTransactions(opts, (tx) => {
           console.log(tx)
         })
       }

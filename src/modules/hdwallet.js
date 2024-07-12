@@ -92,6 +92,7 @@ class HdWallet {
     await this.store.put('sync_state_internal', state)
     state = this._newSyncState('external')
     await this.store.put('sync_state_external', state)
+    await this._updateSyncAddrType(null)
     return state
   }
 
@@ -205,6 +206,10 @@ class HdWallet {
       index: +parts[5]
     }
   }
+  
+  _updateSyncAddrType(v) {
+    return this.store.put('current_sync_addr_type', v)
+  }
 
   async _processPath (syncType, fn) {
     const _signal = this._signal
@@ -230,6 +235,7 @@ class HdWallet {
         }
         await this.setSyncState(syncType)
         if(syncType.isGapLimit()) {
+          await this.resetSyncState()
           return resolve(res)
         }
         run()
@@ -256,7 +262,7 @@ class HdWallet {
 
     if(!addrType) {
       addrType = 'external'
-      await this.store.put('current_sync_addr_type', addrType)
+      await this._updateSyncAddrType(addrType)    
     }
     const accounts = await this.getAccountIndex()
     const syncState = await this.getSyncState(addrType)
@@ -273,7 +279,7 @@ class HdWallet {
     }
 
     if(addrType === 'external') {
-      await this.store.put('current_sync_addr_type', 'internal')
+      await this._updateSyncAddrType('internal')
       return this.eachAccount('internal', fn)
     }
   }
