@@ -42,11 +42,31 @@ function startcli(wallet) {
   console.log(`commands:\n`)
   const commands = [
     [
+      'paymethods',
+      '.paymethods - List of payment methods \n Usage: .paymethods \n Example: .paymethods',
+       async () => {
+        console.log(`\nAvailable payment methods: \n`)
+        for(let method of wallet.pay) {
+          console.log(`>> Method: ${method.assetName}`)
+          const tokens = method._tokens || new Map()
+          if(tokens.size > 0) {
+            for(let [tName, token] of tokens) {
+              console.log(`    Token: ${tName} - ${token.getTokenInfo().contractAddress}`)
+            }
+          }
+          console.log("---")
+        }
+      }
+    ],
+    [
       'newaddress',
-      '.newaddress <asset-name> - Get new address  \n Usage: .newaddress <asset-name> \n Example: .newaddress btc',
-      async (name) => {
+      '.newaddress <asset-name> <token-name?> - Get new address  \n Usage: .newaddress <asset-name> <token-name>  \n Example:\n .newaddress btc \n .newaddress eth USDT',
+      async (args) => {
+        const [name, token] = args.split(" ")
         if(!name || !wallet.pay[name]) return console.log('Please provide valid asset name')
-        const addr = await wallet.pay[name].getNewAddress()
+        const opts = {}
+        if(token) opts.token = token
+        const addr = await wallet.pay[name].getNewAddress(opts)
         console.log(addr)
       }
     ],
@@ -58,7 +78,7 @@ function startcli(wallet) {
           clog(`Synced ${name} asset`)
         }
         wallet.on('asset-synced', handler)
-        await wallet.syncHistory({reset : reset === '--reset'})
+        await wallet.syncHistory({reset : reset === '--reset', all:true})
         wallet.off('asset-synced', handler)
         clog('wallet synced')
       }
@@ -82,7 +102,7 @@ function startcli(wallet) {
     ],
     [
       'send',
-      '.send <asset> <address> <amount> - Send some tokens to an address.\n Usage: .send <asset> <address> <amount in base unit> \n Example: .send btc bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu  100000',
+      '.send <asset> <token> <address> <amount> - Send some tokens to an address.\n Usage: .send <asset> <address> <amount in base unit> \n Example: .send btc bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu  100000',
       async (cmd)=> {
         const [asset, address, amount] = cmd.split(' ')
         if(!asset || !wallet.pay[asset]) return console.log('Please provide valid asset name')
@@ -98,7 +118,7 @@ function startcli(wallet) {
     ],
     [
       'history',
-      '.history <asset>  - Get history of transactions in this wallet.\n Usage .history btc',
+      '.history <asset> <token> - Get history of transactions in this wallet.\n Usage .history btc',
       async (cmd) => {
         console.log(cmd)
         wallet.pay[cmd].getTransactions((tx) => {
