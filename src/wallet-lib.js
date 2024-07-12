@@ -1,8 +1,8 @@
-const { BitcoinPay, Provider } = require('lib-wallet-pay-btc')
 const Wallet = require('./lib/wallet.js')
 const { WalletStoreHyperbee } = require('lib-wallet-store')
 const BIP39Seed = require('wallet-seed-bip39')
-
+const { BitcoinPay } = require('lib-wallet-pay-btc')
+const { EthPay, Provider, erc20CurrencyFac, Erc20 } = require('lib-wallet-pay-eth') 
 async function main (config = {}) {
 
   // Generate seed or use provided seed phrase
@@ -19,11 +19,37 @@ async function main (config = {}) {
     network: config.network || 'mainnet',
   })
 
+  const provider = new Provider({
+    web3: 'http://127.0.0.1:8545/',
+    indexer: 'http://127.0.0.1:8008/'
+  })
+  await provider.init()
+  
+  const USDT = erc20CurrencyFac({
+    name : 'USDT',
+    base_name: 'USDT',
+    contractAddress : '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    decimal_places: 6
+  })
+
+  const ethPay = new EthPay({
+    asset_name: 'eth',
+    provider,
+    store,
+    network: config.network || 'regtest',
+    token : [
+      new Erc20({
+        currency : USDT
+      })
+    ]
+  })
+
+
   // Setup Wallet facade class
   const wallet = new Wallet({
     store,
     seed,
-    assets: [btcPay]
+    assets: [btcPay, ethPay]
   })
 
   await wallet.initialize()

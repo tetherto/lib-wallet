@@ -26,6 +26,7 @@ class WalletPay extends EventEmitter {
     this.network = config.network
     this.seed = config.seed || null
     this.ready = false
+    this._tokens = new Map()
     if(config.token) {
       this.loadToken(config.token)
     }
@@ -77,7 +78,6 @@ class WalletPay extends EventEmitter {
   parsePath () {}
 
   loadToken(tokens){
-    this._tokens = new Map()
     tokens.forEach((t) => {
       if(!t.name) throw new Error('token class missing name')
       this._tokens.set(t.name, t)
@@ -95,7 +95,8 @@ class WalletPay extends EventEmitter {
   async callToken(method, tokenName, argArr) {
     let tokens
     if(!tokenName) tokens = Array.from(this._tokens.keys()) 
-    else tokens = [tokenName]
+    else if(typeof tokenName === 'string')  tokens = [tokenName]
+    else throw new Error(`invalid token name passed: ${tokenName}`)
 
     const res = await Promise.all(tokens.map((tName) => {
       const token = this._tokens.get(tName)
@@ -122,6 +123,10 @@ class WalletPay extends EventEmitter {
 
   static createBalance(Currency) {
     return createBalance(Currency)
+  }
+
+  getTokens() {
+    return this._tokens
   }
 
 }
