@@ -8,7 +8,7 @@ async function main() {
   if(!config.store_path) {
     config.store_path = './data'
   }
-  config.network = 'regtest'
+  config.network = 'bitcoin'
   
   const wallet = await createWallet(config)
   

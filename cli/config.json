@@ -1,8 +1,0 @@
-{
-  "store_path": "./data",
-  "network": "regtest",
-  "seed": {
-    "seed": "58b84e768abb7d13d6e8058e22d52003cd3bfc844e77851d8fef20b412c62f17108a9ea011a07ca2d64b94eab7fb12f0a8903b56d84f20ff92f5ae80bdaabae4",
-    "mnemonic": "session evidence crawl jungle raccoon glory enlist scrub dirt click smart scene"
-  }
-}

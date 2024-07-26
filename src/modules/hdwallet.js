@@ -220,7 +220,7 @@ class HdWallet {
         try {
           res = await fn(syncType, _signal)
         } catch(err) {
-          console.log('Failed to iterate account:'+ syncType, err)
+          console.log('Failed to iterate account:'+ syncType.path, err)
           return reject(err)
         }
 
@@ -245,8 +245,11 @@ class HdWallet {
   }
   
   _signal = {
+    // @desc Transaction has been detected in the path. Bump gap
     hasTx:0,
+    // @desc Transaction not detected in the path
     noTx: 1,
+    // @desc Stop iterating over hd path
     stop: 2,
   }
 

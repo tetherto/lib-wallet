@@ -58,16 +58,25 @@ test('hdwallet', async function (t) {
       let count = 0
       let prevGapEnd
       await hd.eachAccount(name, async function (syncState, signal) {
-        if(count === (gap +1)) {
-          t.ok(syncState.gapEnd >= prevGapEnd, 'gap end increase')
+        // We skip addr types that we are not testing for 
+        if(syncState._addrType !== name) return signal.noTx
+
+        if(count === (gap + 1)) {
+          t.ok(syncState.gapEnd >= prevGapEnd, 'gap end increased')
         }
+
         prevGapEnd = syncState.gapEnd
-        if(count > syncState.gapEnd) throw new Error('failed gap limit count')
+        if(count > syncState.gapEnd) t.fail('count has gone above gap end')
+
+        // Stop when gap end and count are equal
+        if(count === syncState.gapEnd) return signal.stop
         count++
+
+        // transaction is detected
         if(count === gap) return signal.hasTx 
         return signal.noTx
       })
-      t.ok(count === prevGapEnd+1, name+' counter stopped at gap limit '+ (count-1))
+      t.ok(count === prevGapEnd, name+' counter stopped at gap limit '+ (count-1))
     }
 
     await gapLimitTest(10, 'external')

@@ -14,7 +14,10 @@ Multi asset cryptocurrency wallet library in JavaScript.
 
 - `wallet-seed-bip39` - BIP39 seed generation library.
 - `wallet-store-hyperbee` - Hyperbee data store for wallet.
-- `wallet-pay-btc` - Bitcoin payment asset with Electrum backend.
+- `wallet-pay-btc` - Bitcoin payment asset with Electrum backend. 
+- `wallet-pay-eth` - Ethereum and ERC20 payment asset with Web3 backend and custom blocksource
+- `lib-wallet-indexer-eth` - Ethereum indexer backend.
+- `wallet-test-tools` - Tools for development and testing 
 
 ### Example Usage
 
@@ -69,10 +72,11 @@ Multi asset cryptocurrency wallet library in JavaScript.
 sea-shell is a basic terminal wallet built with this library. It supports multiple assets and basic wallet operations.
 
 ```bash
-node ./cli/cli.js
+node ./examples/cli.js
 ```
 
 ### Development Requirements
 
 - Bitcoin Core node running on regtest
 - [ElectrumX](https://electrumx-spesmilo.readthedocs.io/en/latest/)
+- [Hardhat](https://hardhat.org/) Local Ethereum network

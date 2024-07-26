@@ -7,6 +7,9 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
+data
+config.json
+
 
 cli/data/
 cli/config.json

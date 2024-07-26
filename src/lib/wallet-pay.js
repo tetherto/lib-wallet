@@ -52,7 +52,8 @@ class WalletPay extends EventEmitter {
     return this.provider
   }
 
-  async _postDestroy () {
+  async destroy () {
+    await this._destroy()
     this.removeAllListeners()
   }
 
@@ -77,6 +78,14 @@ class WalletPay extends EventEmitter {
   async isValidAddress () {}
 
   parsePath () {}
+
+  addToken(token){
+    
+    if(!this._tokens.has(token.name)) throw new Error('Token already exists '+token.name)
+
+    this._tokens.set(token.name,token)
+
+  }
 
   loadToken(tokens){
     tokens.forEach((t) => {

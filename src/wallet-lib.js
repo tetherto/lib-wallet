@@ -21,11 +21,13 @@ async function main (config = {}) {
   })
 
   const provider = new Provider({
-    web3: 'http://127.0.0.1:8545/',
-    indexer: 'http://127.0.0.1:8008/'
+    web3: 'ws://127.0.0.1:8545/',
+    indexer: 'http://127.0.0.1:8008/',
+    indexerWs: 'http://127.0.0.1:8181/'
   })
   await provider.init()
   
+  // Create a USDT currency instance
   const USDT = erc20CurrencyFac({
     name : 'USDT',
     base_name: 'USDT',
@@ -37,7 +39,7 @@ async function main (config = {}) {
     asset_name: 'eth',
     provider,
     store,
-    network: config.network || 'regtest',
+    network: config.network || 'mainnet',
     token : [
       new Erc20({
         currency : USDT
