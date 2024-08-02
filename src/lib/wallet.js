@@ -24,6 +24,7 @@ class Wallet extends EventEmitter {
     }))
     this._assets = null
     this.emit('ready')
+    console.log('ready')
   }
 
   _handleAssetEvent(assetName, evName) {

@@ -1,3 +1,6 @@
+
+
+
 class SyncState {
   constructor (config, gapLimit = 20, addrType){
     if(!config) config = {}
@@ -6,6 +9,7 @@ class SyncState {
     this.path = config.path || null
     this._gapLimit = gapLimit
     this._addrType = addrType || null
+    this._max_depth = config.max_depth || 10000
   }
 
   bump(tx) {
@@ -213,37 +217,42 @@ class HdWallet {
 
   async _processPath (syncType, fn) {
     const _signal = this._signal
-    return new Promise((resolve, reject) => {
 
-      const run = async () => {
-        let res
-        try {
-          res = await fn(syncType, _signal)
-        } catch(err) {
-          console.log('Failed to iterate account:'+ syncType.path, err)
-          return reject(err)
-        }
-
-        if(res === _signal.stop) return resolve(res)
-        else if(res === _signal.hasTx) {
-          syncType.bump(true)
-          await this.updateLastPath(syncType.path)
-        } else if (res === _signal.noTx) {
-          syncType.bump(false)
-        } else {
-          throw new Error('Invalid signal returned')
-        }
-        await this.setSyncState(syncType)
-        if(syncType.isGapLimit()) {
-          await this.resetSyncState()
-          return resolve(res)
-        }
-        run()
+    const run = async () => {
+      let res
+      try {
+        res = await fn(syncType, _signal)
+      } catch(err) {
+        console.log('Failed to iterate account:'+ syncType.path, err)
+        throw new Error(err)
       }
-      run()
-    })
+
+      if(res === _signal.stop) return res
+      else if(res === _signal.hasTx) {
+        syncType.bump(true)
+        await this.updateLastPath(syncType.path)
+      } else if (res === _signal.noTx) {
+        syncType.bump(false)
+      } else {
+        throw new Error('Invalid signal returned')
+      }
+      await this.setSyncState(syncType)
+      if(syncType.isGapLimit()) {
+        await this.resetSyncState()
+        return res
+      }
+      return false 
+    }
+
+    let x = 0
+    while(x <= this._max_depth) {
+      x++
+      let res 
+      res = await run()
+      if(res) return res
+    }
   }
-  
+
   _signal = {
     // @desc Transaction has been detected in the path. Bump gap
     hasTx:0,

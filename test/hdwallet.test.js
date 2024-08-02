@@ -41,16 +41,16 @@ test('hdwallet', async function (t) {
       })
       t.ok(count === expect.length, name+' path counter stop signal should work')
     }
-    let expect = [
-      "m/84'/0'/0'/0/0",
-      "m/84'/0'/0'/0/1"
-    ]
+
+    let expect = Array.from({ length: 10 }, (_, idx) => {
+      return "m/84'/0'/0'/0/"+idx
+    })
 
     await tester(expect, 'external')
-    expect = [
-      "m/84'/0'/0'/1/0",
-      "m/84'/0'/0'/1/1"
-    ]
+    expect = Array.from({ length: 10 }, (_, idx) => {
+      return "m/84'/0'/0'/1/"+idx
+    })
+
     await tester(expect, 'internal')
 
     async function gapLimitTest(gap, name) {

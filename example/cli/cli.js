@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const createWallet = require('../src/wallet-lib.js')
+const createWallet = require('../../src/wallet-lib.js')
 const fs = require('fs')
 const repl = require("repl");
 

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallet Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f4f4f4;
+    }
+
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+    }
+
+    .content {
+      margin-bottom: 20px;
+    }
+
+    .content h1 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .content p {
+      margin-bottom: 10px;
+      color: #666;
+    }
+    code {
+      background: #1c4f00;
+      padding: 10px;
+      color: white;
+      font-size: 14px;
+    }
+
+  </style>
+    <script src="./dist/main.js" ></script>
+    <script src="./index.js" ></script>
+</head>
+<body>
+
+<header>
+  <h1>Demo Wallet</h1>
+</header>
+
+    <div class="container">
+      <div class="content">
+        <h1>Welcome to wallet</h1>
+        <h2> Your seed phrase is </h2>
+        <code id='seed'>... loading</code>
+      </div>
+      <div class="content">
+        <p> Wallet library is available by using dev tools, Example:</p>
+        <code id='seed'>
+          await window.demoWallet.pay.btc.getNewAddress()
+        </code>
+      </div>
+    </div>
+
+<footer>
+</footer>
+
+</body>
+</html>
+

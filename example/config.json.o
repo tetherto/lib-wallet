@@ -1,8 +1,0 @@
-{
-  "store_path": "./data",
-  "network": "regtest",
-  "seed": {
-    "seed": "8c5dcb66215d9eb289a5f6c06888d614716b26fc3a2f6987e64f7d5395201c23c997f4be5fe476b033599eb862eeb2c8e40777e6c24bea3f6b0aaa229def0fa2",
-    "mnemonic": "answer salad high ready forget source segment parade recall pride approve caution"
-  }
-}
