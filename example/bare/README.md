@@ -1,6 +1,6 @@
 # 🐚  Seashell CLI Wallet Bare app
 
-An example cli wallet powered.
+An example cli wallet used to demo the wallet lib.
 
 
 ⚠️ THIS IS A TEST WALLET ONLY. DON'T RISK REAL FUNDS ⚠️
@@ -32,7 +32,12 @@ all the available config items for config.json
 
 ### Setup
 ```bash
+# Install parent dep
+cd ../../
+npm install
+
 # install bare dependencies
+cd ./example/bare
 npm install
 
 # Create config.json file. This stores your seed phrase

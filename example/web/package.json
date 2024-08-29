@@ -1,0 +1,11 @@
+{
+  "name": "lib-wallet-example-web",
+  "version": "0.0.1",
+  "description": "example web wallet",
+  "main": "index.js",
+  "scripts": {
+    "serve" : "npx http-server ./ -p 8080"
+  },
+  "author": "rbndg",
+  "license": "Apache-2.0"
+}
