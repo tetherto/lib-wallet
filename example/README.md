@@ -1,4 +1,4 @@
-# 🐚  Seashell CLI Wallet  Application
+# 🐚  Seashell Wallet Demo
 
 The wallet library comes with an example wallet running on 3 platforms
 - [Node.js](https://nodejs.org/)

@@ -1,4 +1,4 @@
-# 🐚  Seashell CLI Wallet Bare app
+# 🐚  Seashell CLI Wallet Web app
 
 An example cli wallet used to demo the wallet lib.
 

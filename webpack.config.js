@@ -6,7 +6,7 @@ module.exports = {
   entry: './src/wallet-lib.js',
   output: {
     filename: 'main.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, './example/web/dist'),
     library: 'wallet'
   },
   experiments: {
