@@ -2,6 +2,8 @@
 
 An example cli wallet powered.
 
+[!screenshot](./screenshot.png)
+
 
 ⚠️ THIS IS A TEST WALLET ONLY. DON'T RISK REAL FUNDS ⚠️
 
