@@ -2,13 +2,11 @@
 
 An example cli wallet powered.
 
-![screenshot](./screenshot.png)
-
 
 ⚠️ THIS IS A TEST WALLET ONLY. DON'T RISK REAL FUNDS ⚠️
 
 
-### Dependency
+### Dependencies
 
 - Install [Bare](https://github.com/holepunchto/bare)
 - Install [Wallet indexer](https://github.com/tetherto/lib-wallet-indexer)
