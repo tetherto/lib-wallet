@@ -1,4 +1,4 @@
-# 🐚  Seashell CLI Wallet Web app
+# 🐚  Seashell  Wallet Web app
 
 An example cli wallet used to demo the wallet lib.
 
@@ -44,4 +44,5 @@ npx webpack --config webpack.config.js
 # Run!
 npm run serve
 
+# Open dev tools in your browser to call the wallet lib
 ```
