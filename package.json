@@ -20,6 +20,27 @@
     "sodium-javascript": "^0.8.0",
     "wallet-seed-bip39": "github:rbndg/lib-wallet-seed-bip39"
   },
+  "imports": {
+    "fs": {
+      "bare": "bare-fs",
+      "default": "fs"
+    },
+    "fs/*": {
+      "bare": "bare-fs/*",
+      "default": "fs/*"
+    },
+    "crypto" : {
+      "bare": "bare-crypto",
+      "default": "crypto"
+    },
+    "crypto/*" : {
+      "bare": "bare-crypto/*",
+      "default": "crypto/*"
+    }
+  },
+  "optionalDependencies": {
+    "bare-crypto": "*"
+  }, 
   "devDependencies": {
     "brittle": "^3.5.0",
     "commander": "^12.1.0",

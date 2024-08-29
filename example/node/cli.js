@@ -1,17 +1,40 @@
-const config = require('./config.json')
-const createWallet = require('../../src/wallet-lib.js')
-const fs = require('fs')
-const repl = require("repl");
 
-async function main() {
-  
-  if(!config.store_path) {
-    config.store_path = './data'
+let repl, fs
+
+function clog(msg) {
+  console.log('>> '+msg)
+}
+
+function setupWallet() {
+
+}
+
+function loadModules(opts) {
+  if(!opts.repl) repl = require('repl')
+  else repl = opts.repl
+
+  if(!opts.fs) fs = require('fs')
+  else fs = opts.fs
+}
+
+async function main(opts) {
+
+  loadModules(opts)
+
+  let wallet
+  let config = opts.config
+  let createWallet = opts.createWallet
+
+  if(!opts.config) {
+    config = require('./config.json')
+    if(!config.store_path) {
+      config.store_path = './data'
+    }
+    config.network = config.network || 'regtest'
+    createWallet = require('../../src/wallet-lib.js')
   }
-  config.network = 'regtest'
-  
-  const wallet = await createWallet(config)
-  
+
+  wallet = await createWallet(config)
   if(!config.seed) {
     console.log('\n')
     console.log('No seed found in config, generating new seed')
@@ -32,9 +55,6 @@ async function main() {
   startcli(wallet)
 }
 
-function clog(msg) {
-  console.log('>> '+msg)
-}
 
 function parseArgs(args, wallet) {
   let [name, token] = args.split(" ")
@@ -200,5 +220,10 @@ function startcli(wallet) {
   });
 
 }
-main()
 
+
+if(process.argv[0].includes('/bin/bare')) {
+  module.exports = main
+} else {
+  main({})
+}
