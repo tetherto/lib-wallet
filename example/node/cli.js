@@ -5,10 +5,6 @@ function clog(msg) {
   console.log('>> '+msg)
 }
 
-function setupWallet() {
-
-}
-
 function loadModules(opts) {
   if(!opts.repl) repl = require('repl')
   else repl = opts.repl
@@ -41,8 +37,7 @@ async function main(opts) {
     console.log('Seed will be stored in config.json')
     console.log('\n')
     console.log('Generated seed: ', wallet.seed.mnemonic)
-    console.log('\n')
-    console.log('\n')
+    console.log('\n\n')
   }
 
   config.seed = JSON.parse(wallet.exportSeed())

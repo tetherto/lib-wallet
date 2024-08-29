@@ -1,0 +1,39 @@
+# 🐚  Seashell CLI Wallet Bare app
+
+An example cli wallet powered.
+⚠️ THIS IS A TEST WALLET ONLY. DON'T RISK REAL FUNDS ⚠️
+
+
+### Dependency
+
+Install [Bare](https://github.com/holepunchto/bare)
+Install [wallet indexer](https://github.com/tetherto/lib-wallet-indexer)
+Install [Fulcrum Electrum](https://github.com/cculianu/Fulcrum)
+Install [Test tools](https://github.com/tetherto/wallet-lib-test-tools)
+
+
+### config
+all the available config items.
+```
+{
+    "store_path" :  "./data",
+    "network" : "regtest",
+    "electrum_host" : "ws://127.0.0.1",
+    "electrum_port" : 8002,
+    "web3" : 'ws://127.0.0.1:8545/',
+    "web3_indexer" : 'http://127.0.0.1:8008/',
+    "web3_indexer_ws" : 'http://127.0.0.1:8181/',
+    "token_contract" : "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+}
+
+### Setup
+```
+// Install bare dependencies
+npm install
+
+// Create config.json file. This stores your seed phrase
+echo "{}" > config.json
+
+// Run!
+bare ./cli.js
+```

@@ -17,18 +17,18 @@ async function main (config = {}) {
   // Setup Bitcoin asset
   const btcPay = new BitcoinPay({
     asset_name: 'btc',
-    network: config.network || 'mainnet',
+    network: config.network || 'regtest',
     electrum : {
       net: require('./modules/ws-net.js'),
-      host: 'ws://127.0.0.1',
-      port: '8002'
+      host: config.electrum_host || 'ws://127.0.0.1',
+      port: config.electrum_port || '8002'
     }
   })
 
   const provider = new Provider({
-    web3: 'ws://127.0.0.1:8545/',
-    indexer: 'http://127.0.0.1:8008/',
-    indexerWs: 'http://127.0.0.1:8181/'
+    web3: config.web3 || 'ws://127.0.0.1:8545/',
+    indexer: config.web3_indexer || 'http://127.0.0.1:8008/',
+    indexerWs: config.web3_indexer_ws || 'http://127.0.0.1:8181/'
   })
   await provider.init()
   
@@ -44,7 +44,7 @@ async function main (config = {}) {
     asset_name: 'eth',
     provider,
     store,
-    network: config.network || 'mainnet',
+    network: config.network || 'regtest',
     token : [
       new Erc20({
         currency : USDT
