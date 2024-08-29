@@ -9,7 +9,7 @@ An example cli wallet powered.
 ### Dependency
 
 - Install [Bare](https://github.com/holepunchto/bare)
-- Install [wallet indexer](https://github.com/tetherto/lib-wallet-indexer)
+- Install [Wallet indexer](https://github.com/tetherto/lib-wallet-indexer)
 - Install [Fulcrum Electrum](https://github.com/cculianu/Fulcrum)
 - Install [Test tools](https://github.com/tetherto/wallet-lib-test-tools)
 
