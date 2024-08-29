@@ -18,13 +18,17 @@ class Wallet extends EventEmitter {
   async initialize (args) {
     this.pay = new AssetList()
     await Promise.all(this._assets.map(async (asset) => {
+      try{
       await asset.initialize({ wallet: this })
+      } catch(err) {
+        console.log(err)
+      }
+
       asset.on('new-tx',this._handleAssetEvent(asset.assetName, 'new-tx'))
       asset.on('new-block',this._handleAssetEvent(asset.assetName, 'new-block'))
     }))
     this._assets = null
     this.emit('ready')
-    console.log('ready')
   }
 
   _handleAssetEvent(assetName, evName) {

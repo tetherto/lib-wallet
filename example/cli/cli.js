@@ -8,7 +8,7 @@ async function main() {
   if(!config.store_path) {
     config.store_path = './data'
   }
-  config.network = 'bitcoin'
+  config.network = 'regtest'
   
   const wallet = await createWallet(config)
   
@@ -37,7 +37,6 @@ function clog(msg) {
 }
 
 function parseArgs(args, wallet) {
-
   let [name, token] = args.split(" ")
 
   let err 
@@ -54,10 +53,12 @@ function parseArgs(args, wallet) {
   const sender =  senderIndex > 0 ? args.split(" ")[senderIndex+1] : null
 
   const amtIndex = args.split(" ").indexOf('--amt')
-  const amt =  senderIndex > 0 ? args.split(" ")[amtIndex+1] : null
+  const amt =  amtIndex > 0 ? args.split(" ")[amtIndex+1] : null
 
+  const feeIndex = args.split(" ").indexOf('--fee')
+  const fee =   feeIndex > 0 ? args.split(" ")[feeIndex+1] : null
   return {
-    name,token, err, address, amt, sender
+    name,token, err, address, amt, sender, fee
   }
 }
 
@@ -146,11 +147,11 @@ function startcli(wallet) {
       'send',
       '.send <asset> <token> --addr <receiver> --sender <sender> --amt <amount>  - Send some tokens to an address.\n Usage: .send <asset> <address> <amount in main unit> \n Example: .send btc bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu  100000',
       async (args)=> {
-        const {token,name,address,sender, amt, err} = parseArgs(args, wallet)
+        const {token,name,address,sender, amt, err, fee} = parseArgs(args, wallet)
         if(err) return 
         let opts = {}
         if(token) opts.token = token
-        const tx = await wallet.pay[name].sendTransaction(opts, {address, amount:amt, unit: 'main', sender})
+        const tx = await wallet.pay[name].sendTransaction(opts, {address, amount:amt, unit: 'main', sender, fee})
         console.log('sent')
         console.log(tx)
       }
@@ -177,8 +178,7 @@ function startcli(wallet) {
     r.defineCommand(cmd, {
       help: msg,
       async action(name){
-        await fn(name)
-        this.displayPrompt();
+        await fn(Array.from(arguments).join(" "))
       },
     })
   })

@@ -7,6 +7,7 @@ class Client  extends EventEmitter {
     super()
     const ws = new WebSocket(`${host}:${port}`)
     ws.onerror = (err) => {
+      console.log(err)
       this.emit('error', err)
     }
 

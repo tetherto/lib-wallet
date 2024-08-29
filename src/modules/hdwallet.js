@@ -1,4 +1,5 @@
 
+const { EventEmitter } = require('events')
 
 
 class SyncState {
@@ -43,15 +44,17 @@ class SyncState {
   * @link: https://github.com/bitcoin/bips/blob/master/bip-0084.mediawiki
   * @desc:  m / purpose' / coin_type' / account' / change / address_index
   */
-class HdWallet {
+class HdWallet extends EventEmitter {
   /**
   * @param: {Object} config
   * @param: {Object} config.store - store to save paths
   */
   constructor (config) {
+    super()
     this.store = config.store
     this.coinType = config.coinType 
     this._gapLimit = config.gapLimit || 20
+    this._max_depth = config.max_depth || 100000
     this.purpose = config.purpose
     this.coinType = config.coinType
     this._checkCoinArg(this.coinType)
@@ -239,6 +242,7 @@ class HdWallet {
       await this.setSyncState(syncType)
       if(syncType.isGapLimit()) {
         await this.resetSyncState()
+        this.emit('reset-sync')
         return res
       }
       return false 
@@ -276,6 +280,7 @@ class HdWallet {
       addrType = 'external'
       await this._updateSyncAddrType(addrType)    
     }
+
     const accounts = await this.getAccountIndex()
     const syncState = await this.getSyncState(addrType)
     for (const account of accounts) {

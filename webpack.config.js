@@ -15,12 +15,12 @@ module.exports = {
   resolve: {
     fallback: {
       "buffer": require.resolve("buffer"),
+      "crypto": require.resolve("crypto"),
       "url": require.resolve("url"),
       "stream": require.resolve("stream-browserify"),
-      "events": require.resolve("events/"),
+      "events": require.resolve("events"),
       "https": require.resolve("https-browserify"),
       "http": require.resolve("http-browserify"),
-      "websocket": require.resolve('websocket'),
       "net": false,
     }
   },

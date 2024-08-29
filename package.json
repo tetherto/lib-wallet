@@ -12,15 +12,12 @@
   "license": "MIT",
   "dependencies": {
     "bignumber.js": "^9.1.2",
-    "buffer": "^6.0.3",
-    "http-browserify": "^1.7.0",
-    "https-browserify": "^1.0.0",
+    "fast-text-encoding": "^1.0.6",
     "lib-wallet-pay-btc": "github:rbndg/lib-wallet-pay-btc",
     "lib-wallet-pay-eth": "github:rbndg/lib-wallet-pay-eth",
     "lib-wallet-store": "github:rbndg/lib-wallet-store",
+    "punycode": "^2.3.1",
     "sodium-javascript": "^0.8.0",
-    "stream-browserify": "^3.0.0",
-    "url": "^0.11.4",
     "wallet-seed-bip39": "github:rbndg/lib-wallet-seed-bip39"
   },
   "devDependencies": {

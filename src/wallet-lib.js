@@ -17,11 +17,11 @@ async function main (config = {}) {
   // Setup Bitcoin asset
   const btcPay = new BitcoinPay({
     asset_name: 'btc',
-    network: 'regtest',
+    network: config.network || 'mainnet',
     electrum : {
       net: require('./modules/ws-net.js'),
       host: 'ws://127.0.0.1',
-      port: 8002
+      port: '8002'
     }
   })
 

@@ -86,10 +86,12 @@ We have also provided a demo website to try out the app in the browser.
 npx webpack --config webpack.config.js
 // (optional) Update example web app 
 rm -rf example/web/dist/ && mv dist example/web && cd ./example/web
-// Serve http server 
+// Serve http server (use any http server) 
 python -m http.server 8080
 ```
 
 ### Development Requirements
 - Bitcoin Core node running on regtest
 - [ElectrumX](https://electrumx-spesmilo.readthedocs.io/en/latest/)
+- [Ethereum HardHat](https://hardhat.org/hardhat-network/docs/overview)
+
