@@ -68,7 +68,7 @@ Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 
 ```
 
-### Sea-shell Example app
+### Seashell Example app
 Example app supporting 3 platforms
 
 - Node.js

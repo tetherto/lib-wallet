@@ -1,4 +1,4 @@
-# 🐚  Seashell CLI Wallet Node.js app
+# 🐚  Seashell on Node
 
 An example cli wallet used to demo the wallet lib.
 
@@ -32,7 +32,8 @@ all the available config items for config.json
 
 ### Setup
 ```bash
-# install bare dependencies
+# Install parent dep
+cd ../../
 npm install
 
 # Create config.json file. This stores your seed phrase
