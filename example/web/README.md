@@ -35,7 +35,7 @@ cd ../../
 npm install
 
 
-# update config in index.js./index.js
+# update config in ./index.js
 
 # Compile to web
 # NOTE: this will generate dis folder and move to this director

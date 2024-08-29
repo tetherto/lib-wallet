@@ -1,8 +1,9 @@
 # Wallet Lib
 
-Multi asset cryptocurrency wallet library in JavaScript. Working in Node.js, Browser, Bare.js
+Multi asset cryptocurrency wallet library in JavaScript.
+Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 
-**Warning:** This is a work in progress and not tested on mainnet.**
+**Warning:** Use at your own risk**
 
 ## Features
 
@@ -67,28 +68,18 @@ Multi asset cryptocurrency wallet library in JavaScript. Working in Node.js, Bro
 
 ```
 
-### Sea-shell CLI
+### Sea-shell Example app
+Example app supporting 3 platforms
 
-sea-shell is a basic terminal wallet built with this library. It supports multiple assets and basic wallet operations.
+- Node.js
+- Bare runtime
+- Web
+Webpack.config.js has been provided to allow you to build for the browser.
 
-```bash
-node ./examples/cli.js
-```
-
+[Go here](./example)
 
 ### Browser support
 
-Webpack.config.js has been provided to allow you to build for the browser.
-We have also provided a demo website to try out the app in the browser.
-
-```
-// Generate dis module
-npx webpack --config webpack.config.js
-// (optional) Update example web app 
-rm -rf example/web/dist/ && mv dist example/web && cd ./example/web
-// Serve http server (use any http server) 
-python -m http.server 8080
-```
 
 ### Development Requirements
 - Bitcoin Core node running on regtest
