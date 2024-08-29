@@ -16,27 +16,28 @@ An example cli wallet powered.
 
 ### Configuration
 all the available config items for config.json
-```
+```json
 {
     "store_path" :  "./data",
     "network" : "regtest",
     "electrum_host" : "ws://127.0.0.1",
     "electrum_port" : 8002,
-    "web3" : 'ws://127.0.0.1:8545/',
-    "web3_indexer" : 'http://127.0.0.1:8008/',
-    "web3_indexer_ws" : 'http://127.0.0.1:8181/',
+    "web3" : "ws://127.0.0.1:8545/",
+    "web3_indexer" : "http://127.0.0.1:8008/",
+    "web3_indexer_ws" : "http://127.0.0.1:8181/",
     "token_contract" : "0x5FbDB2315678afecb367f032d93F642f64180aa3"
 }
 
 ```
 
 ### Setup
-// Install bare dependencies
+```bash
+# install bare dependencies
 npm install
 
-// Create config.json file. This stores your seed phrase
+# Create config.json file. This stores your seed phrase
 echo "{}" > config.json
 
-// Run!
+# Run!
 bare ./cli.js
 ```
