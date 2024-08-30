@@ -4,24 +4,37 @@ Multi asset cryptocurrency wallet library in JavaScript.
 Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 
 
-# Features
+# ⭐Features
 
 - **Non custodial:** not your keys, not your coins.
 - **Composable:** Single facade to interact with multiple assets and wallets
 - **Modular:** All components are modular and can be used independently.
 - **Extensible:** Easily add new asset, seed source, block source...etc
 
-### Architecture
-![Architecture](./architecture.png)
+## 🔗 Blockchains
 
-### Default Components and assets
+### [Bitcoin](https://github.com/tetherto/lib-wallet-pay-btc)
+- Electrum blocksource. Support for TCP and Websocket on browser. 
+- P2WPKH / BIP84 address support.
 
-- `wallet-seed-bip39` - BIP39 seed generation library.
-- `wallet-store-hyperbee` - Hyperbee data store for wallet.
-- `wallet-pay-btc` - Bitcoin payment asset with Electrum backend. 
-- `wallet-pay-eth` - Ethereum and ERC20 payment asset with Web3 backend and custom blocksource
-- `lib-wallet-indexer-eth` - Ethereum indexer backend.
-- `wallet-test-tools` - Tools for development and testing 
+### [USDT-Ethereum](https://github.com/tetherto/lib-wallet-pay-eth)
+- Web3 and (Indexer)[https://github.com/tetherto/lib-wallet-indexer] block source.
+- ERC20 support.
+- BIP44 address generation.
+
+** addtional support coming soon**
+
+
+### 🏗️Architecture
+![Architecture](./assets/architecture.png)
+
+### 🧩 Components
+The wallet comes with all the components needed to build a wallet. You can also use these as an example to build your own components.
+
+- [BIP39 Seed](https://github.com/tetherto/lib-wallet-seed-bip39): Generate BIP39 seed for all assets 
+- [Key value store](https://github.com/tetherto/lib-wallet-store): Store transaction history and track state.
+- [Blockchain indexer](https://github.com/tetherto/lib-wallet-indexer): Remote blockchain data provider
+- [Test tools](https://github.com/tetherto/wallet-lib-test-tools)- Tools for development and testing 
 
 ### Example Usage
 
