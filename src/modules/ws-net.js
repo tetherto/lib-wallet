@@ -2,6 +2,8 @@
 const { EventEmitter }  = require('events');
 const  WebSocket = require('websocket').w3cwebsocket
 
+/** @description TCP <> Websocket adaptor **/
+
 class Client  extends EventEmitter {
   constructor(port, host, cb) {
     super()

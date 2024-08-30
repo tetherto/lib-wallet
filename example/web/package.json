@@ -4,8 +4,18 @@
   "description": "example web wallet",
   "main": "index.js",
   "scripts": {
-    "serve" : "npx http-server ./ -p 8080"
+    "serve": "npx http-server ./ -p 8080",
+    "build": "npx webpack --config webpack.config.js"
   },
   "author": "rbndg",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "dependencies": {
+    "buffer": "^6.0.3",
+    "events": "^3.3.0",
+    "http-browserify": "^1.7.0",
+    "https-browserify": "^1.0.0",
+    "stream-browserify": "^3.0.0",
+    "url": "^0.11.4",
+    "lib-wallet": "github:rbndg/lib-wallet"
+  }
 }

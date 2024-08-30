@@ -6,7 +6,8 @@
   "scripts": {
     "test": "brittle ./test/*.test.js",
     "test:hdwallet": "brittle ./test/hdwallet.test.js",
-    "lint": "standard --fix"
+    "lint": "standard --fix",
+    "build:web" : "npx webpack --config webpack.config.js"
   },
   "author": "rbndg",
   "license": "MIT",
