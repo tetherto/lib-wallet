@@ -78,11 +78,8 @@ Webpack.config.js has been provided to allow you to build for the browser.
 
 [Go here](./example)
 
-### Browser support
-
-
 ### Development Requirements
-- Bitcoin Core node running on regtest
+- [Bitcoin Core running Regtest](https://developer.bitcoin.org/examples/testing.html)
 - [ElectrumX](https://electrumx-spesmilo.readthedocs.io/en/latest/)
 - [Ethereum HardHat](https://hardhat.org/hardhat-network/docs/overview)
 

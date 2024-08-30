@@ -108,7 +108,6 @@ test('eachAccount: gap limit', async function (t) {
   })
 
   await hd.eachAccount(async (state, signal) => {
-    console.log(state.gap)
     return signal.noTx
   })
 
