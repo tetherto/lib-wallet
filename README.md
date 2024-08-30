@@ -3,13 +3,16 @@
 Multi asset cryptocurrency wallet library in JavaScript.
 Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 
-**Warning:** Use at your own risk**
 
-## Features
+# Features
 
+- **Non custodial:** not your keys, not your coins.
 - **Composable:** Single facade to interact with multiple assets and wallets
 - **Modular:** All components are modular and can be used independently.
 - **Extensible:** Easily add new asset, seed source, block source...etc
+
+### Architecture
+![Architecture](./architecture.png)
 
 ### Default Components and assets
 
