@@ -4,7 +4,7 @@ Multi asset cryptocurrency wallet library in JavaScript.
 Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 
 
-# ⭐Features
+## ⭐ Features
 
 - **Non custodial:** not your keys, not your coins.
 - **Composable:** Single facade to interact with multiple assets and wallets
@@ -14,18 +14,18 @@ Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 ## 🔗 Blockchains
 
 ### [Bitcoin](https://github.com/tetherto/lib-wallet-pay-btc)
-- Electrum blocksource. Support for TCP and Websocket on browser. 
+- Electrum block data source. Support for TCP and Websocket on browser. 
 - P2WPKH / BIP84 address support.
 
 ### [USDT-Ethereum](https://github.com/tetherto/lib-wallet-pay-eth)
-- Web3 and (Indexer)[https://github.com/tetherto/lib-wallet-indexer] block source.
+- Web3 and [Indexer](https://github.com/tetherto/lib-wallet-indexer) block data source.
 - ERC20 support.
 - BIP44 address generation.
 
-** addtional support coming soon**
+**addtional support coming soon**
 
 
-### 🏗️Architecture
+### 🏗️ Architecture
 ![Architecture](./assets/architecture.png)
 
 ### 🧩 Components
@@ -34,9 +34,9 @@ The wallet comes with all the components needed to build a wallet. You can also 
 - [BIP39 Seed](https://github.com/tetherto/lib-wallet-seed-bip39): Generate BIP39 seed for all assets 
 - [Key value store](https://github.com/tetherto/lib-wallet-store): Store transaction history and track state.
 - [Blockchain indexer](https://github.com/tetherto/lib-wallet-indexer): Remote blockchain data provider
-- [Test tools](https://github.com/tetherto/wallet-lib-test-tools)- Tools for development and testing 
+- [Test tools](https://github.com/tetherto/wallet-lib-test-tools): Tools for development and testing 
 
-### Example Usage
+### **</>**  Example Usage
 
 ```javascript
 
@@ -84,17 +84,14 @@ The wallet comes with all the components needed to build a wallet. You can also 
 
 ```
 
-### Seashell Example app
-Example app supporting 3 platforms
+## 🐚 Seashell Example Wallet
+There is a working example wallet that supports:
+- [Node.js cli wallet](./example/node)
+- [Bare runtime cli wallet](./example/node)
+- [Browser web wallet](./example/web)
 
-- Node.js
-- Bare runtime
-- Web
-Webpack.config.js has been provided to allow you to build for the browser.
 
-[Go here](./example)
-
-### Development Requirements
+## 🛠️ Development and testing
 - [Bitcoin Core running Regtest](https://developer.bitcoin.org/examples/testing.html)
 - [ElectrumX](https://electrumx-spesmilo.readthedocs.io/en/latest/)
 - [Ethereum HardHat](https://hardhat.org/hardhat-network/docs/overview)
