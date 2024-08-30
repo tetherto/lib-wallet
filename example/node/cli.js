@@ -26,9 +26,10 @@ async function main(opts) {
     if(!config.store_path) {
       config.store_path = './data'
     }
-    config.network = config.network || 'regtest'
     createWallet = require('../../src/wallet-lib.js')
   }
+
+  config.network = config.network || 'regtest'
 
   wallet = await createWallet(config)
   if(!config.seed) {

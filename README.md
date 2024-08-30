@@ -6,10 +6,10 @@ Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 
 ## ⭐ Features
 
-- **Non custodial:** not your keys, not your coins.
-- **Composable:** Single facade to interact with multiple assets and wallets
-- **Modular:** All components are modular and can be used independently.
-- **Extensible:** Easily add new asset, seed source, block source...etc
+- 🔑**Non custodial:** not your keys, not your coins.
+- 🧩**Composable:** Single facade to interact with multiple assets and wallets
+- 📦**Modular:** All components are modular and can be used independently.
+- 🛠️**Extensible:** Easily add new asset, seed source, block source...etc
 
 ## 🔗 Blockchains
 
@@ -92,7 +92,6 @@ There is a working example wallet that supports:
 
 
 ## 🛠️ Development and testing
-- [Bitcoin Core running Regtest](https://developer.bitcoin.org/examples/testing.html)
-- [ElectrumX](https://electrumx-spesmilo.readthedocs.io/en/latest/)
-- [Ethereum HardHat](https://hardhat.org/hardhat-network/docs/overview)
+See each asset's repository for setting up it's development enviroment.
 
+## Contribution

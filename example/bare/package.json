@@ -9,7 +9,7 @@
     "lint": "standard --fix"
   },
   "author": "rbndg",
-  "license": "MIT",
+  "license": "APACHE 2",
   "dependencies": {
     "@polkadot/x-textencoder": "^13.0.2",
     "bare-buffer": "^2.5.0",
