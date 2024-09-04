@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events')
 
-const WalletPayError = Error
+class WalletPayError extends Error {}
 
 function createBalance(Currency) {
   return class Balance {
@@ -69,15 +69,25 @@ class WalletPay extends EventEmitter {
     throw new WalletPayError('Method not implemented')
   }
 
-  async getTransactions () {}
+  async getTransactions () {
+    throw new WalletPayError('Method not implemented')
+  }
 
-  async getBalance () {}
+  async getBalance () {
+    throw new WalletPayError('Method not implemented')
+  }
 
-  async sendTransaction () {}
+  async sendTransaction () {
+    throw new WalletPayError('Method not implemented')
+  }
 
-  async isValidAddress () {}
+  async isValidAddress () {
+    throw new WalletPayError('Method not implemented')
+  }
 
-  parsePath () {}
+  parsePath () {
+    throw new WalletPayError('Method not implemented')
+  }
 
   addToken(token){
     

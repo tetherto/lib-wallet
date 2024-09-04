@@ -37,9 +37,8 @@ npm install
 
 # update config in ./index.js
 
-# Compile to web
-# NOTE: this will generate dis folder and move to this director
-npx webpack --config webpack.config.js
+# Run webpack config to build dependecies for the web
+npm run build
 
 # Run!
 npm run serve

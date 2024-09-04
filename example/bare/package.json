@@ -11,7 +11,6 @@
   "author": "rbndg",
   "license": "APACHE 2",
   "dependencies": {
-    "@polkadot/x-textencoder": "^13.0.2",
     "bare-buffer": "^2.5.0",
     "bare-crypto": "github:rbndg/bare-crypto",
     "bare-events": "^2.4.2",
