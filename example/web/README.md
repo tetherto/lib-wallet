@@ -1,6 +1,7 @@
-# 🐚  Seashell on Web
+# 🤖 AI Demo App
 
-An example cli wallet used to demo the wallet lib.
+An example local ai app powered by OLLAMA, Whispr and WSDK
+Use your voice to control wallet!
 
 
 ⚠️ THIS IS A TEST WALLET ONLY. DON'T RISK REAL FUNDS ⚠️
@@ -11,6 +12,8 @@ An example cli wallet used to demo the wallet lib.
 - Install [Wallet indexer](https://github.com/tetherto/lib-wallet-indexer)
 - Install [Fulcrum Electrum](https://github.com/cculianu/Fulcrum)
 - Install [Test tools](https://github.com/tetherto/wallet-lib-test-tools)
+- Instance of [Whispr](https://github.com/fedirz/faster-whisper-server) for voice transcription 
+- Instance of [Ollama](https://ollama.com/library/llama3.1:8b) 
 
 
 ### Configuration
@@ -43,5 +46,4 @@ npm run build
 # Run!
 npm run serve
 
-# Open dev tools in your browser to call the wallet lib
 ```
