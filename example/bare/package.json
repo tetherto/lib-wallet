@@ -9,7 +9,7 @@
     "lint": "standard --fix"
   },
   "author": "rbndg",
-  "license": "APACHE 2",
+  "license": "APACHE 2.0",
   "dependencies": {
     "bare-buffer": "^2.5.0",
     "bare-crypto": "github:rbndg/bare-crypto",

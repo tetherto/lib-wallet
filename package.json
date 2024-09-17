@@ -10,7 +10,7 @@
     "build:web" : "npx webpack --config webpack.config.js"
   },
   "author": "rbndg",
-  "license": "APACHE2.0",
+  "license": "APACHE-2.0",
   "dependencies": {
     "bignumber.js": "^9.1.2",
     "fast-text-encoding": "^1.0.6",
