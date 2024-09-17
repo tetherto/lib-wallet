@@ -5,18 +5,17 @@ const newWallet = require('../src/wallet-lib.js')
 const fs = require('fs')
 
 const SEED_PHRASE = 'sell clock better horn digital prevent image toward sort first voyage detail inner regular improve'
-function expectedWallet(){
+function expectedWallet () {
   return newWallet({
-    seed : { mnemonic:  SEED_PHRASE }, 
-    store_path : './tmp',
+    seed: { mnemonic: SEED_PHRASE },
+    store_path: './tmp',
     network: 'mainnet'
   })
 }
 
-function clearWalletLib(){
+function clearWalletLib () {
   fs.rmSync('./tmp', { recursive: true })
 }
-
 
 test('Load wallet with bitcoin asset', async function (t) {
   const wallet = await expectedWallet()
@@ -35,13 +34,12 @@ test('Load wallet with bitcoin asset', async function (t) {
 
 test('generate bitcoin address that match as expected', async function (t) {
   const wallet = await expectedWallet()
-  const address =  await wallet.pay.btc.getNewAddress()
-  const addr2 =  await wallet.pay.btc.getNewAddress()
-  const pay = wallet.pay
+  const address = await wallet.pay.btc.getNewAddress()
+  await wallet.pay.btc.getNewAddress()
+  await wallet.pay
   t.ok(address.address === 'bc1qxeyapzy3ylv67qnxjtwx8npd8ypjkuy8wlfzrp', 'Address matches')
   t.ok(address.publicKey === '02dd113743a3c8ba2607091a63084de90eef96d3d3d43d9cd3a768f7004068dfc3', 'WIF matches ')
   t.ok(address.WIF === 'KyTSm6ncpbgSupgm6CZ2PYgdahHfNuJ2dQQUykRnwwyWs7Wyzbw6', 'WIF matches ')
-  t.ok(address.path === "m/84'/0'/0'/0/0", "path matches")
+  t.ok(address.path === "m/84'/0'/0'/0/0", 'path matches')
   await wallet.destroy()
 })
-

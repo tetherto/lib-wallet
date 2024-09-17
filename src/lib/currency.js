@@ -1,4 +1,18 @@
 'use strict'
+// Copyright 2024 Tether Operations Limited
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 
 const BN = require('bignumber.js')
 const inspect = Symbol.for('nodejs.util.inspect.custom')
@@ -24,15 +38,15 @@ class Currency {
     let param
     const first = arguments[0]
     if (Array.isArray(first)) {
-      param = first 
-    } else if( first instanceof Currency){
-      param = [ first.amount, first.type, first.config ]
+      param = first
+    } else if (first instanceof Currency) {
+      param = [first.amount, first.type, first.config]
     } else {
       param = arguments
     }
     const amount = BN(param[0]).toString()
     return {
-      amount, 
+      amount,
       type: param[1],
       config: param[2]
     }
@@ -46,22 +60,22 @@ class Currency {
     return `${this.constructor.name} Currency ( ${this.toMainUnit()} ${this.name} - ${this.toBaseUnit()} ${this.base_name} )`
   }
 
-  static toBaseUnit(amount, decimal) {
+  static toBaseUnit (amount, decimal) {
     return BN(amount).shiftedBy(decimal).toString()
   }
 
-  static toMainUnit(amount, decimal) {
+  static toMainUnit (amount, decimal) {
     return BN(amount).shiftedBy(decimal * -1).dp(decimal).toString()
   }
 
-  toString() {
+  toString () {
     return this.amount.toString()
   }
 
-  toNumber() {
+  toNumber () {
     return +this.amount
   }
-  
+
   valueOf () {
     return this.amount
   }
@@ -82,46 +96,50 @@ class Currency {
     return this.type === currency.type
   }
 
-  add(amount) {
+  add (amount) {
     this.isUnitOf(amount)
-    let thisBase = this.toBaseUnit()
-    let amountBase = amount.toBaseUnit()
-    let total = new BN(thisBase).plus(amountBase).toString()
+    const thisBase = this.toBaseUnit()
+    const amountBase = amount.toBaseUnit()
+    const total = new BN(thisBase).plus(amountBase).toString()
     return new this.constructor(total, 'base', this.config)
   }
 
-  minus(amount) {
+  minus (amount) {
     this.isUnitOf(amount)
-    let thisBase = this.toBaseUnit()
-    let amountBase = amount.toBaseUnit()
-    let total = new BN(thisBase).minus(amountBase).toString()
+    const thisBase = this.toBaseUnit()
+    const amountBase = amount.toBaseUnit()
+    const total = new BN(thisBase).minus(amountBase).toString()
     return new this.constructor(total, 'base', this.config)
   }
 
-  abs() {
+  abs () {
     this.amount = Math.abs(this.amount)
     return this
   }
 
-  lte(amount) {
+  lte (amount) {
     this.isUnitOf(amount)
-    let thisBase = this.toBaseUnit()
-    let amountBase = amount.toBaseUnit()
+    const thisBase = this.toBaseUnit()
+    const amountBase = amount.toBaseUnit()
     return new BN(thisBase).lte(amountBase)
   }
 
-  eq(amount) {
+  eq (amount) {
     this.isUnitOf(amount)
-    let thisBase = this.toBaseUnit()
-    let amountBase = amount.toBaseUnit()
+    const thisBase = this.toBaseUnit()
+    const amountBase = amount.toBaseUnit()
     return new BN(thisBase).eq(amountBase)
   }
 
-  gte(amount) {
+  gte (amount) {
     this.isUnitOf(amount)
-    let thisBase = this.toBaseUnit()
-    let amountBase = amount.toBaseUnit()
+    const thisBase = this.toBaseUnit()
+    const amountBase = amount.toBaseUnit()
     return new BN(thisBase).gte(amountBase)
+  }
+
+  isUnitOf () {
+    throw new Error('method not implemented')
   }
 }
 

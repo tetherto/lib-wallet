@@ -13,4 +13,3 @@
 // limitations under the License.
 //
 module.exports = require('lib-wallet/src/wallet-lib')
-
