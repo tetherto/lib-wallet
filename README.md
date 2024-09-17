@@ -114,6 +114,9 @@ The wallet is designed to work with local test enviroments.
 - See [Wallet test tools repo](https://github.com/tetherto/wallet-lib-test-tools) to setup local enviroments 
 - Setup [wallet indexer](https://github.com/tetherto/lib-wallet-indexer) service
 
+## 🍱 Building your own asset
+See [guide](./docs) for how to add new assets
+
 ## 🧪 Testing
 - [Brittle](https://github.com/holepunchto/brittle) is used for testing
 - Tests included in this repo cover
