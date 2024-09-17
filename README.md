@@ -32,7 +32,7 @@ Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 ![Architecture](./assets/architecture.png)
 
 ### 🧩 Components
-The wallet comes with all the components needed to build a wallet. You can also use these as an example to build your own components.
+The library  comes with all the components needed to build a wallet. You can also use these as an example to build your own components.
 
 - [BIP39 Seed](https://github.com/tetherto/lib-wallet-seed-bip39): Generate BIP39 seed for all assets 
 - [Key value store](https://github.com/tetherto/lib-wallet-store): Store transaction history and track state.
@@ -75,26 +75,49 @@ The wallet comes with all the components needed to build a wallet. You can also 
   // Traverse wallet history of all assets and sync them. This might take a while depending on wallet size 
   await wallet.syncHistory(opts)
 
+
+  // All payment features are namespaced under wallet.pay[asset_name][action](opts, ...args)
   // Get a new bitcoin address using api below
   const btcAddress = await wallet.pay.btc.getNewAddress()
 
   // Get Tx history
 
-  await wallet.pay.btc.getTransactions((tx) =>{}
+  await wallet.pay.btc.getTransactions((tx) =>{
     // do something here 
   }))
   //done 
 
 ```
 
+# Development
+
+## 🚀 Getting started
+
+The best way to get started developing:
+
+1. Setup local development enviroment.
+2. Configure example apps to connect to your local blockchains.
+3. Start hacking on example apps.
+After you have example apps running:
+- Fork/modify existing assets
+- Build new assets.
+
 ## 🐚 Seashell Example Wallet
-There is a working example wallet that supports:
+There is a working example wallet that supports. This wallet can be used as an example for making your own integrations.
 - [Node.js cli wallet](./example/node)
-- [Bare runtime cli wallet](./example/node)
+- [Bare runtime cli wallet](./example/bare)
 - [Browser web wallet](./example/web)
 
 
-## 🛠️ Development and testing
-See each asset's repository for setting up it's development enviroment.
+## 🛠️ Dev Enviroment
+The wallet is designed to work with local test enviroments. 
+- See [Wallet test tools repo](https://github.com/tetherto/wallet-lib-test-tools) to setup local enviroments 
+- Setup [wallet indexer](https://github.com/tetherto/lib-wallet-indexer) service
 
-## Contribution
+## 🧪 Testing
+- [Brittle](https://github.com/holepunchto/brittle) is used for testing
+- Tests included in this repo cover
+    - Shared modules
+    - Integration of various blockchains
+- Each asset has it's own tests included in it's repo.
+
