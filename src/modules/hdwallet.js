@@ -78,6 +78,7 @@ class HdWallet extends EventEmitter {
   }
 
   async init () {
+    if(!this.store.ready) await this.store.init()
     const currentPath = await this.store.get('current_internal_path')
     if (!currentPath) {
       await this.store.put('current_internal_path', this.INIT_INTERNAL_PATH)

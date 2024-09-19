@@ -25,7 +25,7 @@ Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 - ERC20 support.
 - BIP44 address generation.
 
-**addtional support coming soon**
+**addtional asset support coming soon**
 
 
 ### 🏗️ Architecture
