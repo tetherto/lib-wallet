@@ -31,11 +31,12 @@ async function main (opts) {
 
   let config = opts.config
   let createWallet = opts.createWallet
+  let configFile = process.argv[2] || './config.json'
 
   if (!opts.config) {
-    config = require('./config.json')
+    config = require(configFile)
     if (!config.store_path) {
-      config.store_path = './data'
+      config.store_path = process.argv[3] || './data'
     }
     createWallet = require('../../src/wallet-lib.js')
   }
@@ -53,7 +54,7 @@ async function main (opts) {
   }
 
   config.seed = JSON.parse(wallet.exportSeed())
-  fs.writeFileSync('./config.json', JSON.stringify(config, null, 2))
+  fs.writeFileSync(configFile, JSON.stringify(config, null, 2))
 
   wallet.on('new-tx', (asset) => {
     console.log('🟩Wallet state updated for asset: ', asset)
@@ -130,7 +131,7 @@ function startcli (wallet) {
           clog(`Synced ${name} ${token ? ': token: ' + token : ''} asset`)
         }
         wallet.on('asset-synced', handler)
-        await wallet.syncHistory({ reset: reset === '--reset', all: true })
+        await wallet.syncHistory({ restart: reset === '--reset', all: true })
         wallet.off('asset-synced', handler)
         clog('wallet synced')
       }
@@ -171,7 +172,7 @@ function startcli (wallet) {
     ],
     [
       'send',
-      '.send <asset> <token> --addr <receiver> --sender <sender> --amt <amount>  - Send some tokens to an address.\n Usage: .send <asset> <address> <amount in main unit> \n Example: .send btc bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu  100000',
+      '.send <asset> <token> --addr <receiver> --sender <sender> --amt <amount in main >  - Send some tokens to an address.\n Usage: .send <asset> <address> <amount in main unit> \n Example: .send btc bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu  100000',
       async (args) => {
         const { token, name, address, sender, amt, err, fee } = parseArgs(args, wallet)
         if (err) return

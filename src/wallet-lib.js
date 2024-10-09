@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 const Wallet = require('./lib/wallet.js')
+
 const { WalletStoreHyperbee } = require('lib-wallet-store')
 const BIP39Seed = require('wallet-seed-bip39')
 const { BitcoinPay } = require('lib-wallet-pay-btc')
@@ -32,6 +33,7 @@ async function main (config = {}) {
   })
 
   // Setup Bitcoin asset
+
   const btcPay = new BitcoinPay({
     // Asset name space
     asset_name: 'btc',
@@ -40,10 +42,11 @@ async function main (config = {}) {
     electrum: {
       // optional TCP to Websocket adaptor. This will allow you to connect to a websocket electrum node
       net: require('./modules/ws-net.js'),
-      host: config.electrum_host || 'ws://127.0.0.1',
-      port: config.electrum_port || '8002'
+      host: config.electrum_host,
+      port: config.electrum_port,
     }
   })
+
 
   // Ethereum data provider setup
   const provider = new Provider({

@@ -177,3 +177,45 @@ test('eachAccount: gap limit', async function (t) {
     return signal.noTx
   })
 })
+
+
+test('eachAccount - respects the stop signal', async (t) => {
+  const store = new WalletStoreHyperbee()
+  const hd = new HdWallet({
+    store,
+    coinType: "0'",
+    purpose: "84'"
+  })
+  await hd.init()
+
+  let callCount = 0
+
+  await hd.eachAccount(async (syncType, signal) => {
+    callCount++
+    return signal.stop
+  })
+
+  t.ok(callCount === 1, 'Should stop after the first call when stop signal is returned')
+})
+
+test('eachAccount - handles hasTx signal correctly', async (t) => {
+  const store = new WalletStoreHyperbee()
+  const hd = new HdWallet({
+    store,
+    coinType: "0'",
+    purpose: "84'"
+  })
+  await hd.init()
+
+  let count = 0 
+  await hd.eachAccount(async (syncType, signal) => {
+    count++
+    if(count === 2 ) return signal.hasTx
+    return signal.noTx
+  })
+
+  const lp = await hd.getLastExtPath()
+  t.ok(lp === "m/84'/0'/0'/0/2", 'Should bump the path when hasTx signal is returned')
+})
+
+

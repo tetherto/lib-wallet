@@ -105,7 +105,12 @@ class HdWallet extends EventEmitter {
     if (addrType === 'internal') path = this.INIT_INTERNAL_PATH
     if (addrType === 'external') path = this.INIT_EXTERNAL_PATH
 
-    return new SyncState({ path }, this._gapLimit, addrType)
+    return new SyncState({ 
+      path,
+      max_depth: this._max_depth,
+      gapLimt: this._gapLimit
+      
+    }, this._gapLimit, addrType)
   }
 
   async resetSyncState () {

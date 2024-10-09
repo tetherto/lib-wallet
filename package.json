@@ -7,7 +7,7 @@
     "test": "brittle ./test/*.test.js",
     "test:hdwallet": "brittle ./test/hdwallet.test.js",
     "lint": "standard --fix",
-    "build:web" : "npx webpack --config webpack.config.js"
+    "build:web": "npx webpack --config webpack.config.js"
   },
   "author": "rbndg",
   "license": "APACHE-2.0",
@@ -19,7 +19,8 @@
     "lib-wallet-store": "github:rbndg/lib-wallet-store",
     "punycode": "^2.3.1",
     "sodium-javascript": "^0.8.0",
-    "wallet-seed-bip39": "github:rbndg/lib-wallet-seed-bip39"
+    "wallet-seed-bip39": "github:rbndg/lib-wallet-seed-bip39",
+    "websocket": "^1.0.35"
   },
   "imports": {
     "fs": {
@@ -30,18 +31,18 @@
       "bare": "bare-fs/*",
       "default": "fs/*"
     },
-    "crypto" : {
+    "crypto": {
       "bare": "bare-crypto",
       "default": "crypto"
     },
-    "crypto/*" : {
+    "crypto/*": {
       "bare": "bare-crypto/*",
       "default": "crypto/*"
     }
   },
   "optionalDependencies": {
     "bare-crypto": "*"
-  }, 
+  },
   "devDependencies": {
     "brittle": "^3.5.0",
     "commander": "^12.1.0",
