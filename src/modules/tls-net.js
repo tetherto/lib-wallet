@@ -14,55 +14,53 @@
 // limitations under the License.
 //
 
-const { EventEmitter } = require('events');
-const tls = require('tls');
+const { EventEmitter } = require('events')
+const tls = require('tls')
 
 /** @description TCP <> TLS adaptor **/
 class Client extends EventEmitter {
-  constructor(port, host, options, cb) {
-    super();
+  constructor (port, host, options, cb) {
+    super()
     const socket = tls.connect(port, host, {
       handshakeTimeout: 10000,
-      rejectUnauthorized: false,
+      rejectUnauthorized: false
     }, () => {
-      if (cb) cb();
-    });
+      if (cb) cb()
+    })
 
     socket.on('error', (err) => {
-      console.log(err);
-      this.emit('error', err);
-    });
+      console.log(err)
+      this.emit('error', err)
+    })
 
     socket.on('close', () => {
-      this.emit('end');
-    });
+      this.emit('end')
+    })
 
     socket.on('data', (data) => {
-      this.emit('data', data);
-    });
+      this.emit('data', data)
+    })
 
-    this._socket = socket;
+    this._socket = socket
   }
 
-  write(data) {
-    this._socket.write(data);
+  write (data) {
+    this._socket.write(data)
   }
 
-  end() {
-    this._socket.end();
+  end () {
+    this._socket.end()
   }
 }
 
 class TlsNet {
-  static createConnection(port, host, options = {}, cb) {
+  static createConnection (port, host, options = {}, cb) {
     if (typeof options === 'function') {
-      cb = options;
-      options = {};
+      cb = options
+      options = {}
     }
-    return new Client(port, host, options, cb);
+    return new Client(port, host, options, cb)
   }
 }
 
-
-module.exports = TlsNet;
-
+module.exports = TlsNet

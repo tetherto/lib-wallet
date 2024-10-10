@@ -15,6 +15,9 @@
 //
 const { EventEmitter } = require('events')
 
+const EXTERNAL_ADDR = 'external'
+const INTERNAL_ADDR = 'internal'
+
 class SyncState {
   constructor (config, gapLimit = 20, addrType) {
     if (!config) config = {}
@@ -53,8 +56,9 @@ class SyncState {
 }
 
 /**
-  * @desc: Class to manage HD wallet paths only supports 84' paths'
+  * @desc: Class to manage HD wallet paths
   * @link: https://github.com/bitcoin/bips/blob/master/bip-0084.mediawiki
+  * @link: https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki
   * @desc:  m / purpose' / coin_type' / account' / change / address_index
   */
 class HdWallet extends EventEmitter {
@@ -78,7 +82,7 @@ class HdWallet extends EventEmitter {
   }
 
   async init () {
-    if(!this.store.ready) await this.store.init()
+    if (!this.store.ready) await this.store.init()
     const currentPath = await this.store.get('current_internal_path')
     if (!currentPath) {
       await this.store.put('current_internal_path', this.INIT_INTERNAL_PATH)
@@ -89,7 +93,7 @@ class HdWallet extends EventEmitter {
   }
 
   _checkCoinArg (arg) {
-    if (!arg || arg[arg.length - 1] !== "'") throw new Error("coinType is required and must be like: 84' ")
+    if (!arg || arg[arg.length - 1] !== "'") throw new Error("coinType and purpose are required and must be like: 84' ")
   }
 
   async getSyncState (addrType) {
@@ -102,27 +106,26 @@ class HdWallet extends EventEmitter {
 
   _newSyncState (addrType) {
     let path
-    if (addrType === 'internal') path = this.INIT_INTERNAL_PATH
-    if (addrType === 'external') path = this.INIT_EXTERNAL_PATH
+    if (addrType === INTERNAL_ADDR) path = this.INIT_INTERNAL_PATH
+    if (addrType === EXTERNAL_ADDR) path = this.INIT_EXTERNAL_PATH
 
-    return new SyncState({ 
+    return new SyncState({
       path,
-      max_depth: this._max_depth,
-      gapLimt: this._gapLimit
-      
+      max_depth: this._max_depth
+
     }, this._gapLimit, addrType)
   }
 
   async resetSyncState () {
-    let state = this._newSyncState('internal')
+    let state = this._newSyncState(INTERNAL_ADDR)
     await this.store.put('sync_state_internal', state)
-    state = this._newSyncState('external')
+    state = this._newSyncState(EXTERNAL_ADDR)
     await this.store.put('sync_state_external', state)
     await this._updateSyncAddrType(null)
     return state
   }
 
-  async setSyncState (state) {
+  async _setSyncState (state) {
     return this.store.put('sync_state_' + state._addrType, state)
   }
 
@@ -164,6 +167,9 @@ class HdWallet extends EventEmitter {
     return this.store.get('current_external_path')
   }
 
+  /**
+  * @description update last known address path
+  */
   async updateLastPath (path) {
     const parsed = HdWallet.parsePath(path)
     if (parsed.change) {
@@ -257,7 +263,7 @@ class HdWallet extends EventEmitter {
       } else {
         throw new Error('Invalid signal returned')
       }
-      await this.setSyncState(syncType)
+      await this._setSyncState(syncType)
       if (syncType.isGapLimit()) {
         await this.resetSyncState()
         this.emit('reset-sync')
@@ -275,35 +281,46 @@ class HdWallet extends EventEmitter {
   }
 
   _signal = {
-    // @desc Transaction has been detected in the path. Bump gap
+    // @desc Transaction has been detected in the path. Bump gap count
     hasTx: 0,
-    // @desc Transaction not detected in the path
+    // @desc Transaction not detected in the path. continue loop.
     noTx: 1,
-    // @desc Stop iterating over hd path
+    // @desc Stop iterating over hd path. Breaks loop
     stop: 2
   }
 
-  async eachAccount (arg1, arg2) {
+  async _prepareEachAcct (arg1, arg2) {
     let addrType, fn
     if (typeof arg1 === 'function') {
       fn = arg1
       addrType = await this.store.get('current_sync_addr_type')
-    } else {
+    } else if (typeof arg2 === 'function') {
       fn = arg2
       addrType = arg1
+    } else {
+      throw new Error('callback function not passed')
     }
 
     if (!addrType) {
-      addrType = 'external'
+      addrType = EXTERNAL_ADDR
       await this._updateSyncAddrType(addrType)
     }
 
+    return {
+      addrType,
+      fn
+    }
+  }
+
+  async eachAccount (arg1, arg2) {
+    const { addrType, fn } = await this._prepareEachAcct(arg1, arg2)
     const accounts = await this.getAccountIndex()
     const syncState = await this.getSyncState(addrType)
+
     for (const account of accounts) {
       const [purpose, accountIndex] = account
       if (!syncState.path) {
-        let path = addrType === 'external' ? this.INIT_EXTERNAL_PATH : this.INIT_INTERNAL_PATH
+        let path = addrType === EXTERNAL_ADDR ? this.INIT_EXTERNAL_PATH : this.INIT_INTERNAL_PATH
         path = HdWallet.setPurpose(path, purpose)
         path = HdWallet.setAccount(path, accountIndex)
         syncState.setPath(path)
@@ -312,9 +329,9 @@ class HdWallet extends EventEmitter {
       if (res === this._signal.stop) return
     }
 
-    if (addrType === 'external') {
-      await this._updateSyncAddrType('internal')
-      return this.eachAccount('internal', fn)
+    if (addrType === EXTERNAL_ADDR) {
+      await this._updateSyncAddrType(INTERNAL_ADDR)
+      return this.eachAccount(INTERNAL_ADDR, fn)
     }
   }
 }

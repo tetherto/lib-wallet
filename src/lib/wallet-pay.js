@@ -118,8 +118,8 @@ class WalletPay extends EventEmitter {
 
   async _eachToken (fn) {
     if (!this._tokens) return
-    for (const [_, token] of this._tokens) {
-      await fn(token)
+    for (const tk of this._tokens) {
+      await fn(tk[1])
     }
   }
 

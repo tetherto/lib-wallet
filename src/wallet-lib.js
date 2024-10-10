@@ -43,16 +43,15 @@ async function main (config = {}) {
       // optional TCP to Websocket adaptor. This will allow you to connect to a websocket electrum node
       net: require('./modules/ws-net.js'),
       host: config.electrum_host,
-      port: config.electrum_port,
+      port: config.electrum_port
     }
   })
 
-
   // Ethereum data provider setup
   const provider = new Provider({
-    web3: config.web3 || 'ws://127.0.0.1:8545/',
-    indexer: config.web3_indexer || 'http://127.0.0.1:8008/',
-    indexerWs: config.web3_indexer_ws || 'http://127.0.0.1:8181/'
+    web3: config.web3,
+    indexer: config.web3_indexer,
+    indexerWs: config.web3_indexer_ws
   })
   await provider.init()
 
@@ -60,7 +59,7 @@ async function main (config = {}) {
   const USDT = erc20CurrencyFac({
     name: 'USDT',
     base_name: 'USDT',
-    contractAddress: config.token_contract || '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    contractAddress: config.token_contract || '0xdac17f958d2ee523a2206206994597c13d831ec7',
     decimal_places: 6
   })
 
