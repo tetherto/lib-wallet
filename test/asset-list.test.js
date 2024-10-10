@@ -63,6 +63,6 @@ t.test('iterator works correctly', () => {
 t.test('_define method creates non-enumerable properties', () => {
   const list = new AssetList()
   assert.strictEqual(Object.keys(list).length, 0)
-  assert.strictEqual(list.hasOwnProperty('size'), true)
-  assert.strictEqual(list.hasOwnProperty('keys'), true)
+  assert.strictEqual(list.size)
+  assert.strictEqual(list.keys)
 })

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-const test = require('brittle')
+const { test } = require('brittle')
 const HdWallet = require('../src/modules/hdwallet.js')
 const { WalletStoreHyperbee } = require('lib-wallet-store')
 const assert = require('assert')
@@ -32,6 +32,23 @@ test('mergePath', async function (t) {
   const parsed = HdWallet.parsePath(path)
   const merged = HdWallet.mergePath(parsed)
   t.ok(path === merged, 'merged path works')
+})
+
+test('should initialize wallet correctly', async (t) => {
+  const store = new WalletStoreHyperbee()
+  const wallet = new HdWallet({
+    store,
+    coinType: "0'",
+    purpose: "84'"
+  })
+
+  t.ok(!await wallet.store.get('current_internal_path'), 'Internal path should not be set')
+  await wallet.init()
+
+  t.ok(await wallet.store.get('current_internal_path') === wallet.INIT_INTERNAL_PATH, 'Internal path should be set')
+  t.ok(await wallet.store.get('current_external_path') === wallet.INIT_EXTERNAL_PATH, 'External path shoul be set')
+  t.ok(Array.isArray(await wallet.store.get('account_index')), 'Account index should be an array')
+  t.ok(Array.isArray(await wallet.store.get('address_index')), 'Address index should be an array')
 })
 
 test('HdWallet getNewAddress', async (t) => {
@@ -61,8 +78,6 @@ test('HdWallet getNewAddress', async (t) => {
   const allAddresses = await wallet.getAllAddress()
   assert.deepStrictEqual(allAddresses, ['newaddr123'])
 })
-
-
 
 test('eachAccount: path', async function (t) {
   const store = new WalletStoreHyperbee()
@@ -137,28 +152,49 @@ test('eachAccount: gap limit', async function (t) {
   await gapLimitTest(20, 'internal')
 })
 
-test('HdWallet static methods', () => {
-  const testPath = "m/84'/0'/0'/0/0";
+test('HdWallet static methods', (t) => {
+  t.comment('test 84 path')
+  let testPath = "m/84'/0'/0'/0/0"
 
-  const bumpedAccount = HdWallet.bumpAccount(testPath);
-  assert.strictEqual(bumpedAccount, "m/84'/0'/1'/0/0");
+  let bumpedAccount = HdWallet.bumpAccount(testPath)
+  assert.strictEqual(bumpedAccount, "m/84'/0'/1'/0/0")
 
-  const bumpedIndex = HdWallet.bumpIndex(testPath);
-  assert.strictEqual(bumpedIndex, "m/84'/0'/0'/0/1");
+  let bumpedIndex = HdWallet.bumpIndex(testPath)
+  assert.strictEqual(bumpedIndex, "m/84'/0'/0'/0/1")
 
-  const changedIndex = HdWallet.setChangeIndex(testPath, 5);
-  assert.strictEqual(changedIndex, "m/84'/0'/0'/1/5");
+  let changedIndex = HdWallet.setChangeIndex(testPath, 5)
+  assert.strictEqual(changedIndex, "m/84'/0'/0'/1/5")
 
-  const parsedPath = HdWallet.parsePath(testPath);
+  let parsedPath = HdWallet.parsePath(testPath)
   assert.deepStrictEqual(parsedPath, {
     purpose: "84'",
     coin_type: "0'",
     account: "0'",
     change: 0,
-    index: 0,
-  });
-});
+    index: 0
+  })
 
+  t.comment('test 44 path')
+  testPath = "m/44'/0'/0'/0/0"
+
+  bumpedAccount = HdWallet.bumpAccount(testPath)
+  assert.strictEqual(bumpedAccount, "m/44'/0'/1'/0/0")
+
+  bumpedIndex = HdWallet.bumpIndex(testPath)
+  assert.strictEqual(bumpedIndex, "m/44'/0'/0'/0/1")
+
+  changedIndex = HdWallet.setChangeIndex(testPath, 5)
+  assert.strictEqual(changedIndex, "m/44'/0'/0'/1/5")
+
+  parsedPath = HdWallet.parsePath(testPath)
+  assert.deepStrictEqual(parsedPath, {
+    purpose: "44'",
+    coin_type: "0'",
+    account: "0'",
+    change: 0,
+    index: 0
+  })
+})
 
 test('eachAccount: gap limit', async function (t) {
   const store = new WalletStoreHyperbee()
@@ -178,7 +214,6 @@ test('eachAccount: gap limit', async function (t) {
   })
 })
 
-
 test('eachAccount - respects the stop signal', async (t) => {
   const store = new WalletStoreHyperbee()
   const hd = new HdWallet({
@@ -189,13 +224,26 @@ test('eachAccount - respects the stop signal', async (t) => {
   await hd.init()
 
   let callCount = 0
+  const counter = 5
+  let lastPath
 
-  await hd.eachAccount(async (syncType, signal) => {
+  await hd.eachAccount((syncState, signal) => {
     callCount++
+    if (callCount === counter) {
+      lastPath = syncState.path
+      return signal.stop
+    }
+    return signal.noTx
+  })
+  const lp = await hd.getLastExtPath()
+  t.ok(lp === hd.INIT_EXTERNAL_PATH, 'no new address found')
+
+  t.ok(callCount === counter, 'Should stop after the first call when stop signal is returned')
+
+  await hd.eachAccount((syncState, signal) => {
+    t.ok(syncState.path === lastPath, 'resume after stop')
     return signal.stop
   })
-
-  t.ok(callCount === 1, 'Should stop after the first call when stop signal is returned')
 })
 
 test('eachAccount - handles hasTx signal correctly', async (t) => {
@@ -207,15 +255,13 @@ test('eachAccount - handles hasTx signal correctly', async (t) => {
   })
   await hd.init()
 
-  let count = 0 
+  let count = 0
   await hd.eachAccount(async (syncType, signal) => {
     count++
-    if(count === 2 ) return signal.hasTx
+    if (count === 2) return signal.hasTx
     return signal.noTx
   })
 
   const lp = await hd.getLastExtPath()
   t.ok(lp === "m/84'/0'/0'/0/2", 'Should bump the path when hasTx signal is returned')
 })
-
-
