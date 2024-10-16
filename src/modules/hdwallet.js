@@ -92,6 +92,10 @@ class HdWallet extends EventEmitter {
     }
   }
 
+  async close() {
+    return this.store.close()
+  }
+
   _checkCoinArg (arg) {
     if (!arg || arg[arg.length - 1] !== "'") throw new Error("coinType and purpose are required and must be like: 84' ")
   }

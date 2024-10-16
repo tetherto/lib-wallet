@@ -26,8 +26,9 @@ test('constructor', async (t) => {
   t.ok(c2.type === 'main', 'Type should be set correctly with array input')
 
   try {
-    new Currency(100, 'invalid', {})
+    const c = new Currency(100, 'invalid', {})
     t.ok(false, 'Should throw error for invalid type')
+    t.ok(c)
   } catch (err) {
     t.ok(err.message === "Currency type must be either 'base' or 'main'", 'Should throw correct error for invalid type')
   }
@@ -58,8 +59,8 @@ test('type checking methods', async (t) => {
 
 test('arithmetic methods', async (t) => {
   class TestCurrency extends Currency {
-    isUnitOf() { return true }
-    toBaseUnit() { return this.amount }
+    isUnitOf () { return true }
+    toBaseUnit () { return this.amount }
   }
 
   const c1 = new TestCurrency(100, 'base', {})
@@ -70,13 +71,12 @@ test('arithmetic methods', async (t) => {
 
   const diff = c1.minus(c2)
   t.ok(diff.amount === '50', 'minus should work correctly')
-
 })
 
 test('comparison methods', async (t) => {
   class TestCurrency extends Currency {
-    isUnitOf() { return true }
-    toBaseUnit() { return this.amount }
+    isUnitOf () { return true }
+    toBaseUnit () { return this.amount }
   }
 
   const c1 = new TestCurrency(100, 'base', {})

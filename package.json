@@ -6,6 +6,7 @@
   "scripts": {
     "test": "brittle ./test/*.test.js",
     "test:hdwallet": "brittle ./test/hdwallet.test.js",
+    "test:currency": "brittle ./test/currency.test.js",
     "lint": "standard --fix",
     "build:web": "npx webpack --config webpack.config.js"
   },
