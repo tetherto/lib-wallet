@@ -92,7 +92,7 @@ class HdWallet extends EventEmitter {
     }
   }
 
-  async close() {
+  async close () {
     return this.store.close()
   }
 
@@ -131,10 +131,6 @@ class HdWallet extends EventEmitter {
 
   async _setSyncState (state) {
     return this.store.put('sync_state_' + state._addrType, state)
-  }
-
-  async close () {
-    return this.store.close()
   }
 
   getAllAddress () {

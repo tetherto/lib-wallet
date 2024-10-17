@@ -30,7 +30,7 @@ class Wallet extends EventEmitter {
     this._assets = config.assets
   }
 
-  async initialize (args) {
+  async initialize () {
     this.pay = new AssetList()
     await Promise.all(this._assets.map(async (asset) => {
       try {
@@ -70,17 +70,26 @@ class Wallet extends EventEmitter {
     return this.pay.set(k, assetObj)
   }
 
-  async syncHistory (opts) {
-    return await this._eachAsset(async (asset) => {
-      await asset.syncTransactions(opts)
-      this.emit('asset-synced', asset.assetName)
-      if (opts.all) {
-        const tokens = asset.getTokens()
-        for (const [token] of tokens) {
-          await asset.syncTransactions({ ...opts, token })
-          this.emit('asset-synced', asset.assetName, token)
-        }
+  async _sync (opts, asset) {
+    await asset.syncTransactions(opts)
+    this.emit('asset-synced', asset.assetName)
+    if (opts.all) {
+      const tokens = asset.getTokens()
+      for (const [token] of tokens) {
+        await asset.syncTransactions({ ...opts, token })
+        this.emit('asset-synced', asset.assetName, token)
       }
+    }
+  }
+
+  async syncHistory (opts) {
+    if (opts.asset) {
+      const asset = this.pay[opts.asset]
+      if (!asset) throw new Error('asset does not exist')
+      return this._sync(opts, asset)
+    }
+    return await this._eachAsset(async (asset) => {
+      return this._sync(opts, asset)
     })
   }
 
