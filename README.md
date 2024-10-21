@@ -1,4 +1,4 @@
-<p align="center">
+<p align="center" width="100">
   <img src="./docs/logo.svg" />
 </p>
 
@@ -46,6 +46,8 @@ The library  comes with all the components needed to build a wallet. You can als
 - [Test tools](https://github.com/tetherto/wallet-lib-test-tools): Tools for development and testing 
 
 ### **</>**  Example Usage
+
+Checkout [Quick start guide](./docs/) for more detailed guide.
 
 ```javascript
 
