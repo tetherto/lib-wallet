@@ -1,162 +1,190 @@
-# Developer Guide: Integrating new assets
 
-This README provides a guide for developers looking to extend the `WalletPay` base class to integrate a new cryptocurrency, example: XYZ Coin, into the wallet system.
+# Quick Start
+
 
 ## Table of Contents
+1. [Simple CLI wallet](#create-your-own-wallet)
+2. [Build a New Asset](./new-asset.md)
 
-1. [Prerequisites](#prerequisites)
-2. [Getting Started](#getting-started)
-3. [Implementing XYZCoin Class](#implementing-xyzcoin-class)
-4. [Extending WalletPay](#extending-walletpay)
-5. [Implementing Core Methods](#implementing-core-methods)
-6. [Testing Your Implementation](#testing-your-implementation)
-7. [Best Practices](#best-practices)
 
-## Prerequisites
 
-- Familiarity with JavaScript and ES6 class syntax
-- Understanding of the `WalletPay` base class and its methods
-- Knowledge of XYZ Coin's blockchain specifics (e.g., address format, transaction structure)
-- Access to XYZ Coin's blockchain API or node
 
-## Getting Started
+## Create your own wallet
 
-1. Create a new directory for your XYZ Coin implementation:
-   ```
-   mkdir wallet-pay-xyz
-   cd wallet-pay-xyz
-   ```
 
-2. Initialize a new npm project and install necessary dependencies:
-   ```
-   npm init -y
-   npm install lib-wallet 
-   ```
+### Prerequisites
+- Setup your block source or have URL to remote node
+    - Electrum and Bitcoin Core
+    - Web3 and lib-wallet-indexer
+- Latest version of Node.js
 
-## Implementing XYZCoin Class
+### Guide
 
-Create a new file `xyz.currency.js` to define the XYZCoin class:
+#### 1. Wallet seed/mnemonic
+In WDK, we use 1 seed phrase for all assets. To learn more [check out here](https://planb.network/en/courses/cyp201)
 
-```javascript
-const { Currency } = require('lib-wallet');
-const BN = Currency._BN;
-
-class XYZCoin extends Currency {
-  constructor() {
-    super(...arguments);
-    this.name = 'XYZ'; // BTC in case of bitcoin 
-    this.base_name = 'xyz'; // SATs in case of bitcoin
-    this.decimal_places = 8; // Adjust based on XYZ Coin's specifications
-  }
-
-  // Implement any XYZ Coin-specific methods here. See currency.js to see all the methods that needs to be implemented
-}
-
-module.exports = XYZCoin;
+```
+const BIP39Seed = require('wallet-seed-bip39')
+const seed = await BIP39Seed.generate()
 ```
 
-## Extending WalletPay
-
-Create a new file `wallet-pay-xyz.js` to extend the WalletPay class:
-
-```javascript
-const { WalletPay, HdWallet } = require('lib-wallet');
-const XYZCoin = require('./xyz.currency');
-
-class WalletPayXYZ extends WalletPay {
-  constructor(config) {
-    super(config);
-    this.ready = false;
-    this._halt = false;
-    this._setCurrency(XYZCoin);
-  }
-
-  async initialize(ctx) {
-    // Implement initialization logic
-  }
-
-  // Implement other required methods
-}
-
-module.exports = WalletPayXYZ;
+To reuse an existing seed phrase from a different wallet:
+```
+const seed = await BIP39Seed.generate(<seed phrase here>)
 ```
 
-### Other Components
+your `seed` is now ready to be used to secure your assets
 
-Wallet components are modular by design. There are other components you can either integrate, develop or your own.
+#### 2. Database
 
-#### Block Data Provider
-you should be splitting up your data provider into a seperate class.
+In WDK we use the database to keep track of the overall state of the wallet. This includes things like balances, past transactions, addresses.
 
-### Data Store
-Transaction history and wallet state is tracked using a key value store. We provide a key-value data store with WalletStoreHyperBee. You can build your own storage engine too! 
+WDK does not depend on any particular database. Out of the box we support [Hyperbee](https://github.com/holepunchto/hyperbee) a distributed key value store.
 
-
-## Implementing Core Methods
-
-Implement the following core methods in your `WalletPayXYZ` class:
-
-1. `getNewAddress()`: Generate a new XYZ Coin address
-2. `getTransactions(opts, fn)`: Retrieve transaction history
-3. `getBalance(opts, addr)`: Get balance for the entire wallet or a specific address
-4. `syncTransactions(opts)`: Sync transactions with the blockchain
-5. `sendTransaction(opts, outgoing)`: Send XYZ Coins
-6. `isValidAddress(address)`: Validate XYZ Coin addresses
-
-Example implementation of `getNewAddress()`:
-
-It's important to create new addresses using a [HD path standard](https://learnmeabitcoin.com/technical/keys/hd-wallets/) this will allow the wallet to be recreated with just a seed phrase and also makes the wallet compatible with other wallets.
-
-```javascript
-async getNewAddress() {
-  const res = await this._hdWallet.getNewAddress((path) => {
-    return this.keyManager.addrFromPath(path);
-  });
-  // Subscribe to updates for this address if necessary
-  return res.addr;
-}
+```
+const store = new WalletStoreHyperbee({
+    store_path: './path-to-data-dir'
+})
+await store.init()
 ```
 
-## Testing Your Implementation
+if you want to not have persistance storage and use in memory storage leave `store_path` empty
 
-1. Create a test file `test-wallet-pay-xyz.js`:
+#### 3. Setup assets
+Each blockchain/asset hast it's own module that encapsulates all of the logic. Each asset can have it's own configuration.
 
-```javascript
-const WalletPayXYZ = require('./wallet-pay-xyz');
 
-async function testWallet() {
-  const wallet = new WalletPayXYZ({
-    asset_name: 'XYZCoin',
-    network: 'testnet',
-    provider: 
-    // Add other necessary configuration
-  });
+Lets setup Bitcoin:
+```
+const { BitcoinPay } = require('lib-wallet-pay-btc')
+const btcPay = new BitcoinPay({
+    // Asset name space
+    asset_name: 'btc',
+    // Asset's network
+    network: 'regtest',
+    electrum: {
+      // optional TCP to Websocket adaptor. This will allow you to connect to a websocket electrum node
+      net: require('./modules/ws-net.js'),
+      host: "electrum-websocket host"
+      port: "electrum-websocket port"
+    }
+})
 
-  await wallet.initialize();
-
-  const newAddress = await wallet.getNewAddress();
-  console.log('New Address:', newAddress);
-
-  const balance = await wallet.getBalance({});
-  console.log('Wallet Balance:', balance.toString());
-
-  // Add more tests for other methods
-}
-
-testWallet().catch(console.error);
 ```
 
-2. Run the test:
-   ```
-   node test-wallet-pay-xyz.js
-   ```
+Lets setup Ethereum and USDt
+```
+const { EthPay, Provider } = require('lib-wallet-pay-eth')
+const { TetherCurrency } = require('lib-wallet')
 
-## Best Practices
+// Ethereum data provider setup
+const provider = new Provider({
+    web3: "web3 endpoint" 
+    indexer: "web3 indexer rpc endpoint"
+    indexerWs: "web3 indexer websocket endpoint"
+})
 
-1. Event Emission: Emit appropriate events (e.g., 'new-tx', 'synced-path') to allow users to react to wallet state changes.
-2. Configurability: Allow users to configure network, API endpoints, and other XYZ Coin-specific parameters.
-3. Security: Ensure proper handling of private keys and sensitive data.
-4. Testing: Implement comprehensive unit tests for your WalletPayXYZ class.
-5. Documentation: Provide clear documentation for any XYZ Coin-specific features or limitations.
+await provider.init()
 
-By following this guide, you should be able to create a functional WalletPayXYZ implementation that integrates XYZ Coin into the WalletPay system. Remember to thoroughly test your implementation and handle edge cases specific to XYZ Coin's blockchain.
+const ethPay = new EthPay({
+    asset_name: 'eth',
+    provider,
+    network : 'sepolia'
+    token: [
+        TetherCurrency.ERC20()
+    ]
+})
+
+```
+
+You've now setup Ethereum and USDt. You can now generate addresses and send and receive funds.
+
+#### Putting it all together
+
+We configure the main Wallet class with the assets we want to use:
+
+```
+const wallet = new Wallet({
+    store,
+    seed,
+    assets: [btcPay, ethPay]
+})
+
+await wallet.initialize()
+```
+
+The wallet is now setup and ready to be used.
+
+
+
+### Use your wallet.
+
+#### Generate addresses:
+
+```
+// Generate Bitcoin address
+await wallet.pay.btc.getNewAddress()
+
+// Generate ETH / USDt  address
+await wallet.pay.eth.getNewAddress()
+```
+
+#### Sync your wallet
+
+WDK automatically listens to new incoming transactions for your latest transactions if you are online. When you close and reopen the wallet, you need to resync with the blockchain.
+
+```
+await wallet.syncHistory()
+```
+
+#### Perform transactions
+
+Check out some of the simple APIs available for building a wallet.
+
+
+```
+await wallet.pay.btc({}, {
+    address: <recipient>,
+    amount: <quanity of bitcoin>,
+    unit: <main or base>  // main = bitcoin base = satoshis. 
+    fee: <in sats per bytes>
+})
+
+
+// Example: send 0,1 bitcoin wiht 10 satsVbyte in fees
+await wallet.pay.btc({}, {
+    address: <recipient>,
+    amount: 0.1,
+    unit: 'base',
+    fee:  10
+})
+
+```
+
+#### Sending USDt on Ethereum 
+
+```
+await wallet.pay.eth({
+    token : 'USDT'
+}, {
+    address: <recipient>,
+    amount: <quanity of USDT>,
+    unit:  'main',
+})
+```
+
+
+#### Wallet history
+
+Transaction history now works via an iterator.
+
+```
+// Get USDT transactions history.
+await wallet.pay.eth.getTransactions({
+    token : 'USDT',
+}, (tx) => {
+    // iterate through tx history
+})
+```
+
+
