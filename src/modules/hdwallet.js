@@ -213,9 +213,17 @@ class HdWallet extends EventEmitter {
     return `m/${path.purpose}/${path.coin_type}/${path.account}/${path.change}/${path.index}`
   }
 
-  async getNewAddress (newAddr) {
-    let path = await this.getLastExtPath()
-    const res = newAddr(path)
+  async getNewAddress (inext, newAddrFn) {
+    let path 
+    if(inext === 'in') {
+      path = await this.getLastIntPath()
+    } else if( inext == 'ext') {
+      path = await this.getLastExtPath()
+    } else {
+      throw new Error('invalid address path type')
+    }
+
+    const res = newAddrFn(path)
     if (!res.addr.path) throw new Error('newAddr function returned invalid response')
     const addr = res.addr
     path = HdWallet.bumpIndex(addr.path)

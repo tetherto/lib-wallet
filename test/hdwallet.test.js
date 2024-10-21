@@ -68,7 +68,7 @@ test('HdWallet getNewAddress', async (t) => {
     }
   })
 
-  const newAddr = await wallet.getNewAddress(newAddrFn)
+  const newAddr = await wallet.getNewAddress('ext', newAddrFn)
   assert.strictEqual(newAddr.addr.address, 'newaddr123')
   assert.strictEqual(newAddr.addr.path, "m/84'/0'/0'/0/0")
 
