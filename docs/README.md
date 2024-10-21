@@ -23,13 +23,14 @@
 #### 1. Wallet seed/mnemonic
 In WDK, we use 1 seed phrase for all assets. To learn more [check out here](https://planb.network/en/courses/cyp201)
 
-```
+
+```javascript
 const BIP39Seed = require('wallet-seed-bip39')
 const seed = await BIP39Seed.generate()
 ```
 
 To reuse an existing seed phrase from a different wallet:
-```
+```javascript
 const seed = await BIP39Seed.generate(<seed phrase here>)
 ```
 
@@ -41,7 +42,7 @@ In WDK we use the database to keep track of the overall state of the wallet. Thi
 
 WDK does not depend on any particular database. Out of the box we support [Hyperbee](https://github.com/holepunchto/hyperbee) a distributed key value store.
 
-```
+```javascript
 const store = new WalletStoreHyperbee({
     store_path: './path-to-data-dir'
 })
@@ -55,7 +56,7 @@ Each blockchain/asset hast it's own module that encapsulates all of the logic. E
 
 
 Lets setup Bitcoin:
-```
+```javascript
 const { BitcoinPay } = require('lib-wallet-pay-btc')
 const btcPay = new BitcoinPay({
     // Asset name space
@@ -73,7 +74,7 @@ const btcPay = new BitcoinPay({
 ```
 
 Lets setup Ethereum and USDt
-```
+```javascript
 const { EthPay, Provider } = require('lib-wallet-pay-eth')
 const { TetherCurrency } = require('lib-wallet')
 
@@ -103,7 +104,8 @@ You've now setup Ethereum and USDt. You can now generate addresses and send and 
 
 We configure the main Wallet class with the assets we want to use:
 
-```
+
+```javascript
 const wallet = new Wallet({
     store,
     seed,
@@ -121,7 +123,7 @@ The wallet is now setup and ready to be used.
 
 #### Generate addresses:
 
-```
+```javascript
 // Generate Bitcoin address
 await wallet.pay.btc.getNewAddress()
 
@@ -133,7 +135,7 @@ await wallet.pay.eth.getNewAddress()
 
 WDK automatically listens to new incoming transactions for your latest transactions if you are online. When you close and reopen the wallet, you need to resync with the blockchain.
 
-```
+```javascript
 await wallet.syncHistory()
 ```
 
@@ -142,7 +144,7 @@ await wallet.syncHistory()
 Check out some of the simple APIs available for building a wallet.
 
 
-```
+```javascript
 await wallet.pay.btc({}, {
     address: <recipient>,
     amount: <quanity of bitcoin>,
@@ -163,7 +165,7 @@ await wallet.pay.btc({}, {
 
 #### Sending USDt on Ethereum 
 
-```
+```javascript
 await wallet.pay.eth({
     token : 'USDT'
 }, {
@@ -178,7 +180,7 @@ await wallet.pay.eth({
 
 Transaction history now works via an iterator.
 
-```
+```javascript
 // Get USDT transactions history.
 await wallet.pay.eth.getTransactions({
     token : 'USDT',
