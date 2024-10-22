@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-'use strict'
 
 const { EventEmitter } = require('events')
 const AssetList = require('./asset-list.js')
@@ -52,14 +51,8 @@ class Wallet extends EventEmitter {
     }
   }
 
-  async _eachAsset (fn) {
-    for (const asset of this.pay) {
-      await fn(asset)
-    }
-  }
-
   async destroy () {
-    await this._eachAsset(asset => asset.destroy())
+    await this.pay.forEach(asset => asset.destroy())
     this.seed = null
     await this.store.close()
     this.store = null
@@ -88,7 +81,7 @@ class Wallet extends EventEmitter {
       if (!asset) throw new Error('asset does not exist')
       return this._sync(opts, asset)
     }
-    return await this._eachAsset(async (asset) => {
+    return await this.pay.each(async (asset) => {
       return this._sync(opts, asset)
     })
   }

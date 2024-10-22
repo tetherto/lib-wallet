@@ -37,6 +37,19 @@ class AssetList {
     return v
   }
 
+  async each (fn) {
+    const data = Object.keys(this)
+    return Promise.all(data.map((k) => {
+      return fn(this[k])
+    }))
+  }
+
+  async forEach(fn) {
+    for (const asset of this) {
+      await fn(asset)
+    }
+  }
+
   exists (k) {
     return !!this[k]
   }

@@ -20,6 +20,7 @@ const BIP39Seed = require('wallet-seed-bip39')
 const { BitcoinPay } = require('lib-wallet-pay-btc')
 const { EthPay, Provider, erc20CurrencyFac, Erc20 } = require('lib-wallet-pay-eth')
 
+
 /**
 * this function is an example of how to setup various components of the wallet lib.
 */
