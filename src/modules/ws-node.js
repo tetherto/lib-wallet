@@ -20,21 +20,23 @@ class NodeWs extends EventEmitter {
   constructor (url, cb) {
     super()
     const client =  new WS(url);
-    client.on('data', (data) => {
+    client.on('message', (data) => {
       this.emit('data', data)
     })
     client.on('error', (data) => {
       this.emit('error', data)
     })
-    client.on('open', () =>{
+    client.on('open', () => {
       this.emit('open')
-      
+    })
+    client.on('close', () => {
+      this.emit('close')
     })
     this._ws = client
   }
 
   write (data) {
-    this._ws.send(data)
+    this._ws.send(Buffer.from(data),'utf8')
   }
 
   end () {

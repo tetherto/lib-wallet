@@ -76,7 +76,7 @@
     "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4"
   },
-  "standard" : {
+  "standard": {
     "ignore": [
       "/test/*.js"
     ]

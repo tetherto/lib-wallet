@@ -24,6 +24,7 @@ globalThis.Buffer = Buffer
 const TextEncoder = require('fast-text-encoding')
 const fs = require('fs')
 const repl = require('repl')
+window = {}
 window.TextEncoder = TextEncoder
 
 /**

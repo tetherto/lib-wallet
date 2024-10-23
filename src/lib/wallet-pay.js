@@ -51,13 +51,13 @@ class WalletPay extends EventEmitter {
   async initialize (ctx = {}) {
     if (!ctx.wallet) return
     const wallet = ctx.wallet
+    if (!this.store && !wallet.store) throw new Error('store is missing')
+    if (!this.seed && !wallet.seed) throw new Error('seed is missing')
     // Use wallet's store for asset
     if (!this.store) this.store = wallet.store
-    // Use wallet's network for asset
-    if (wallet.network) this.keyManager.setNetwork(this.network)
     // Use wallet's seed for asset
     this.keyManager.setSeed(wallet.seed)
-    // Add asset to wallet
+    // Add asset to wallet. Register itself
     await wallet.addAsset(this.assetName, this)
   }
 

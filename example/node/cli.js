@@ -14,6 +14,7 @@
 //
 let repl, fs
 
+
 function clog (msg) {
   console.log('>> ' + msg)
 }
@@ -31,7 +32,7 @@ async function main (opts) {
 
   let config = opts.config
   let createWallet = opts.createWallet
-  let configFile = process.argv[2] || './config.json'
+  const configFile = process.argv[2] || './config.json'
 
   if (!opts.config) {
     config = require(configFile)
@@ -161,8 +162,9 @@ function startcli (wallet) {
       async (args) => {
         const { token, name, err } = parseArgs(args, wallet)
         if (err) return
+        const fn = wallet.pay[name].getFundedTokenAddresses
         if (token) {
-          const bal = await wallet.pay[name].getFundedTokenAddresses({ token })
+          const bal = await ({ token })
           console.log(bal)
         } else {
           const bal = await wallet.pay[name].getFundedTokenAddresses({})

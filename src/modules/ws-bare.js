@@ -22,11 +22,13 @@ class BareWs extends EventEmitter {
     const client = new Socket(url)
 
     client.on('data', (data) => {
-      console.log('ddd')
       this.emit('data', data)
     })
     client.on('error', (data) => {
       this.emit('error', data)
+    })
+    client.on('close', (data) => {
+      this.emit('close', data)
     })
     this._ws = client
   }
