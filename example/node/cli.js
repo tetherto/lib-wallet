@@ -57,8 +57,9 @@ async function main (opts) {
   config.seed = JSON.parse(wallet.exportSeed())
   fs.writeFileSync(configFile, JSON.stringify(config, null, 2))
 
-  wallet.on('new-tx', (asset) => {
+  wallet.on('new-tx', (asset, tx) => {
     console.log('🟩Wallet state updated for asset: ', asset)
+    console.log(tx)
   })
 
   startcli(wallet)
@@ -164,10 +165,9 @@ function startcli (wallet) {
         if (err) return
         const fn = wallet.pay[name].getFundedTokenAddresses
         if (token) {
-          const bal = await ({ token })
+          const bal = await wallet.pay[name].getFundedTokenAddresses({ token })
           console.log(bal)
         } else {
-          const bal = await wallet.pay[name].getFundedTokenAddresses({})
           console.log(bal)
         }
       }
