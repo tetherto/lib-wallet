@@ -40,11 +40,11 @@ class NodeWs extends EventEmitter {
   }
 
   end () {
-    this._ws.close()
+    return this._ws.close()
   }
 
   close() {
-    this._ws.close()
+   return  this._ws.close()
   }
 }
 
