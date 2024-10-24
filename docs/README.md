@@ -6,22 +6,18 @@
 1. [Simple CLI wallet](#create-your-own-wallet)
 2. [Build a New Asset](./new-asset.md)
 
-
-
-
 ## Create your own wallet
 
-
 ### Prerequisites
-- Setup your block source or have URL to remote node
+- Setup your block source or have a URL to a remote node
     - Electrum and Bitcoin Core
-    - Web3 and lib-wallet-indexer
+    - Web3 and Wallet Indexer
 - Latest version of Node.js
 
 ### Guide
 
 #### 1. Wallet seed/mnemonic
-In WDK, we use 1 seed phrase for all assets. To learn more [check out here](https://planb.network/en/courses/cyp201)
+In WDK, we use 1 seed phrase for all assets. To learn more [check out the course here.](https://planb.network/en/courses/cyp201)
 
 
 ```javascript
@@ -34,13 +30,13 @@ To reuse an existing seed phrase from a different wallet:
 const seed = await BIP39Seed.generate(<seed phrase here>)
 ```
 
-your `seed` is now ready to be used to secure your assets
+The `seed` is now ready to be used to secure your assets.
 
 #### 2. Database
 
-In WDK we use the database to keep track of the overall state of the wallet. This includes things like balances, past transactions, addresses.
+In WDK we use a database to keep track of the overall state of the wallet. This includes things like balances, past transactions, addresses etc.
 
-WDK does not depend on any particular database. Out of the box we support [Hyperbee](https://github.com/holepunchto/hyperbee) a distributed key value store.
+WDK does not depend on any particular database. Out of the box we support [Hyperbee](https://github.com/holepunchto/hyperbee), a distributed key value store.
 
 ```javascript
 const store = new WalletStoreHyperbee({
@@ -49,10 +45,10 @@ const store = new WalletStoreHyperbee({
 await store.init()
 ```
 
-if you want to not have persistance storage and use in memory storage leave `store_path` empty
+If you do not want persistance storage and want to use in memory storage leave the `store_path` field as empty.
 
 #### 3. Setup assets
-Each blockchain/asset hast it's own module that encapsulates all of the logic. Each asset can have it's own configuration.
+Each blockchain/asset has it's own module that encapsulates all of the logic. Each asset can have it's own configuration.
 
 
 Lets setup Bitcoin:
@@ -73,7 +69,7 @@ const btcPay = new BitcoinPay({
 
 ```
 
-Lets setup Ethereum and USDt
+Let's set-up Ethereum and USDt
 ```javascript
 const { EthPay, Provider } = require('lib-wallet-pay-eth')
 const { TetherCurrency } = require('lib-wallet')
@@ -104,7 +100,6 @@ You've now setup Ethereum and USDt. You can now generate addresses and send and 
 
 We configure the main Wallet class with the assets we want to use:
 
-
 ```javascript
 const wallet = new Wallet({
     store,
@@ -116,8 +111,6 @@ await wallet.initialize()
 ```
 
 The wallet is now setup and ready to be used.
-
-
 
 ### Use your wallet.
 
@@ -147,13 +140,13 @@ Check out some of the simple APIs available for building a wallet.
 ```javascript
 await wallet.pay.btc({}, {
     address: <recipient>,
-    amount: <quanity of bitcoin>,
+    amount: <quantity of bitcoin>,
     unit: <main or base>  // main = bitcoin base = satoshis. 
     fee: <in sats per bytes>
 })
 
 
-// Example: send 0,1 bitcoin wiht 10 satsVbyte in fees
+// Example: send 0,1 Bitcoin with 10 satsVbyte in fees
 await wallet.pay.btc({}, {
     address: <recipient>,
     amount: 0.1,
