@@ -42,6 +42,10 @@ class NodeWs extends EventEmitter {
   end () {
     this._ws.close()
   }
+
+  close() {
+    this._ws.close()
+  }
 }
 
 module.exports = NodeWs
