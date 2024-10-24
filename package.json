@@ -18,10 +18,10 @@
     "fast-text-encoding": "^1.0.6",
     "lib-wallet-pay-btc": "github:rbndg/lib-wallet-pay-btc",
     "lib-wallet-pay-eth": "github:rbndg/lib-wallet-pay-eth",
-    "lib-wallet-store": "github:rbndg/lib-wallet-store",
+    "lib-wallet-store": "github:tetherto/lib-wallet-store",
     "punycode": "^2.3.1",
     "sodium-javascript": "^0.8.0",
-    "wallet-seed-bip39": "github:rbndg/lib-wallet-seed-bip39",
+    "wallet-seed-bip39": "github:tetherto/lib-wallet-seed-bip39",
     "ws": "^8.18.0"
   },
   "imports": {
