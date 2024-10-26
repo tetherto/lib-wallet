@@ -14,12 +14,12 @@
 // limitations under the License.
 //
 const { EventEmitter } = require('events')
-const WS  = require('ws')
+const WS = require('ws')
 
 class NodeWs extends EventEmitter {
   constructor (url, cb) {
     super()
-    const client =  new WS(url);
+    const client = new WS(url)
     client.on('message', (data) => {
       this.emit('data', data)
     })
@@ -36,15 +36,15 @@ class NodeWs extends EventEmitter {
   }
 
   write (data) {
-    this._ws.send(Buffer.from(data),'utf8')
+    this._ws.send(Buffer.from(data), 'utf8')
   }
 
   end () {
     return this._ws.close()
   }
 
-  close() {
-   return  this._ws.close()
+  close () {
+    return this._ws.close()
   }
 }
 

@@ -14,9 +14,8 @@
 // limitations under the License.
 //
 
-
-if(global.Bare) {
+if (global.Bare) {
   module.exports = require('./ws-bare')
-} else if(process?.release?.name === 'node') {
+} else if (process?.release?.name === 'node') {
   module.exports = require('./ws-node')
-} 
+}

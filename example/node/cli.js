@@ -14,7 +14,6 @@
 //
 let repl, fs
 
-
 function clog (msg) {
   console.log('>> ' + msg)
 }
@@ -164,10 +163,8 @@ function startcli (wallet) {
         const { token, name, err } = parseArgs(args, wallet)
         if (err) return
         const fn = wallet.pay[name].getFundedTokenAddresses
-        if (token) {
+        if (fn) {
           const bal = await wallet.pay[name].getFundedTokenAddresses({ token })
-          console.log(bal)
-        } else {
           console.log(bal)
         }
       }

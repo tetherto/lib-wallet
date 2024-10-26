@@ -44,7 +44,7 @@ class AssetList {
     }))
   }
 
-  async forEach(fn) {
+  async forEach (fn) {
     for (const asset of this) {
       await fn(asset)
     }

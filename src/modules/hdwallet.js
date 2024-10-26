@@ -214,10 +214,10 @@ class HdWallet extends EventEmitter {
   }
 
   async getNewAddress (inext, newAddrFn) {
-    let path 
-    if(inext === 'in') {
+    let path
+    if (inext === 'in') {
       path = await this.getLastIntPath()
-    } else if( inext == 'ext') {
+    } else if (inext === 'ext') {
       path = await this.getLastExtPath()
     } else {
       throw new Error('invalid address path type')

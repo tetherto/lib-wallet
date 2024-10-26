@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 const { EventEmitter } = require('events')
-const { Socket }  = require('bare-ws')
+const { Socket } = require('bare-ws')
 
 class BareWs extends EventEmitter {
   constructor (url, cb) {
