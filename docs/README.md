@@ -71,7 +71,7 @@ const btcPay = new BitcoinPay({
 
 Let's set-up Ethereum and USDt
 ```javascript
-const { EthPay, Provider } = require('lib-wallet-pay-eth')
+const { EthPay, Provider, Erc20  } = require('lib-wallet-pay-eth')
 const { TetherCurrency } = require('lib-wallet')
 
 // Ethereum data provider setup
@@ -88,7 +88,9 @@ const ethPay = new EthPay({
     provider,
     network : 'sepolia'
     token: [
-        TetherCurrency.ERC20()
+        new Erc20({
+            currency : TetherCurrency.ERC20()
+        })
     ]
 })
 
