@@ -32,7 +32,7 @@ class Client extends EventEmitter {
     })
 
     ws.on('data',(data) => {
-      this.emit('data', data.data)
+      this.emit('data', data)
     })
 
     this._ws = ws
