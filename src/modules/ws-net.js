@@ -40,7 +40,7 @@ class Client extends EventEmitter {
   }
 
   write (data) {
-    this._ws.send(data)
+    this._ws.write(data)
   }
 
   end () {
