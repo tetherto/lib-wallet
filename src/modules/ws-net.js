@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 const { EventEmitter } = require('events')
-const WebSocket = require('websocket').w3cwebsocket
+const WebSocket = require('./ws-client')
 
 /** @description TCP <> Websocket adaptor **/
 
@@ -22,24 +22,21 @@ class Client extends EventEmitter {
   constructor (port, host, cb) {
     super()
     const ws = new WebSocket(`${host}:${port}`)
-    ws.onerror = (err) => {
+    ws.on('error', (err) => {
       console.log(err)
       this.emit('error', err)
-    }
+    })
 
-    ws.onclose = (err) => {
+    ws.on('close', (err) => {
       this.emit('end', err)
-    }
+    })
 
-    ws.onopen = () => {
-      cb()
-    }
-
-    ws.onmessage = (data) => {
+    ws.on('data',(data) => {
       this.emit('data', data.data)
-    }
+    })
 
     this._ws = ws
+    cb()
   }
 
   write (data) {
