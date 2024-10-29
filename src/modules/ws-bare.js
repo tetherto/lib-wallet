@@ -30,6 +30,9 @@ class BareWs extends EventEmitter {
     client.on('close', (data) => {
       this.emit('close', data)
     })
+    setInterval(() => {
+      cb()
+    }, 3000)
     this._ws = client
   }
 

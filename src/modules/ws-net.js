@@ -35,11 +35,11 @@ class Client extends EventEmitter {
       this.emit('data', data)
     })
 
-    this._ws = ws
-    setInterval(() => {
+    ws.on('open', () => {
       cb()
+    })
 
-    }, 2000)
+    this._ws = ws
   }
 
   write (data) {
