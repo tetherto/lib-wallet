@@ -1,0 +1,14 @@
+data
+config.json
+
+cli/data/
+cli/config.json
+tmp
+example/web/dist
+watch-dir
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+

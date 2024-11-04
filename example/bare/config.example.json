@@ -1,0 +1,10 @@
+{
+  "store_path": "./data",
+  "network": "regtest",
+  "electrum_host": "ws://127.0.0.1",
+  "electrum_port": "8002",
+  "token_contract": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "web3_indexer_ws": "",
+  "web3_indexer": "",
+  "web3": ""
+}

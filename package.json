@@ -1,0 +1,55 @@
+{
+  "name": "lib-wallet",
+  "version": "0.0.1",
+  "description": "Multi asset, multi chain wallet libary.",
+  "main": "index.js",
+  "scripts": {
+    "test": "brittle ./test/*.test.js",
+    "test:hdwallet": "brittle ./test/hdwallet.test.js",
+    "test:currency": "brittle ./test/currency.test.js",
+    "lint": "standard --fix",
+    "build:web": "npx webpack --config webpack.config.js"
+  },
+  "author": "rbndg",
+  "license": "APACHE-2.0",
+  "dependencies": {
+    "bare-ws": "^1.3.1",
+    "bignumber.js": "^9.1.2",
+    "fast-text-encoding": "^1.0.6",
+    "lib-wallet-pay-btc": "github:rbndg/lib-wallet-pay-btc",
+    "lib-wallet-pay-eth": "github:rbndg/lib-wallet-pay-eth",
+    "lib-wallet-store": "github:tetherto/lib-wallet-store",
+    "punycode": "^2.3.1",
+    "sodium-javascript": "^0.8.0",
+    "wallet-seed-bip39": "github:tetherto/lib-wallet-seed-bip39",
+    "ws": "^8.18.0"
+  },
+  "imports": {
+    "fs": {
+      "bare": "bare-fs",
+      "default": "fs"
+    },
+    "fs/*": {
+      "bare": "bare-fs/*",
+      "default": "fs/*"
+    },
+    "crypto": {
+      "bare": "bare-crypto",
+      "default": "crypto"
+    },
+    "crypto/*": {
+      "bare": "bare-crypto/*",
+      "default": "crypto/*"
+    }
+  },
+  "optionalDependencies": {
+    "bare-crypto": "*"
+  },
+  "devDependencies": {
+    "brittle": "^3.5.0",
+    "commander": "^12.1.0",
+    "standard": "^17.1.2",
+    "webpack": "^5.93.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
