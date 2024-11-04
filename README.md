@@ -90,7 +90,7 @@ Checkout [Quick start guide](./docs/) for more detailed guide.
 
   // Get Tx history
 
-  await wallet.pay.btc.getTransactions((tx) =>{
+  await wallet.pay.btc.getTransactions({}, (tx) =>{
     // do something here 
   }))
   //done 
