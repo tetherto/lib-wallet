@@ -223,7 +223,7 @@ class HdWallet extends EventEmitter {
       throw new Error('invalid address path type')
     }
 
-    const res = newAddrFn(path)
+    const res = await newAddrFn(path)
     if (!res.addr.path) throw new Error('newAddr function returned invalid response')
     const addr = res.addr
     path = HdWallet.bumpIndex(addr.path)
