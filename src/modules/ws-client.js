@@ -13,10 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 if (global.Bare) {
   module.exports = require('./ws-bare')
-} else if (process?.release?.name === 'node') {
+} else if (typeof process !== 'undefined' && process?.release?.name === 'node') {
   module.exports = require('./ws-node')
 } else {
   module.exports = require('./ws-web')

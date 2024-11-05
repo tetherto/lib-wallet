@@ -32,6 +32,9 @@ class WebWs extends EventEmitter {
     socket.addEventListener("close", (event) => {
       this.emit('close', event)
     })
+    socket.addEventListener("open", (event) => {
+      this.emit('open', event)
+    })
     this._ws = socket
   }
 
