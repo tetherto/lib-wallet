@@ -1,3 +1,4 @@
+
 'use strict'
 // Copyright 2024 Tether Operations Limited
 //
@@ -14,10 +15,33 @@
 // limitations under the License.
 //
 
-if (global.Bare) {
-  module.exports = require('./ws-bare')
-} else if (process?.release?.name === 'node') {
-  module.exports = require('./ws-node')
-} else {
-  module.exports = require('./ws-web')
+const { EventEmitter } = require('events')
+class WebWs extends EventEmitter {
+  constructor (url, cb) {
+    super()
+    const socket = new WebSocket(url);
+
+    socket.addEventListener("message", (event) => {
+      this.emit('data', event.data)
+    })
+
+    socket.addEventListener("error", (event) => {
+      this.emit('error', event)
+    })
+
+    socket.addEventListener("close", (event) => {
+      this.emit('close', event)
+    })
+    this._ws = socket
+  }
+
+  write (data) {
+    this._ws.send(data)
+  }
+
+  end () {
+    this._ws.close()
+  }
 }
+
+module.exports = WebWs
