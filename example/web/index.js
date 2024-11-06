@@ -78,9 +78,15 @@ const PHRASE = 'differ current leg erode fog hundred file multiply word inner gr
 async function initWallet () {
   renderAddressBook(book)
   const w = await window.wallet({
-    network: 'regtest',
-    seed: {
-      mnemonic: PHRASE
+    "network":"regtest",
+    "electrum_host": "ws://localhost",
+    "electrum_port": "8001",
+    "token_contract": "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
+    "web3_indexer_ws": "ws://localhost/eth/hardhat/indexer/ws",
+    "web3_indexer": "http://localhost/eth/hardhat/indexer/rpc",
+    "web3": "ws://localhost/eth/hardhat/indexer/web3",
+    seed : {
+      mnemonic : PHRASE
     }
   })
 
