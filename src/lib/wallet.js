@@ -75,7 +75,7 @@ class Wallet extends EventEmitter {
     }
   }
 
-  async syncHistory (opts) {
+  async syncHistory (opts = {}) {
     if (opts.asset) {
       const asset = this.pay[opts.asset]
       if (!asset) throw new Error('asset does not exist')

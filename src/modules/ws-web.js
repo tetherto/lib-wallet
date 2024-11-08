@@ -1,3 +1,4 @@
+
 'use strict'
 // Copyright 2024 Tether Operations Limited
 //
@@ -13,28 +14,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-const { EventEmitter } = require('events')
-const { Socket } = require('bare-ws')
 
-class BareWs extends EventEmitter {
+const { EventEmitter } = require('events')
+class WebWs extends EventEmitter {
   constructor (url, cb) {
     super()
-    const client = new Socket(url)
+    const socket = new WebSocket(url);
 
-    client.on('data', (data) => {
-      this.emit('data', data)
+    socket.addEventListener("message", (event) => {
+      this.emit('data', event.data)
     })
-    client.on('error', (data) => {
-      this.emit('error', data)
+
+    socket.addEventListener("error", (event) => {
+      this.emit('error', event)
     })
-    client.on('close', (data) => {
-      this.emit('close', data)
+
+    socket.addEventListener("close", (event) => {
+      this.emit('close', event)
     })
-    this._ws = client
+    socket.addEventListener("open", (event) => {
+      this.emit('open', event)
+    })
+    this._ws = socket
   }
 
   write (data) {
-    this._ws.write(data)
+    this._ws.send(data)
   }
 
   end () {
@@ -42,4 +47,4 @@ class BareWs extends EventEmitter {
   }
 }
 
-module.exports = BareWs
+module.exports = WebWs
