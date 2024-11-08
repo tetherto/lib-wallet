@@ -1,5 +1,5 @@
-<p align="center" width="100">
-  <img src="./docs/logo.svg" />
+<p align="center" width="400">
+  <img src="./docs/logo.svg" width="400" />
 </p>
 
 
@@ -35,7 +35,10 @@ Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 
 
 ### 🏗️ Architecture
-![Architecture](./assets/architecture.png)
+<p align="center" width="10" height=10>
+  <img src="./assets/architecture.png "  width="500"/>
+</p>
+
 
 ### 🧩 Components
 The library  comes with all the components needed to build a wallet. You can also use these as an example to build your own components.
