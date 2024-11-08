@@ -139,7 +139,7 @@ After you have example apps running:
 There is a working example wallet that supports. This wallet can be used as an example for making your own integrations.
 - [Node.js cli wallet](./example/node)
 - [Bare runtime cli wallet](./example/bare)
-- [Browser web wallet](./example/web)
+- [AI Agent  wallet](./example/web)
 
 
 ## 🛠️ Dev Enviroment
