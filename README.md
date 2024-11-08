@@ -9,6 +9,10 @@
 Multi asset cryptocurrency wallet library in JavaScript.
 Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 
+Checkout the website [here](https://wallet.tether.io/)
+
+
+
 
 ## ⭐ Features
 
@@ -26,13 +30,10 @@ Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 - Electrum block data source. Support for TCP and Websocket on browser. 
 - P2WPKH / BIP84 address support.
 
-### [USDT-Ethereum](https://github.com/tetherto/lib-wallet-pay-eth)
+### [USDT on Ethereum](https://github.com/tetherto/lib-wallet-pay-eth)y
 - Web3 and [Indexer](https://github.com/tetherto/lib-wallet-indexer) block data source.
 - ERC20 support.
 - BIP44 address generation.
-
-**addtional support coming soon**
-
 
 ### 🏗️ Architecture
 <p align="center" width="10" height=10>
@@ -40,13 +41,17 @@ Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 </p>
 
 
-### 🧩 Components
+### 🧩 Components and Links
 The library  comes with all the components needed to build a wallet. You can also use these as an example to build your own components.
 
 - [BIP39 Seed](https://github.com/tetherto/lib-wallet-seed-bip39): Generate BIP39 seed for all assets 
 - [Key value store](https://github.com/tetherto/lib-wallet-store): Store transaction history and track state.
 - [Blockchain indexer](https://github.com/tetherto/lib-wallet-indexer): Remote blockchain data provider
 - [Test tools](https://github.com/tetherto/wallet-lib-test-tools): Tools for development and testing 
+- [Documentation](https://wallet.tether.io/): Guides, documentation.
+- [Bitcoin](https://github.com/tetherto/lib-wallet-pay-btc): Bitcoin asset integration.
+- [Ethereum/ERC20](https://github.com/tetherto/lib-wallet-pay-eth): Ethereum and ERC20 integration.
+
 
 ### **</>**  Example Usage
 
@@ -99,6 +104,7 @@ Checkout [Quick start guide](./docs/) for more detailed guide.
   //done 
 
 ```
+
 
 # Development
 
