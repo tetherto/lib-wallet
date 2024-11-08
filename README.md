@@ -30,10 +30,26 @@ Checkout the website [here](https://wallet.tether.io/)
 - Electrum block data source. Support for TCP and Websocket on browser. 
 - P2WPKH / BIP84 address support.
 
-### [USDT on Ethereum](https://github.com/tetherto/lib-wallet-pay-eth)y
+### [USDT on Ethereum](https://github.com/tetherto/lib-wallet-pay-eth)
 - Web3 and [Indexer](https://github.com/tetherto/lib-wallet-indexer) block data source.
 - ERC20 support.
 - BIP44 address generation.
+
+| Blockchain   	|  Supported  | Token Protocol
+|---	        |---	      |--
+|  Bitcoin 	    |  ✅ 	      | -
+|  Ethereum  	|  ✅ 	      | ERC20
+|  Tron 	    |  ⌛ 	      | TRC20
+|  TON 	        |   ⌛	      | Jettons
+|  Avalanche 	|   ⌛	      | C-Chain
+|  Solana 	    |  ⌛ 	      | Solana Token
+|  Celo 	    |   ⌛	      | ERC20
+|  Liquid 	    |  ⌛ 	      | Liquid Asset
+|  Tezos 	    |  ⌛ 	      | Tezos Token
+|  Aptos 	    |  ⌛ 	      | Fungible Asset
+|  Cosmos 	    |  ⌛ 	      | ERC20
+|  Near 	    |  ⌛ 	      | Near Token
+|  Polkadot 	|  ⌛ 	      | AssetHub
 
 ### 🏗️ Architecture
 <p align="center" width="10" height=10>
