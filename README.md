@@ -132,3 +132,6 @@ See [guide](./docs) for how to add new assets
     - Integration of various blockchains
 - Each asset has it's own tests included in it's repo.
 
+## Security 
+For critical vulnerabilities and bug reports, please reach out to us at bounty@tether.io.
+Your insights help us keep WDK by Tether secure and reliable!
