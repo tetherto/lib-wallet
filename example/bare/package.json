@@ -12,7 +12,7 @@
   "license": "APACHE 2.0",
   "dependencies": {
     "bare-buffer": "^2.5.0",
-    "bare-crypto": "github:rbndg/bare-crypto",
+    "bare-crypto": "github:tetherto/bare-crypto",
     "bare-events": "^2.4.2",
     "bare-fetch": "^1.2.0",
     "bare-fs": "^2.3.1",
