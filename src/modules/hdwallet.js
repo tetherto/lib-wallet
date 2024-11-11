@@ -226,6 +226,8 @@ class HdWallet extends EventEmitter {
     const res = await newAddrFn(path)
     if (!res.addr.path) throw new Error('newAddr function returned invalid response')
     const addr = res.addr
+    const exists = await this.getAddress(addr.address)
+    if(exists) throw new Error('address already exists in the db')
     path = HdWallet.bumpIndex(addr.path)
     await this.updateLastPath(path)
     await this.addAddress(addr)

@@ -1,5 +1,5 @@
-<p align="center" width="100">
-  <img src="./docs/logo.svg" />
+<p align="center" width="400">
+  <img src="./docs/logo.svg" width="400" />
 </p>
 
 
@@ -8,6 +8,10 @@
 
 Multi asset cryptocurrency wallet library in JavaScript.
 Supported on 3 platforms:  Node.js, Browser, Bare Runtime
+
+Checkout the website [here](https://wallet.tether.io/)
+
+
 
 
 ## ⭐ Features
@@ -26,24 +30,44 @@ Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 - Electrum block data source. Support for TCP and Websocket on browser. 
 - P2WPKH / BIP84 address support.
 
-### [USDT-Ethereum](https://github.com/tetherto/lib-wallet-pay-eth)
+### [USDT on Ethereum](https://github.com/tetherto/lib-wallet-pay-eth)
 - Web3 and [Indexer](https://github.com/tetherto/lib-wallet-indexer) block data source.
 - ERC20 support.
 - BIP44 address generation.
 
-**addtional support coming soon**
-
+| Blockchain   	|  Supported  | Token Protocol
+|---	        |---	      |--
+|  Bitcoin 	    |  ✅ 	      | -
+|  Ethereum  	|  ✅ 	      | ERC20
+|  Tron 	    |  ⌛ 	      | TRC20
+|  TON 	        |   ⌛	      | Jettons
+|  Avalanche 	|   ⌛	      | C-Chain
+|  Solana 	    |  ⌛ 	      | Solana Token
+|  Celo 	    |   ⌛	      | ERC20
+|  Liquid 	    |  ⌛ 	      | Liquid Asset
+|  Tezos 	    |  ⌛ 	      | Tezos Token
+|  Aptos 	    |  ⌛ 	      | Fungible Asset
+|  Cosmos 	    |  ⌛ 	      | ERC20
+|  Near 	    |  ⌛ 	      | Near Token
+|  Polkadot 	|  ⌛ 	      | AssetHub
 
 ### 🏗️ Architecture
-![Architecture](./assets/architecture.png)
+<p align="center" width="10" height=10>
+  <img src="./assets/architecture.png "  width="500"/>
+</p>
 
-### 🧩 Components
+
+### 🧩 Components and Links
 The library  comes with all the components needed to build a wallet. You can also use these as an example to build your own components.
 
 - [BIP39 Seed](https://github.com/tetherto/lib-wallet-seed-bip39): Generate BIP39 seed for all assets 
 - [Key value store](https://github.com/tetherto/lib-wallet-store): Store transaction history and track state.
 - [Blockchain indexer](https://github.com/tetherto/lib-wallet-indexer): Remote blockchain data provider
 - [Test tools](https://github.com/tetherto/wallet-lib-test-tools): Tools for development and testing 
+- [Documentation](https://wallet.tether.io/): Guides, documentation.
+- [Bitcoin](https://github.com/tetherto/lib-wallet-pay-btc): Bitcoin asset integration.
+- [Ethereum/ERC20](https://github.com/tetherto/lib-wallet-pay-eth): Ethereum and ERC20 integration.
+
 
 ### **</>**  Example Usage
 
@@ -97,6 +121,7 @@ Checkout [Quick start guide](./docs/) for more detailed guide.
 
 ```
 
+
 # Development
 
 ## 🚀 Getting started
@@ -114,7 +139,7 @@ After you have example apps running:
 There is a working example wallet that supports. This wallet can be used as an example for making your own integrations.
 - [Node.js cli wallet](./example/node)
 - [Bare runtime cli wallet](./example/bare)
-- [Browser web wallet](./example/web)
+- [AI Agent  wallet](./example/web)
 
 
 ## 🛠️ Dev Enviroment
@@ -132,3 +157,6 @@ See [guide](./docs) for how to add new assets
     - Integration of various blockchains
 - Each asset has it's own tests included in it's repo.
 
+## Security 
+For critical vulnerabilities and bug reports, please reach out to us at bounty@tether.io.
+Your insights help us keep WDK by Tether secure and reliable!

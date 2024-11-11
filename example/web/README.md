@@ -1,4 +1,4 @@
-# 🤖 AI Demo App
+# 🤖 AI Agent Demo
 
 An example local ai app powered by OLLAMA, Whispr and WSDK
 Use your voice to control wallet!
