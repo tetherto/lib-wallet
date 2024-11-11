@@ -95,7 +95,7 @@ Checkout [Quick start guide](./docs/) for more detailed guide.
   const wallet = new Wallet({
     store,
     seed,
-    // List of assets 
+    // List of assets that the wallet will support 
     assets: [ btcPay ]
   })
 
@@ -156,6 +156,8 @@ See [guide](./docs) for how to add new assets
     - Shared modules
     - Integration of various blockchains
 - Each asset has it's own tests included in it's repo.
+
+
 
 ## Security 
 For critical vulnerabilities and bug reports, please reach out to us at bounty@tether.io.
