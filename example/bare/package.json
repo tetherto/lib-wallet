@@ -36,7 +36,7 @@
     "fs": "npm:bare-node-fs@^1.0.2",
     "http": "npm:bare-node-http@^1.0.1",
     "https": "npm:bare-node-https@^1.0.0",
-    "lib-wallet": "github:rbndg/lib-wallet",
+    "lib-wallet": "github:tetherto/lib-wallet#v0.0.1",
     "net": "npm:bare-node-net@^1.0.0",
     "path": "npm:bare-node-path@^1.0.1",
     "process": "npm:bare-node-process@^1.0.1",
