@@ -16,6 +16,8 @@
 
 const { EventEmitter } = require('events')
 const AssetList = require('./asset-list.js')
+const { getRandomBytes } = require('crypto')
+
 const WalletError = Error
 
 class Wallet extends EventEmitter {
@@ -27,6 +29,7 @@ class Wallet extends EventEmitter {
     this.seed = config.seed
     this.store = config.store
     this._assets = config.assets
+    this.walletName = config.walletName || randomBytes(32).toString('hex');
   }
 
   async initialize () {
@@ -95,6 +98,36 @@ class Wallet extends EventEmitter {
 
   exportSeed () {
     return this.seed.exportSeed()
+  }
+
+  async exportWallet () {
+    const assets = await this.pay.each((asset, key) => {
+      const tokens = asset.getTokens()
+      let tokenInstance, tokenConfig, tokenKeys
+      if(tokens.size >  0) {
+        tokenKeys = Array.from(tokens.keys())
+        tokenInstance = tokens.get(tokenKeys[0]).constructor.name
+        tokenConfig = tokenKeys.map((k) => {
+          const token = tokens.get(k)
+          return token.Currency.exportConfig()
+        })
+      }
+
+      return {
+        key,
+        instance: asset.constructor.name,
+        network: asset.network,
+        tokenKeys,
+        tokenInstance,
+        tokenConfig
+      }
+    })
+
+    return {
+      name: this.walletName,
+      seed : this.exportSeed(),
+      assets
+    }
   }
 }
 

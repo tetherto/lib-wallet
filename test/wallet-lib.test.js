@@ -77,3 +77,13 @@ test('addAsset', async function (t) {
   t.ok(addr.address, 'got a new btc addr')
   await wallet.destroy()
 })
+
+
+test('exportWallet',async () => {
+
+  const wallet = await expectedWallet()
+  const ex = await wallet.exportWallet()
+  console.log(ex)
+  
+
+})
