@@ -1,4 +1,3 @@
-
 'use strict'
 // Copyright 2024 Tether Operations Limited
 //
@@ -19,20 +18,20 @@ const { EventEmitter } = require('events')
 class WebWs extends EventEmitter {
   constructor (url, cb) {
     super()
-    const socket = new WebSocket(url);
+    const socket = new WebSocket(url)
 
-    socket.addEventListener("message", (event) => {
+    socket.addEventListener('message', (event) => {
       this.emit('data', event.data)
     })
 
-    socket.addEventListener("error", (event) => {
+    socket.addEventListener('error', (event) => {
       this.emit('error', event)
     })
 
-    socket.addEventListener("close", (event) => {
+    socket.addEventListener('close', (event) => {
       this.emit('close', event)
     })
-    socket.addEventListener("open", (event) => {
+    socket.addEventListener('open', (event) => {
       this.emit('open', event)
     })
     this._ws = socket

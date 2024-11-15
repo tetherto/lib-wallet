@@ -31,7 +31,7 @@ class Client extends EventEmitter {
       this.emit('end', err)
     })
 
-    ws.on('data',(data) => {
+    ws.on('data', (data) => {
       this.emit('data', data)
     })
 

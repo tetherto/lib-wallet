@@ -31,18 +31,22 @@ class Wallet extends EventEmitter {
 
   async initialize () {
     this.pay = new AssetList()
-    await Promise.all(this._assets.map(async (asset) => {
-      try {
-        await asset.initialize({ wallet: this })
-      } catch (err) {
-        console.log(err)
-      }
-
-      asset.on('new-tx', this._handleAssetEvent(asset.assetName, 'new-tx'))
-      asset.on('new-block', this._handleAssetEvent(asset.assetName, 'new-block'))
+    await Promise.all(this._assets.map((asset) => {
+      return this._initAsset(asset)
     }))
     this._assets = null
     this.emit('ready')
+  }
+
+  async _initAsset (asset) {
+    try {
+      await asset.initialize({ wallet: this })
+    } catch (err) {
+      console.log(err)
+    }
+
+    asset.on('new-tx', this._handleAssetEvent(asset.assetName, 'new-tx'))
+    asset.on('new-block', this._handleAssetEvent(asset.assetName, 'new-block'))
   }
 
   _handleAssetEvent (assetName, evName) {
@@ -59,8 +63,11 @@ class Wallet extends EventEmitter {
     this.pay = null
   }
 
-  addAsset (k, assetObj) {
-    return this.pay.set(k, assetObj)
+  async addAsset (k, assetObj) {
+    if (typeof k !== 'string') {
+      return this._initAsset(k)
+    }
+    this.pay.set(k, assetObj)
   }
 
   async _sync (opts, asset) {
