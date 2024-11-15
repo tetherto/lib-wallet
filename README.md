@@ -95,7 +95,7 @@ Checkout [Quick start guide](./docs/) for more detailed guide.
   const wallet = new Wallet({
     store,
     seed,
-    // List of assets 
+    // List of assets that the wallet will support 
     assets: [ btcPay ]
   })
 
@@ -117,9 +117,89 @@ Checkout [Quick start guide](./docs/) for more detailed guide.
   await wallet.pay.btc.getTransactions({}, (tx) =>{
     // do something here 
   }))
+
+
+  // Add Asset:
+  wallet.addAsset()
   //done 
 
 ```
+
+### Wallet API Documentation
+
+## Constructor
+```javascript
+new Wallet(config)
+```
+Creates a new Wallet instance.
+
+### Parameters
+- `config` (Object):
+  - `store` (Object): Required. Storage interface for the wallet
+  - `seed` (Object): Required. Seed object for wallet initialization
+  - `assets` (Array): Required. Array of asset objects to be managed by the wallet
+
+### Throws
+- `WalletError` with code 'BAD_ARGS' if required config parameters are missing or invalid
+
+## Methods
+
+### initialize()
+```javascript
+await wallet.initialize()
+```
+Initializes the wallet and all its assets. Emits 'ready' event when complete.
+
+### destroy()
+```javascript
+await wallet.destroy()
+```
+Cleanly destroys the wallet instance, closing stores and network connections..
+
+### addAsset(assetObj)
+```javascript
+await wallet.addAsset(assetObj)
+```
+Adds a new asset to the wallet.
+- `assetObj` (Object): Asset instance to add
+
+### syncHistory([options])
+```javascript
+await wallet.syncHistory({
+    asset : 'asset-name' // sync only this asset
+})
+
+await wallet.syncHistory() /// sync everything
+```
+Synchronizes transaction history for assets.
+
+#### Options
+- `asset` (String): Optional. Sync specific asset name
+- `all` (Boolean): Optional. If true, syncs all tokens for assets
+- Additional options are passed to asset.syncTransactions()
+
+### exportSeed()
+```javascript
+const seed = wallet.exportSeed()
+```
+Exports the wallet's seed data.
+
+## Events
+
+The wallet extends EventEmitter and emits the following events:
+
+- `ready`: Emitted when wallet is fully initialized
+- `new-tx`: Emitted when a new transaction is detected
+  - Arguments: `(assetName, ...transactionDetails)`
+- `new-block`: Emitted when a new block is detected
+  - Arguments: `(assetName, ...blockDetails)`
+- `asset-synced`: Emitted when an asset completes synchronization
+  - Arguments: `(assetName, [token])`
+
+## Properties
+
+### pay
+An AssetList instance containing all initialized assets. Available after initialization.
 
 
 # Development
@@ -156,6 +236,8 @@ See [guide](./docs) for how to add new assets
     - Shared modules
     - Integration of various blockchains
 - Each asset has it's own tests included in it's repo.
+
+
 
 ## Security 
 For critical vulnerabilities and bug reports, please reach out to us at bounty@tether.io.

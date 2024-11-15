@@ -16,6 +16,8 @@
 
 const { EventEmitter } = require('events')
 const AssetList = require('./asset-list.js')
+const { getRandomBytes } = require('crypto')
+
 const WalletError = Error
 
 class Wallet extends EventEmitter {
@@ -27,22 +29,27 @@ class Wallet extends EventEmitter {
     this.seed = config.seed
     this.store = config.store
     this._assets = config.assets
+    this.walletName = config.walletName || randomBytes(32).toString('hex');
   }
 
   async initialize () {
     this.pay = new AssetList()
-    await Promise.all(this._assets.map(async (asset) => {
-      try {
-        await asset.initialize({ wallet: this })
-      } catch (err) {
-        console.log(err)
-      }
-
-      asset.on('new-tx', this._handleAssetEvent(asset.assetName, 'new-tx'))
-      asset.on('new-block', this._handleAssetEvent(asset.assetName, 'new-block'))
+    await Promise.all(this._assets.map((asset) => {
+      return this._initAsset(asset)
     }))
     this._assets = null
     this.emit('ready')
+  }
+
+  async _initAsset (asset) {
+    try {
+      await asset.initialize({ wallet: this })
+    } catch (err) {
+      console.log(err)
+    }
+
+    asset.on('new-tx', this._handleAssetEvent(asset.assetName, 'new-tx'))
+    asset.on('new-block', this._handleAssetEvent(asset.assetName, 'new-block'))
   }
 
   _handleAssetEvent (assetName, evName) {
@@ -59,8 +66,11 @@ class Wallet extends EventEmitter {
     this.pay = null
   }
 
-  addAsset (k, assetObj) {
-    return this.pay.set(k, assetObj)
+  async addAsset (k, assetObj) {
+    if (typeof k !== 'string') {
+      return this._initAsset(k)
+    }
+    this.pay.set(k, assetObj)
   }
 
   async _sync (opts, asset) {
@@ -88,6 +98,36 @@ class Wallet extends EventEmitter {
 
   exportSeed () {
     return this.seed.exportSeed()
+  }
+
+  async exportWallet () {
+    const assets = await this.pay.each((asset, key) => {
+      const tokens = asset.getTokens()
+      let tokenInstance, tokenConfig, tokenKeys
+      if(tokens.size >  0) {
+        tokenKeys = Array.from(tokens.keys())
+        tokenInstance = tokens.get(tokenKeys[0]).constructor.name
+        tokenConfig = tokenKeys.map((k) => {
+          const token = tokens.get(k)
+          return token.Currency.exportConfig()
+        })
+      }
+
+      return {
+        key,
+        instance: asset.constructor.name,
+        network: asset.network,
+        tokenKeys,
+        tokenInstance,
+        tokenConfig
+      }
+    })
+
+    return {
+      name: this.walletName,
+      seed : this.exportSeed(),
+      assets
+    }
   }
 }
 

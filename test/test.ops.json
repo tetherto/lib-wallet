@@ -1,0 +1,8 @@
+{
+  "network": "regtest",
+  "electrum_host": "ws://localhost",
+  "electrum_port": "8002",
+  "web3_indexer_ws": "ws://localhost:8181",
+  "web3_indexer": "http://localhost:8008/rpc",
+  "web3": "ws://localhost:8545"
+}

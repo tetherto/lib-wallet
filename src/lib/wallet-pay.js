@@ -116,6 +116,10 @@ class WalletPay extends EventEmitter {
     })
   }
 
+  getTokensKeys() {
+    return Array.from(this._tokens.keys())
+  }
+
   async _eachToken (fn) {
     if (!this._tokens) return
     for (const tk of this._tokens) {
