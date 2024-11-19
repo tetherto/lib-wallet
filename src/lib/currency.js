@@ -31,7 +31,9 @@ class Currency {
     this.type = type
     this.name = ''
     this.base_name = ''
-    this.decimal_places = ''
+    this.decimal_places = 0
+    // cointype: https://github.com/satoshilabs/slips/blob/master/slip-0044.md. For example "607"
+    this.coinType = ''
   }
 
   _parseConstArg () {
@@ -66,6 +68,26 @@ class Currency {
 
   static toMainUnit (amount, decimal) {
     return BN(amount).shiftedBy(decimal * -1).dp(decimal).toString()
+  }
+
+  isUnitOf (amount) {
+    return true
+  }
+
+  toBaseUnit () {
+    if (this.type === 'base') return this.amount.toString()
+    return new BN(this.amount)
+      .shiftedBy(this.decimal_places)
+      .dp(0, BN.ROUND_FLOOR)
+      .toString()
+  }
+
+  toMainUnit () {
+    if (this.type === 'main') return this.amount.toString()
+    return new BN(this.amount)
+      .shiftedBy(this.decimal_places * -1)
+      .dp(this.decimal_places, BN.ROUND_FLOOR)
+      .toString()
   }
 
   toString () {
@@ -136,10 +158,6 @@ class Currency {
     const thisBase = this.toBaseUnit()
     const amountBase = amount.toBaseUnit()
     return new BN(thisBase).gte(amountBase)
-  }
-
-  isUnitOf () {
-    throw new Error('method not implemented')
   }
 }
 
