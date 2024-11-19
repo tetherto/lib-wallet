@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 const { EventEmitter } = require('events')
+const path = require('path');
+const fs = require('fs');
 
 class WalletPayError extends Error {}
 
@@ -46,6 +48,21 @@ class WalletPay extends EventEmitter {
     if (config.token) {
       this.loadToken(config.token)
     }
+
+    const prepareStackTrace = Error.prepareStackTrace;
+    Error.prepareStackTrace = (_, stack) => stack;
+    const stack = new Error().stack;
+    Error.prepareStackTrace = prepareStackTrace;
+    const mod = require(stack[1].getFileName()+'/../../package.json')
+    this._module_info = {
+      name: mod.name,
+      version:mod.version
+    }
+
+  }
+
+  async _getModuleInfo() {
+    return this._module_info
   }
 
   async initialize (ctx = {}) {

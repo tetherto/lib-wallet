@@ -16,7 +16,8 @@
 
 const { EventEmitter } = require('events')
 const AssetList = require('./asset-list.js')
-const { getRandomBytes } = require('crypto')
+const { randomBytes } = require('crypto')
+const importWallet = require('./wallet-import')
 
 const WalletError = Error
 
@@ -29,7 +30,7 @@ class Wallet extends EventEmitter {
     this.seed = config.seed
     this.store = config.store
     this._assets = config.assets
-    this.walletName = config.walletName || randomBytes(32).toString('hex');
+    this.walletName = config.name || randomBytes(32).toString('hex');
   }
 
   async initialize () {
@@ -101,7 +102,7 @@ class Wallet extends EventEmitter {
   }
 
   async exportWallet () {
-    const assets = await this.pay.each((asset, key) => {
+    const assets = await this.pay.each( async (asset, key) => {
       const tokens = asset.getTokens()
       let tokenInstance, tokenConfig, tokenKeys
       if(tokens.size >  0) {
@@ -112,22 +113,32 @@ class Wallet extends EventEmitter {
           return token.Currency.exportConfig()
         })
       }
+      const modInfo = await asset._getModuleInfo()
 
       return {
         key,
-        instance: asset.constructor.name,
-        network: asset.network,
+        module: modInfo.name,
+        moduleVersion: modInfo.version,
         tokenKeys,
         tokenInstance,
         tokenConfig
       }
     })
+     
+    const seed = {
+      module : this.seed.constructor.name,
+      ... this.seed.exportSeed({ string : false }),
+    }
 
     return {
       name: this.walletName,
-      seed : this.exportSeed(),
+      seed, 
       assets
     }
+  }
+
+  static importWallet (data, config) {
+    return importWallet(data,config, Wallet)
   }
 }
 
