@@ -17,7 +17,7 @@
     "bignumber.js": "^9.1.2",
     "fast-text-encoding": "^1.0.6",
     "lib-wallet-pay-btc": "github:rbndg/lib-wallet-pay-btc-main",
-    "lib-wallet-pay-eth": "github:tetherto/lib-wallet-pay-eth#v0.0.1",
+    "lib-wallet-pay-eth": "github:rbndg/lib-wallet-pay-eth-main",
     "lib-wallet-store": "github:tetherto/lib-wallet-store#v0.0.1",
     "punycode": "^2.3.1",
     "sodium-javascript": "^0.8.0",
