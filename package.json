@@ -46,7 +46,11 @@
     "commander": "^12.1.0",
     "standard": "^17.1.2",
     "webpack": "^5.93.0",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "lib-wallet-pay-btc": "github:tetherto/lib-wallet-pay-btc#v0.0.1",
+    "lib-wallet-pay-eth": "github:tetherto/lib-wallet-pay-eth#v0.0.1",
+    "lib-wallet-store": "github:tetherto/lib-wallet-store#v0.0.1",
+    "wallet-seed-bip39": "github:tetherto/lib-wallet-seed-bip39#v0.0.1"
   },
   "standard" : {
     "ignore": [

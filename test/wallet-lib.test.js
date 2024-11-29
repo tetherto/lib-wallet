@@ -2,7 +2,7 @@
 
 const { test } = require('brittle')
 const fs = require('fs')
-const newWallet = require('../src/wallet-lib.js')
+const newWallet = require('../example/node/wallet-lib.js')
 const { BitcoinPay } = require('lib-wallet-pay-btc')
 const BIP39Seed = require('wallet-seed-bip39')
 const Wallet = require('../src/lib/wallet.js')
