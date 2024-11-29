@@ -38,7 +38,7 @@ async function main (opts) {
     if (!config.store_path) {
       config.store_path = process.argv[3] || './data'
     }
-    createWallet = require('../../src/wallet-lib.js')
+    createWallet = require('./wallet-lib.js')
   }
 
   config.network = config.network || 'regtest'
