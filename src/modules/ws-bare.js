@@ -40,6 +40,10 @@ class BareWs extends EventEmitter {
   end () {
     this._ws.close()
   }
+
+  close () {
+    this._ws.close()
+  }
 }
 
 module.exports = BareWs
