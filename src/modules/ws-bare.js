@@ -38,11 +38,11 @@ class BareWs extends EventEmitter {
   }
 
   end () {
-    this._ws.close()
+    this._ws.end()
   }
 
   close () {
-    this._ws.close()
+    this._ws.end()
   }
 }
 
