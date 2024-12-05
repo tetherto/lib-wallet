@@ -17,10 +17,41 @@
 const { EventEmitter } = require('events')
 const AssetList = require('./asset-list.js')
 const { randomBytes } = require('crypto')
+const defaultWallet = require('../modules/default-wallet.js')
+
+
+async function exportAssetParser(data, fns) {
+  const { libs, tokens, defaultConfig } = defaultWallet
+  let assets = []
+  if(!data || !data.assets || data.assets.length === 0) {
+    
+    for(let key in libs) {
+      const setup = libs[key]
+      const tokns = tokens[key]
+      const base = defaultConfig[key]
+
+      const opts = {...data, tokenConfig : tokns, name : base.name }
+      const mod = await fns[key](opts)
+      assets.push(mod)
+    }
+  } else {
+
+    assets = await Promise.all(data.assets.map((asset, key) => {
+      const setup = libs[asset.module]
+      if(!setup) return null
+      const mod = fns[key](asset, data)
+      return mod
+    }))
+  }
+  return assets
+
+}
+
 
 const WalletError = Error
 
 class Wallet extends EventEmitter {
+
   constructor (config) {
     super()
     if (!config.store) throw new WalletError('Store not provided', 'BAD_ARGS')
@@ -135,6 +166,10 @@ class Wallet extends EventEmitter {
       assets
     }
   }
+
+  static exportAssetParser(walletExport, setupFn) {
+    return exportAssetParser(walletExport, setupFn)
+  } 
 }
 
 
