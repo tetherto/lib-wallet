@@ -25,8 +25,7 @@ async function exportAssetParser(data, fns) {
   let assets = []
   if(!data || !data.assets || data.assets.length === 0) {
     
-    for(let key in libs) {
-      const setup = libs[key]
+    for(let key of libs) {
       const tokns = tokens[key]
       const base = defaultConfig[key]
 
@@ -37,9 +36,7 @@ async function exportAssetParser(data, fns) {
   } else {
 
     assets = await Promise.all(data.assets.map((asset, key) => {
-      const setup = libs[asset.module]
-      if(!setup) return null
-      const mod = fns[key](asset, data)
+      const mod = fns[asset.module](asset, data)
       return mod
     }))
   }
@@ -90,7 +87,7 @@ class Wallet extends EventEmitter {
   }
 
   async destroy () {
-    await this.pay.forEach(asset => asset.destroy())
+    await this.pay.each(asset => asset.destroy())
     this.seed = null
     await this.store.close()
     this.store = null
@@ -146,7 +143,7 @@ class Wallet extends EventEmitter {
       const modInfo = await asset._getModuleInfo()
 
       return {
-        key,
+        name: key,
         module: modInfo.name,
         moduleVersion: modInfo.version,
         tokenKeys,
@@ -154,13 +151,13 @@ class Wallet extends EventEmitter {
         tokenConfig
       }
     })
-     
     const seed = {
       module : this.seed.constructor.name,
       ... this.seed.exportSeed({ string : false }),
     }
 
     return {
+      store_path : this.store.store_path,
       name: this.walletName,
       seed, 
       assets

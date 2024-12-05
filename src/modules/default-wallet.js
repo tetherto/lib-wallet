@@ -1,4 +1,4 @@
-const { TetherCurrency }  = require('lib-wallet')
+const TetherCurrency   = require('../tether-currency')
 const erc20USDT = TetherCurrency.ERC20()
 
 const libs = [
@@ -28,31 +28,6 @@ const defaultConfig = {
   },
 }
 
-async function walletExportAssetParser(data, fns) {
-  let assets = []
-  if(!data.assets || data.assets.length === 0) {
-    
-    for(let key in libs) {
-      const setup = libs[key]
-      const tokns = tokens[key]
-      const base = defaultConfig[key]
-
-      const opts = {...data, tokenConfig : tokns, name : base.name }
-      const mod = await fns[key](opts)
-      assets.push(mod)
-    }
-  } else {
-
-    assets = await Promise.all(data.assets.map((asset) => {
-      const setup = libs[asset.module]
-      if(!setup) return null
-      const mod = fns[key](asset, data)
-      return mod
-    }))
-  }
-  return assets
-
-}
 
 module.exports = {
   defaultConfig,
