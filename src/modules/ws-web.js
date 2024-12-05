@@ -1,4 +1,3 @@
-
 'use strict'
 // Copyright 2024 Tether Operations Limited
 //
