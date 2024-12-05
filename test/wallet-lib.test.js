@@ -9,15 +9,14 @@ const SEED_PHRASE = 'sell clock better horn digital prevent image toward sort fi
 function expectedWallet () {
   return newWallet({
     seed: { mnemonic: SEED_PHRASE },
-    store_path: "./tmp",
-    ...ops,
+    store_path: './tmp',
+    ...ops
   })
 }
 
 function clearWalletLib () {
   fs.rmSync('./tmp', { recursive: true })
 }
-
 
 test('Load wallet with bitcoin asset', async function (t) {
   const wallet = await expectedWallet()
@@ -40,6 +39,6 @@ test('generate bitcoin address that match as expected', async function (t) {
   t.ok(address.address === 'bcrt1q2g8ruxp58fs9g34uj535tret0c03u2jkkzkj0w', 'Address matches')
   t.ok(address.publicKey === '03455b95b0ecea8bfb93ce8310e16d9315b2afe660b23ce69bc78c4966a8fd282f', 'WIF matches ')
   t.ok(address.WIF === 'cNgxAUw3gPjyJXcMe2e8h4qTZQ6YGYbHssrQfVByRoSXWJ6hTMKc', 'WIF matches ')
-  t.ok(address.path ===  "m/84'/1'/0'/0/0", 'path matches')
+  t.ok(address.path === "m/84'/1'/0'/0/0", 'path matches')
   await wallet.destroy()
 })
