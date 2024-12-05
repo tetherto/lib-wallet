@@ -31,7 +31,7 @@ module.exports = {
   Wallet,
   HdWallet,
   TetherCurrency,
-  WalletManager,
   ConnectionManager,
-  PluginBase
+  PluginBase,
+  WalletManager
 }

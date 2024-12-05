@@ -12,6 +12,7 @@ class MultiWalletManager {
     this._walletLoader = walletLoader
     this._subs = new Map()
     if (!this._walletLoader) throw new Error('wallet loader must be passed')
+    
   }
 
   async init () {
@@ -55,6 +56,7 @@ class MultiWalletManager {
       throw new Error('wallet already exists')
     }
     walletList.push(walletExport.name)
+    
     await this._store.put(`wallet-${walletExport.name}`, walletExport)
     await this._updateWalletList(walletList)
   }
@@ -191,6 +193,10 @@ class MultiWalletManager {
       return this._subscribe(req, wallet, 'wallet')
     } else if (req.namespace === 'off') {
       return this._unsubscribe(req, wallet, 'wallet')
+    }
+
+    if(!req.resource) {
+      return wallet[req.namespace](...req.params)
     }
 
     if (!wallet[req.namespace][req.resource]) throw new Error('wallet doesnt have this resource')
