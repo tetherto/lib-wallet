@@ -16,11 +16,14 @@ const Currency = require('./src/lib/currency.js')
 const WalletPay = require('./src/lib/wallet-pay.js')
 const Wallet = require('./src/lib/wallet.js')
 const HdWallet = require('./src/modules/hdwallet.js')
+const WalletManager = require('./src/modules/wallet-manager.js')
 const TetherCurrency = require('./src/tether-currency.js')
+
 module.exports = {
   Currency,
   WalletPay,
   Wallet,
   HdWallet,
-  TetherCurrency
+  TetherCurrency,
+  WalletManager
 }
