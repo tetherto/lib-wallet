@@ -17,7 +17,6 @@
 const { EventEmitter } = require('events')
 const AssetList = require('./asset-list.js')
 const { randomBytes } = require('crypto')
-const importWallet = require('./wallet-import')
 
 const WalletError = Error
 
@@ -136,10 +135,8 @@ class Wallet extends EventEmitter {
       assets
     }
   }
-
-  static importWallet (data, config) {
-    return importWallet(data,config, Wallet)
-  }
 }
+
+
 
 module.exports = Wallet
