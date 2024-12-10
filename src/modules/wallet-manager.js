@@ -10,6 +10,7 @@ class MultiWalletManager {
     this._store = new WalletStoreHyperbee({
       store_path: opts.store_path
     })
+    this._store_path = opts.store_path
     this._wallets = new Map()
     this._walletLoader = walletLoader 
     this._subs = new Map()
@@ -44,6 +45,13 @@ class MultiWalletManager {
     this._wallets = new Map()
 
     return res
+  }
+
+  async resumeWallets() {
+
+    for (const [key, wallet] of this._wallets) { 
+      await wallet.destroy()
+    }
   }
 
   async addWallet(walletExport) {
@@ -85,18 +93,17 @@ class MultiWalletManager {
       return walletList
     }
     const config = await this.getWallet(opts.name)
-    if(!config) throw new Error('cant find serialized data')
+    if(!config) throw new Error('cant find wallet data')
     const wallet = await this._load(config, opts)
     this._wallets.set(opts.name, wallet)
     return [wallet]
   }
 
   async createWallet(opts = {}) {
-
     opts.name = opts.name || 'default'
+    opts.store_path = opts.store_path || this._store_path
     let wallet = this._wallets.get(opts.name )
     if(wallet) throw new Error('wallet already exists with name')
-    
     wallet = await this._walletLoader(opts)
     const walletExport =  await wallet.exportWallet() 
 
@@ -194,6 +201,7 @@ class MultiWalletManager {
     } 
     return wallet[req.namespace][req.resource][req.method](req.params)
   }
+
 }
 
 module.exports = MultiWalletManager
