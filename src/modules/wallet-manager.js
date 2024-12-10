@@ -1,5 +1,8 @@
 const { WalletStoreHyperbee } = require('lib-wallet-store')
 
+
+const MAX_SUB_SIZE = 10000
+
 class MultiWalletManager {
 
   constructor(opts, walletLoader) {
@@ -49,7 +52,7 @@ class MultiWalletManager {
       throw new Error('wallet already exists')
     }
     walletList.push(walletExport.name)
-    const z = await this._store.put(`wallet-${walletExport.name}`, walletExport)
+    await this._store.put(`wallet-${walletExport.name}`, walletExport)
     await this._updateWalletList(walletList)
   }
 
@@ -102,39 +105,61 @@ class MultiWalletManager {
     return  walletExport
   }
 
-  _subscribe(req, wallet) {
+  _subscribe(req, wallet, opts) {
+    const eventName = this._getEventName(req)
+    let eventKey
 
-    const { eventName, eventKey } = this._getEventKey(req)
+    if(this._subs.size === MAX_SUB_SIZE) throw new Error('memory leak: too many subscriptions')
 
     function eventHandler(...args) {
-      req.notify(eventKey,  [...args])
+      try {
+        req.notify(eventKey,  [...args])
+      } catch { }
     }
 
-    wallet[req.namespace][req.resource].on(eventName,eventHandler)
+    if(opts === 'wallet') {
+      eventKey = `${req.name}:${eventName}`
+      wallet.on(eventName, eventHandler)
+    } else if(opts === 'resource') {
+      eventKey = `${req.name}:${req.namespace}-${req.resource}:${eventName}`
+      wallet[req.namespace][req.resource].on(eventName, eventHandler)
+    } else {
+      throw new Error('invalid subscriptions opts')
+    }
+
     this._subs.set(eventKey, eventHandler)
 
     return eventKey
   }
 
-  _getEventKey(req) {
+  _getEventName(req) {
     if(!Array.isArray(req.params)) throw new Error('req params must be an array')
     const eventName = req.params.shift()
     if(!eventName) throw new Error('event name is missing')
-
-    return { 
-      eventKey : `${req.namespace}-${req.resource}-${eventName}`,
-      eventName
-    }
+    return eventName
   }
 
-  _unsubscribe(req, wallet) {
+  _getEventHandler(k){
+    const handler = this._subs.get(k)
+    if(!handler) throw new Error('handler does not exist '+k)
+    return handler
+  }
 
-    const { eventKey, eventName } = this._getEventKey(req)
+  _unsubscribe(req, wallet, opts) {
+    let eventKey
+    const eventName = this._getEventName(req)
 
-    const eventHandler = this._subs.get(eventKey)
-    if(!eventHandler) throw new Error('event is not being listened to')
+    if(opts === 'wallet') {
+      eventKey = `${req.name}:${eventName}`
+      wallet.off(eventName, this._getEventHandler(eventKey))
+    } else if(opts === 'resource') {
+      eventKey = `${req.name}:${req.namespace}-${req.resource}:${eventName}`
+      wallet[req.namespace][req.resource].off(eventName, this._getEventHandler(eventKey))
+    } else {
+      throw new Error('invalid unsub opts')
+    }
+
     this._subs.delete(eventKey)
-    wallet[req.namespace][req.resource].off(eventName,eventHandler)
 
     return eventKey
   }
@@ -147,13 +172,19 @@ class MultiWalletManager {
       this._wallets.set(req.name, wallet)
     }
     if(!wallet[req.namespace]) throw new Error('wallet doesnt have this namespace')
+
+    if(req.namespace === 'on' ) {
+      return this._subscribe(req, wallet, 'wallet')
+    }  else if(req.namespace === 'off') {
+      return this._unsubscribe(req, wallet, 'wallet')
+    }
+
     if(!wallet[req.namespace][req.resource]) throw new Error('wallet doesnt have this resource')
 
     if(req.method === 'on') { 
-      return this._subscribe(req, wallet)
-    }
-    if(req.method === 'off') { 
-      return this._unsubscribe(req, wallet)
+      return this._subscribe(req, wallet, 'resource')
+    } else if(req.method === 'off') { 
+      return this._unsubscribe(req, wallet, 'resource')
     }
 
     if(!wallet[req.namespace][req.resource][req.method]) throw new Error('wallet resource does not have that method name')
