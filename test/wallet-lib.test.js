@@ -1,8 +1,12 @@
 'use strict'
 
-const test = require('brittle')
-const newWallet = require('../src/wallet-lib.js')
+const { test } = require('brittle')
 const fs = require('fs')
+const newWallet = require('../src/wallet-lib.js')
+const { BitcoinPay } = require('lib-wallet-pay-btc')
+const BIP39Seed = require('wallet-seed-bip39')
+const Wallet = require('../src/lib/wallet.js')
+const { WalletStoreHyperbee } = require('lib-wallet-store')
 const ops = require('./test.ops.json')
 
 const SEED_PHRASE = 'sell clock better horn digital prevent image toward sort first voyage detail inner regular improve'
@@ -40,5 +44,36 @@ test('generate bitcoin address that match as expected', async function (t) {
   t.ok(address.publicKey === '03455b95b0ecea8bfb93ce8310e16d9315b2afe660b23ce69bc78c4966a8fd282f', 'WIF matches ')
   t.ok(address.WIF === 'cNgxAUw3gPjyJXcMe2e8h4qTZQ6YGYbHssrQfVByRoSXWJ6hTMKc', 'WIF matches ')
   t.ok(address.path === "m/84'/1'/0'/0/0", 'path matches')
+  await wallet.destroy()
+})
+
+test('addAsset', async function (t) {
+  const seed = await BIP39Seed.generate(SEED_PHRASE)
+  const store = new WalletStoreHyperbee({})
+  const wallet = new Wallet({
+    store,
+    seed,
+    assets: []
+  })
+
+  await wallet.initialize()
+
+  t.ok(wallet.pay.size === 0, 'no asset is loaded')
+
+  const btcPay = new BitcoinPay({
+    asset_name: 'btc',
+    network: 'regtest',
+    electrum: {
+      net: require('../src/modules/ws-net.js'),
+      host: ops.electrum_host,
+      port: ops.electrum_port
+    }
+  })
+
+  await wallet.addAsset(btcPay)
+
+  t.ok(wallet.pay.btc, 'btc is loaded')
+  const addr = await wallet.pay.btc.getNewAddress()
+  t.ok(addr.address, 'got a new btc addr')
   await wallet.destroy()
 })
