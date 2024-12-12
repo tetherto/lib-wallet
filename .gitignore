@@ -1,5 +1,7 @@
 data
 config.json
+jsconfig.json
+package-lock.json
 
 cli/data/
 cli/config.json
