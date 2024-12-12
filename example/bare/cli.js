@@ -24,7 +24,7 @@ globalThis.Buffer = Buffer
 const TextEncoder = require('fast-text-encoding')
 const fs = require('fs')
 const repl = require('repl')
-window = {}
+window = {} // eslint-disable-line no-global-assign
 window.TextEncoder = TextEncoder
 
 /**

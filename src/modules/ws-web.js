@@ -18,7 +18,7 @@ const { EventEmitter } = require('events')
 class WebWs extends EventEmitter {
   constructor (url, cb) {
     super()
-    const socket = new WebSocket(url)
+    const socket = new WebSocket(url) // eslint-disable-line no-undef
 
     socket.addEventListener('message', (event) => {
       this.emit('data', event.data)
