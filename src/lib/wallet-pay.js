@@ -14,8 +14,6 @@
 // limitations under the License.
 //
 const { EventEmitter } = require('events')
-const path = require('path');
-const fs = require('fs');
 
 class WalletPayError extends Error {}
 
@@ -30,6 +28,42 @@ function createBalance (Currency) {
     }
   }
 }
+
+class TxEntry {
+
+  static OUTGOING = 1 
+
+  static INCOMING = 0
+
+  constructor(data) {
+    this.from_address = data.from_address
+    this.to_address = data.to_address
+    this.fee = data.fee
+    this.total_amount = data.total_amount
+    this.amount = data.amount
+    this.fee_rate = data.fee_rate
+    this.txid = data.txid
+    this.direction = data.direction
+    this.currency = data.amount.name
+
+    let isValid = true 
+    if(!this.txid || !this.from_address || !this.to_address || !this.amount) {
+      isValid = false
+    }
+    if(this.direction !== TxEntry.OUTGOING &&  this.direction !== TxEntry.INCOMING) {
+      isValid = false
+    }
+
+    Object.defineProperty(this, 'isValid', {
+      value: isValid,
+      writable: false,
+      enumerable: false,
+      configurable: false
+    })
+  }
+}
+
+
 
 class WalletPay extends EventEmitter {
   constructor (config) {
@@ -98,7 +132,7 @@ class WalletPay extends EventEmitter {
   }
 
   async pauseSync () {
-    throw new WalletPayError('Method not implemented')
+throw new WalletPayError('Method not implemented')
   }
 
   async getTransactions () {
@@ -175,6 +209,8 @@ class WalletPay extends EventEmitter {
   static createBalance (Currency) {
     return createBalance(Currency)
   }
+
+  static TxEntry = TxEntry
 
   getTokens () {
     return this._tokens
