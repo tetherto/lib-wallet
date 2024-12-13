@@ -30,12 +30,11 @@ function createBalance (Currency) {
 }
 
 class TxEntry {
-
-  static OUTGOING = 1 
+  static OUTGOING = 1
 
   static INCOMING = 0
 
-  constructor(data) {
+  constructor (data) {
     this.from_address = data.from_address
     this.to_address = data.to_address
     this.fee = data.fee
@@ -46,11 +45,11 @@ class TxEntry {
     this.direction = data.direction
     this.currency = data.amount.name
 
-    let isValid = true 
-    if(!this.txid || !this.from_address || !this.to_address || !this.amount) {
+    let isValid = true
+    if (!this.txid || !this.from_address || !this.to_address || !this.amount) {
       isValid = false
     }
-    if(this.direction !== TxEntry.OUTGOING &&  this.direction !== TxEntry.INCOMING) {
+    if (this.direction !== TxEntry.OUTGOING && this.direction !== TxEntry.INCOMING) {
       isValid = false
     }
 
@@ -62,8 +61,6 @@ class TxEntry {
     })
   }
 }
-
-
 
 class WalletPay extends EventEmitter {
   constructor (config) {
@@ -83,19 +80,18 @@ class WalletPay extends EventEmitter {
       this.loadToken(config.token)
     }
 
-    const prepareStackTrace = Error.prepareStackTrace;
-    Error.prepareStackTrace = (_, stack) => stack;
-    const stack = new Error().stack;
-    Error.prepareStackTrace = prepareStackTrace;
-    const mod = require(stack[1].getFileName()+'/../../package.json')
+    const prepareStackTrace = Error.prepareStackTrace
+    Error.prepareStackTrace = (_, stack) => stack
+    const stack = new Error().stack
+    Error.prepareStackTrace = prepareStackTrace
+    const mod = require(stack[1].getFileName() + '/../../package.json')
     this._module_info = {
       name: mod.name,
-      version:mod.version
+      version: mod.version
     }
-
   }
 
-  async _getModuleInfo() {
+  async _getModuleInfo () {
     return this._module_info
   }
 
@@ -132,7 +128,7 @@ class WalletPay extends EventEmitter {
   }
 
   async pauseSync () {
-throw new WalletPayError('Method not implemented')
+    throw new WalletPayError('Method not implemented')
   }
 
   async getTransactions () {
@@ -167,7 +163,7 @@ throw new WalletPayError('Method not implemented')
     })
   }
 
-  getTokensKeys() {
+  getTokensKeys () {
     return Array.from(this._tokens.keys())
   }
 

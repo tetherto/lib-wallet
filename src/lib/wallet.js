@@ -19,36 +19,30 @@ const AssetList = require('./asset-list.js')
 const { randomBytes } = require('crypto')
 const defaultWallet = require('../modules/default-wallet.js')
 
-
-async function exportAssetParser(data, fns) {
+async function exportAssetParser (data, fns) {
   const { libs, tokens, defaultConfig } = defaultWallet
   let assets = []
-  if(!data || !data.assets || data.assets.length === 0) {
-    
-    for(let key of libs) {
+  if (!data || !data.assets || data.assets.length === 0) {
+    for (const key of libs) {
       const tokns = tokens[key]
       const base = defaultConfig[key]
 
-      const opts = {...data, tokenConfig : tokns, name : base.name }
+      const opts = { ...data, tokenConfig: tokns, name: base.name }
       const mod = await fns[key](opts)
       assets.push(mod)
     }
   } else {
-
     assets = await Promise.all(data.assets.map((asset, key) => {
       const mod = fns[asset.module](asset, data)
       return mod
     }))
   }
   return assets
-
 }
-
 
 const WalletError = Error
 
 class Wallet extends EventEmitter {
-
   constructor (config) {
     super()
     if (!config.store) throw new WalletError('Store not provided', 'BAD_ARGS')
@@ -57,7 +51,7 @@ class Wallet extends EventEmitter {
     this.seed = config.seed
     this.store = config.store
     this._assets = config.assets
-    this.walletName = config.name || randomBytes(32).toString('hex');
+    this.walletName = config.name || randomBytes(32).toString('hex')
   }
 
   async initialize () {
@@ -129,10 +123,10 @@ class Wallet extends EventEmitter {
   }
 
   async exportWallet () {
-    const assets = await this.pay.each( async (asset, key) => {
+    const assets = await this.pay.each(async (asset, key) => {
       const tokens = asset.getTokens()
       let tokenInstance, tokenConfig, tokenKeys
-      if(tokens.size >  0) {
+      if (tokens.size > 0) {
         tokenKeys = Array.from(tokens.keys())
         tokenInstance = tokens.get(tokenKeys[0]).constructor.name
         tokenConfig = tokenKeys.map((k) => {
@@ -152,23 +146,21 @@ class Wallet extends EventEmitter {
       }
     })
     const seed = {
-      module : this.seed.constructor.name,
-      ... this.seed.exportSeed({ string : false }),
+      module: this.seed.constructor.name,
+      ...this.seed.exportSeed({ string: false })
     }
 
     return {
-      store_path : this.store.store_path,
+      store_path: this.store.store_path,
       name: this.walletName,
-      seed, 
+      seed,
       assets
     }
   }
 
-  static exportAssetParser(walletExport, setupFn) {
+  static exportAssetParser (walletExport, setupFn) {
     return exportAssetParser(walletExport, setupFn)
-  } 
+  }
 }
-
-
 
 module.exports = Wallet

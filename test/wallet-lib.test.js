@@ -1,7 +1,6 @@
 'use strict'
 
 const { test } = require('brittle')
-const fs = require('fs')
 const newWallet = require('../example/node/wallet-lib.js')
 const { BitcoinPay } = require('lib-wallet-pay-btc')
 const BIP39Seed = require('wallet-seed-bip39')
@@ -71,12 +70,10 @@ test('addAsset', async function (t) {
   await wallet.destroy()
 })
 
-
-test('exportWallet',async (t) => {
-
+test('exportWallet', async (t) => {
   const wallet = await expectedWallet()
   const ex = await wallet.exportWallet()
-  const btc =   {
+  const btc = {
     key: 'btc',
     module: 'lib-wallet-pay-btc',
     moduleVersion: '0.0.1',
@@ -89,7 +86,7 @@ test('exportWallet',async (t) => {
     key: 'eth',
     module: 'lib-wallet-pay-eth',
     moduleVersion: '0.0.1',
-    tokenKeys: [ 'USDT' ],
+    tokenKeys: ['USDT'],
     tokenInstance: 'ERC20',
     tokenConfig: [
       {
@@ -108,12 +105,10 @@ test('exportWallet',async (t) => {
   t.alike(ex.assets[0], eth, 'eth export matches')
   t.alike(ex.assets[1], btc, 'btc export matches')
 
-  
   await wallet.destroy()
-
 })
 
-test('importWallet',async (t) => {
+test('importWallet', async (t) => {
   const wallet = await expectedWallet()
   const ex = await wallet.exportWallet()
   const exbtc = await wallet.pay.btc.getNewAddress()
@@ -121,7 +116,7 @@ test('importWallet',async (t) => {
   await wallet.destroy()
 
   ops.data_dir_memory = true
-  const newWallet = await Wallet.importWallet(ex,ops)
+  const newWallet = await Wallet.importWallet(ex, ops)
   const newWalletEx = await newWallet.exportWallet()
 
   const nwbtc = await newWallet.pay.btc.getNewAddress()
@@ -129,5 +124,4 @@ test('importWallet',async (t) => {
   t.alike(exbtc, nwbtc, 'new btc address matches both instances')
 
   await newWallet.destroy()
-
 })
