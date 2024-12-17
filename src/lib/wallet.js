@@ -32,7 +32,7 @@ async function exportAssetParser (data, fns) {
       assets.push(mod)
     }
   } else {
-    assets = await Promise.all(data.assets.map((asset, key) => {
+    assets = await Promise.all(data.assets.map((asset) => {
       const mod = fns[asset.module](asset, data)
       return mod
     }))

@@ -147,6 +147,10 @@ class WalletPay extends EventEmitter {
     throw new WalletPayError('Method not implemented')
   }
 
+  async getFeeEstimate () {
+    throw new WalletPayError('Method not implemented')
+  }
+
   parsePath () {
     throw new WalletPayError('Method not implemented')
   }

@@ -13,10 +13,11 @@
 // limitations under the License.
 'use strict'
 
-const { EventEmitter } = require('events')
 const WS = require('./ws-client')
+const ConnectionManager = require('./connection-status')
+const { ConnectionStatus } = ConnectionManager
 
-class Provider extends EventEmitter {
+class Provider extends ConnectionManager {
   constructor (config) {
     super()
 
@@ -39,11 +40,12 @@ class Provider extends EventEmitter {
     return response.json()
   }
 
-  async init () {
-    await this._startWs()
+  async connect () {
+    return this._startWs()
   }
 
   async stop () {
+    super.destroy()
     this._ws?.close()
   }
 
@@ -56,7 +58,10 @@ class Provider extends EventEmitter {
         reject(new Error('failed to connected to indexer websocket: ' + err.message))
       })
 
-      ws.on('close', () => this.emit('close'))
+      ws.on('close', () => {
+        this.setStatus(ConnectionStatus.STATUS.DISCONNECTED)
+        this.emit('close')
+      })
 
       ws.on('data', data => {
         let res
