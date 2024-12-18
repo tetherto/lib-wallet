@@ -81,7 +81,7 @@ class ConnectionManager extends PluginBase {
       'isConnected',
       'connect',
       'reconnect',
-      'getConnectionString'
+      'getConnectionStatus'
     ])
   }
 
