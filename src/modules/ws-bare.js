@@ -31,7 +31,7 @@ class BareWs extends EventEmitter {
       this.emit('close', data)
     })
 
-    setInterval(() => {
+    setTimeout(() => {
       this.emit('open')
     }, 3000)
     this._ws = client
