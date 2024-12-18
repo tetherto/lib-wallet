@@ -78,12 +78,18 @@ class ConnectionManager extends PluginBase {
     this._currentReconnectDelay = this.initialReconnectDelay
 
     this._exposeMethods([
-      'getStatus',
       'isConnected',
-      'getStatusString',
       'connect',
-      'reconnect'
+      'reconnect',
+      'getConnectionString'
     ])
+  }
+
+  getConnectionStatus() {
+    return {
+      code : this.status,
+      msg: this.getStatusString()
+    }
   }
 
   getStatus () {
