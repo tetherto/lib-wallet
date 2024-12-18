@@ -89,10 +89,25 @@ class WalletPay extends EventEmitter {
       name: mod.name,
       version: mod.version
     }
+
+    this._plugins = new Set()
   }
 
   async _getModuleInfo () {
     return this._module_info
+  }
+
+  _loadPlugin (mod) {
+    if(this._plugins.has(mod)) throw new Error(`plugin ${mod} exists`)
+    this._plugins.add(mod)
+    this[mod].on('*', (ev, ...args) => {
+      this.emit(`${mod}:${ev}`, ...args)
+    })
+    if(!this[mod].expose) throw new Error('plugin has no expose array')
+    this[mod].expose.forEach((fnName)=> {
+      if(this[fnName]) throw new Error(`module: ${mod} cant expose ${fnName}. Already exists`)
+      this[fnName] = this[mod][fnName].bind(this[mod])
+    })
   }
 
   async initialize (ctx = {}) {
@@ -112,6 +127,12 @@ class WalletPay extends EventEmitter {
     this.provider = new this.provider.constructor(config)
     await this.provider.connect()
     return this.provider
+  }
+
+  async callExt (mod, method, ...args) {
+    if (!this[mod]) throw new Error(`Module ${mod} is not defined`)
+    if (!this[mod][method]) throw new Error(`Module ${mod} has no method ${method}`)
+    return this[mod][method](...args)
   }
 
   async destroy () {
