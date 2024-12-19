@@ -13,7 +13,7 @@
   "author": "rbndg",
   "license": "APACHE-2.0",
   "dependencies": {
-    "bare-ws": "github:holepunchto/bare-ws",
+    "bare-ws": "github:rbndg/bare-ws",
     "bignumber.js": "^9.1.2",
     "fast-text-encoding": "^1.0.6",
     "punycode": "^2.3.1",
