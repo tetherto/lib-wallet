@@ -61,7 +61,7 @@ class BareWs extends EventEmitter {
     if (this._pongTimeoutId) return // Previous ping hasn't been answered yet
 
     this._pongTimeoutId = setTimeout(() => {
-      this._ws.close()
+      this._ws.destroy()
     }, this._pongTimeout)
 
     this._ws.ping()
