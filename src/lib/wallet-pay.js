@@ -29,6 +29,39 @@ function createBalance (Currency) {
   }
 }
 
+class TxEntry {
+  static OUTGOING = 1
+
+  static INCOMING = 0
+
+  constructor (data) {
+    this.from_address = data.from_address
+    this.to_address = data.to_address
+    this.fee = data.fee
+    this.total_amount = data.total_amount
+    this.amount = data.amount
+    this.fee_rate = data.fee_rate
+    this.txid = data.txid
+    this.direction = data.direction
+    this.currency = data.amount.name
+
+    let isValid = true
+    if (!this.txid || !this.from_address || !this.to_address || !this.amount) {
+      isValid = false
+    }
+    if (this.direction !== TxEntry.OUTGOING && this.direction !== TxEntry.INCOMING) {
+      isValid = false
+    }
+
+    Object.defineProperty(this, 'isValid', {
+      value: isValid,
+      writable: false,
+      enumerable: false,
+      configurable: false
+    })
+  }
+}
+
 class WalletPay extends EventEmitter {
   constructor (config) {
     super()
@@ -46,6 +79,35 @@ class WalletPay extends EventEmitter {
     if (config.token) {
       this.loadToken(config.token)
     }
+
+    const prepareStackTrace = Error.prepareStackTrace
+    Error.prepareStackTrace = (_, stack) => stack
+    const stack = new Error().stack
+    Error.prepareStackTrace = prepareStackTrace
+    const mod = require(stack[1].getFileName() + '/../../package.json')
+    this._module_info = {
+      name: mod.name,
+      version: mod.version
+    }
+
+    this._plugins = new Set()
+  }
+
+  async _getModuleInfo () {
+    return this._module_info
+  }
+
+  _loadPlugin (mod) {
+    if(this._plugins.has(mod)) throw new Error(`plugin ${mod} exists`)
+    this._plugins.add(mod)
+    this[mod].on('*', (ev, ...args) => {
+      this.emit(`${mod}:${ev}`, ...args)
+    })
+    if(!this[mod].expose) throw new Error('plugin has no expose array')
+    this[mod].expose.forEach((fnName)=> {
+      if(this[fnName]) throw new Error(`module: ${mod} cant expose ${fnName}. Already exists`)
+      this[fnName] = this[mod][fnName].bind(this[mod])
+    })
   }
 
   async initialize (ctx = {}) {
@@ -65,6 +127,12 @@ class WalletPay extends EventEmitter {
     this.provider = new this.provider.constructor(config)
     await this.provider.connect()
     return this.provider
+  }
+
+  async callExt (mod, method, ...args) {
+    if (!this[mod]) throw new Error(`Module ${mod} is not defined`)
+    if (!this[mod][method]) throw new Error(`Module ${mod} has no method ${method}`)
+    return this[mod][method](...args)
   }
 
   async destroy () {
@@ -100,6 +168,10 @@ class WalletPay extends EventEmitter {
     throw new WalletPayError('Method not implemented')
   }
 
+  async getFeeEstimate () {
+    throw new WalletPayError('Method not implemented')
+  }
+
   parsePath () {
     throw new WalletPayError('Method not implemented')
   }
@@ -114,6 +186,10 @@ class WalletPay extends EventEmitter {
       if (!t.name) throw new Error('token class missing name')
       this._tokens.set(t.name, t)
     })
+  }
+
+  getTokensKeys () {
+    return Array.from(this._tokens.keys())
   }
 
   async _eachToken (fn) {
@@ -154,6 +230,8 @@ class WalletPay extends EventEmitter {
   static createBalance (Currency) {
     return createBalance(Currency)
   }
+
+  static TxEntry = TxEntry
 
   getTokens () {
     return this._tokens

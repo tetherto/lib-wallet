@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-const Wallet = require('./lib/wallet.js')
+const Wallet = require('../../src/lib/wallet.js')
 
 const { WalletStoreHyperbee } = require('lib-wallet-store')
 const BIP39Seed = require('wallet-seed-bip39')
@@ -41,7 +41,7 @@ async function main (config = {}) {
     network: config.network || 'regtest',
     electrum: {
       // optional TCP to Websocket adaptor. This will allow you to connect to a websocket electrum node
-      net: require('./modules/ws-net.js'),
+      net: require('../../src/modules/ws-net.js'),
       host: config.electrum_host,
       port: config.electrum_port
     }

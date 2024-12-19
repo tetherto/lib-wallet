@@ -16,6 +16,30 @@
 
 const { EventEmitter } = require('events')
 const AssetList = require('./asset-list.js')
+const { randomBytes } = require('crypto')
+const defaultWallet = require('../modules/default-wallet.js')
+
+async function exportAssetParser (data, fns) {
+  const { libs, tokens, defaultConfig } = defaultWallet
+  let assets = []
+  if (!data || !data.assets || data.assets.length === 0) {
+    for (const key of libs) {
+      const tokns = tokens[key]
+      const base = defaultConfig[key]
+
+      const opts = { ...data, tokenConfig: tokns, name: base.name }
+      const mod = await fns[key](opts)
+      assets.push(mod)
+    }
+  } else {
+    assets = await Promise.all(data.assets.map((asset) => {
+      const mod = fns[asset.module](asset, data)
+      return mod
+    }))
+  }
+  return assets
+}
+
 const WalletError = Error
 
 class Wallet extends EventEmitter {
@@ -27,6 +51,7 @@ class Wallet extends EventEmitter {
     this.seed = config.seed
     this.store = config.store
     this._assets = config.assets
+    this.walletName = config.name || randomBytes(32).toString('hex')
   }
 
   async initialize () {
@@ -56,7 +81,7 @@ class Wallet extends EventEmitter {
   }
 
   async destroy () {
-    await this.pay.forEach(asset => asset.destroy())
+    await this.pay.each(asset => asset.destroy())
     this.seed = null
     await this.store.close()
     this.store = null
@@ -95,6 +120,46 @@ class Wallet extends EventEmitter {
 
   exportSeed () {
     return this.seed.exportSeed()
+  }
+
+  async exportWallet () {
+    const assets = await this.pay.each(async (asset, key) => {
+      const tokens = asset.getTokens()
+      let tokenInstance, tokenConfig, tokenKeys
+      if (tokens.size > 0) {
+        tokenKeys = Array.from(tokens.keys())
+        tokenInstance = tokens.get(tokenKeys[0]).constructor.name
+        tokenConfig = tokenKeys.map((k) => {
+          const token = tokens.get(k)
+          return token.Currency.exportConfig()
+        })
+      }
+      const modInfo = await asset._getModuleInfo()
+
+      return {
+        name: key,
+        module: modInfo.name,
+        moduleVersion: modInfo.version,
+        tokenKeys,
+        tokenInstance,
+        tokenConfig
+      }
+    })
+    const seed = {
+      module: this.seed.constructor.name,
+      ...this.seed.exportSeed({ string: false })
+    }
+
+    return {
+      store_path: this.store.store_path,
+      name: this.walletName,
+      seed,
+      assets
+    }
+  }
+
+  static exportAssetParser (walletExport, setupFn) {
+    return exportAssetParser(walletExport, setupFn)
   }
 }
 
