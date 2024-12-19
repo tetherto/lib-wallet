@@ -170,8 +170,7 @@ class MultiWalletManager {
     let wallet = this._wallets.get(req.name)
     if (!wallet) {
       wallet = await this._setupWallet({ name: req.name })
-      if (!wallet || wallet.length === 0) throw new Error(`Wallet with name ${req.name} not found `)
-      wallet = wallet.pop()
+      if (!wallet) throw new Error(`Wallet with name ${req.name} not found `)
       this._wallets.set(req.name, wallet)
     }
     if (!wallet[req.namespace]) throw new Error('wallet doesnt have this namespace')
