@@ -20,7 +20,7 @@ class BareWs extends EventEmitter {
   constructor (url) {
     super()
     this._pingInterval = 5000
-    this._pongTimeout = 1000
+    this._pongTimeout = 10000
     this._intervalId = null
     this._pongTimeoutId = null
 
