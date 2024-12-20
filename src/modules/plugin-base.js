@@ -16,11 +16,11 @@
 const { EventEmitter } = require('events')
 
 class PluginBase extends EventEmitter {
-  constructor () {
+  constructor (opts = {}) {
     super()
     const emit = this.emit
     this.emit = function (type, ...args) {
-      emit.apply(this, ['*', type, ...args])
+      emit.apply(this, [`plugin:${opts.name}:${type}`, type, ...args])
       return emit.apply(this, [type, ...args])
     }
 

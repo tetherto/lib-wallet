@@ -66,11 +66,12 @@ class ConnectionManager extends PluginBase {
   static ConnectionStatus = ConnectionStatus
 
   constructor (opts = {}) {
-    super()
+    opts.name = opts.name || 'connection'
+    super(opts)
     this.status = ConnectionStatus.STATUS.DISCONNECTED
 
-    this.maxReconnectAttempts = opts.maxReconnectAttempts || 10
-    this.initialReconnectDelay = opts.initialReconnectDelay || 1000
+    this.maxReconnectAttempts = opts.maxReconnectAttempts || 1000
+    this.initialReconnectDelay = opts.initialReconnectDelay || 2000
     this.maxReconnectDelay = opts.maxReconnectDelay || 30000
 
     this._reconnectAttempts = 0
