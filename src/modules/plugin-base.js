@@ -20,7 +20,7 @@ class PluginBase extends EventEmitter {
     super()
     const emit = this.emit
     this.emit = function (type, ...args) {
-      emit.apply(this, ['*', `plugin:${opts.name}:${type}`, type, ...args])
+      emit.apply(this, ['*', `plugin:${opts.name}:${type}`, ...args])
       return emit.apply(this, [type, ...args])
     }
 
