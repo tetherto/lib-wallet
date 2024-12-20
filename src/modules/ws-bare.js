@@ -36,10 +36,10 @@ class BareWs extends EventEmitter {
       this.emit('close', data)
     })
 
-    client.once('open', (err) => {
+    client.on('open', (err) => {
       if (err) return this.emit('error')
       this.emit('open')
-      this._checkAlive()
+      this._startHeartbeat()
     })
 
     client.on('pong', () => {
@@ -60,30 +60,25 @@ class BareWs extends EventEmitter {
 
   close () {
     this._ws.end()
+    this._stopHeartBeat()
   }
 
   _checkAlive () {
     if (this._pongTimeoutId) return // Previous ping hasn't been answered yet
 
     this._pongTimeoutId = setTimeout(() => {
-      this._ws.destroy()
+      this.close()
     }, this._pongTimeout)
 
     this._ws.ping()
   }
 
   _startHeartbeat () {
-    // Clear any existing intervals
     this._stopHeartbeat()
-
-    // Setup pong listener
-
-
-    // Start checking
     this._intervalId = setInterval(() => this._checkAlive(), this._pingInterval)
   }
 
-  stopHeartbeat () {
+  _stopHeartbeat () {
     if (this._intervalId) {
       clearInterval(this._intervalId)
       this._intervalId = null
