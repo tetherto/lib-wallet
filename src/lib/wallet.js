@@ -70,15 +70,6 @@ class Wallet extends EventEmitter {
     } catch (err) {
       console.log(err)
     }
-
-    asset.on('new-tx', this._handleAssetEvent(asset.assetName, 'new-tx'))
-    asset.on('new-block', this._handleAssetEvent(asset.assetName, 'new-block'))
-  }
-
-  _handleAssetEvent (assetName, evName) {
-    return async (...args) => {
-      this.emit(evName, assetName, ...args)
-    }
   }
 
   async destroy () {

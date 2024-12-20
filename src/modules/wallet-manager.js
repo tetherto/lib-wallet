@@ -72,8 +72,8 @@ class MultiWalletManager {
     return wallet
   }
 
-  async loadWallet (opts) {
-    const res = await this._setupWallet(opts)
+  async loadWallet (opts, ...param) {
+    const res = await this._setupWallet(...param)
     return res.map((w) => w.walletName)
   }
 
@@ -82,15 +82,13 @@ class MultiWalletManager {
     if (opts.all) {
       await Promise.all(walletList.map(async (walletName) => {
         const config = await this.getWallet(walletName)
-        const wallet = await this._load(config)
-        this._wallets.set(walletName, wallet)
+        await this._load(config)
       }))
       return walletList
     }
     const config = await this.getWallet(opts.name)
     if (!config) throw new Error('cant find wallet data')
     const wallet = await this._load(config, opts)
-    this._wallets.set(opts.name, wallet)
     return [wallet]
   }
 
@@ -101,9 +99,11 @@ class MultiWalletManager {
     if (wallet) throw new Error('wallet already exists with name')
     wallet = await this._walletLoader(opts)
     const walletExport = await wallet.exportWallet()
-
     this._wallets.set(wallet.walletName, wallet)
     await this.addWallet(walletExport)
+    if(opts.req) {
+      this._subBootstrapEvents(wallet, opts.req)
+    }
     return walletExport
   }
 
@@ -160,10 +160,22 @@ class MultiWalletManager {
     } else {
       throw new Error('invalid unsub opts')
     }
-
     this._subs.delete(eventKey)
-
     return eventKey
+  }
+
+   _subBootstrapEvents(wallet, req){
+
+    const payEvents = this._walletLoader.bootstrapEvents.pay
+
+    wallet.pay.each((asset, k) => {
+      payEvents.forEach((ev) => {
+        const eventKey  = `${wallet.walletName}:pay-${k}:${ev}`
+        asset.on(ev, (args)=> {
+          req.notify(eventKey,[...args])
+        })
+      })
+    })
   }
 
   async callWallet (req) {
@@ -172,7 +184,7 @@ class MultiWalletManager {
       wallet = await this._setupWallet({ name: req.name })
       if (!wallet || wallet.length === 0) throw new Error(`Wallet with name ${req.name} not found `)
       wallet = wallet.pop()
-      this._wallets.set(req.name, wallet)
+      this._subBootstrapEvents(wallet, req)
     }
     if (!wallet[req.namespace]) throw new Error('wallet doesnt have this namespace')
 
