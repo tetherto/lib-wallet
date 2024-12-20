@@ -101,7 +101,7 @@ class WalletPay extends EventEmitter {
     if(this._plugins.has(mod)) throw new Error(`plugin ${mod} exists`)
     this._plugins.add(mod)
     this[mod].on('*', (ev, ...args) => {
-      this.emit(`${mod}:${ev}`, ...args)
+      this.emit(ev, ...args)
     })
     if(!this[mod].expose) throw new Error('plugin has no expose array')
     this[mod].expose.forEach((fnName)=> {
