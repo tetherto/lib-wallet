@@ -33,11 +33,12 @@ async function exportAssetParser (data, fns) {
     }
   } else {
     assets = await Promise.all(data.assets.map((asset) => {
+      if(!fns[asset.module]) return null
       const mod = fns[asset.module](asset, data)
       return mod
     }))
   }
-  return assets
+  return assets.filter(Boolean)
 }
 
 const WalletError = Error

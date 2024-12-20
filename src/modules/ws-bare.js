@@ -42,6 +42,11 @@ class BareWs extends EventEmitter {
       this._checkAlive()
     })
 
+    client.on('pong', () => {
+      clearTimeout(this._pongTimeoutId)
+      this._pongTimeoutId = null
+    })
+
     this._ws = client
   }
 
@@ -72,10 +77,7 @@ class BareWs extends EventEmitter {
     this._stopHeartbeat()
 
     // Setup pong listener
-    this._ws.on('pong', () => {
-      clearTimeout(this._pongTimeoutId)
-      this._pongTimeoutId = null
-    })
+
 
     // Start checking
     this._intervalId = setInterval(() => this._checkAlive(), this._pingInterval)
