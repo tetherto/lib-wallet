@@ -19,10 +19,10 @@ const { Socket } = require('bare-ws')
 class BareWs extends EventEmitter {
   constructor (url) {
     super()
-    this._pingInterval = 25000;
-    this._pongTimeout = 32000;
-    this._intervalId = null;
-    this._pongTimeoutId = null;
+    this._pingInterval = 5000
+    this._pongTimeout = 1000
+    this._intervalId = null
+    this._pongTimeoutId = null
 
     const client = new Socket(url)
 
