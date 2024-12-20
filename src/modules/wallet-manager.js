@@ -101,7 +101,7 @@ class MultiWalletManager {
     const walletExport = await wallet.exportWallet()
     this._wallets.set(wallet.walletName, wallet)
     await this.addWallet(walletExport)
-    if(opts.req) {
+    if (opts.req) {
       this._subBootstrapEvents(wallet, opts.req)
     }
     return walletExport
@@ -164,15 +164,14 @@ class MultiWalletManager {
     return eventKey
   }
 
-   _subBootstrapEvents(wallet, req){
-
+  _subBootstrapEvents (wallet, req) {
     const payEvents = this._walletLoader.bootstrapEvents.pay
 
     wallet.pay.each((asset, k) => {
       payEvents.forEach((ev) => {
-        const eventKey  = `${wallet.walletName}:pay-${k}:${ev}`
-        asset.on(ev, (args)=> {
-          req.notify(eventKey,[...args])
+        const eventKey = `${wallet.walletName}:pay-${k}:${ev}`
+        asset.on(ev, (...args) => {
+          req.notify(eventKey, [...args])
         })
       })
     })

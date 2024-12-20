@@ -86,9 +86,9 @@ class ConnectionManager extends PluginBase {
     ])
   }
 
-  getConnectionStatus() {
+  getConnectionStatus () {
     return {
-      code : this.status,
+      code: this.status,
       msg: this.getStatusString()
     }
   }
