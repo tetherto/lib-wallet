@@ -55,12 +55,12 @@ class BareWs extends EventEmitter {
   }
 
   end () {
-    this._ws.end()
+    this.close()
   }
 
   close () {
     this._ws.end()
-    this._stopHeartBeat()
+    this._stopHeartbeat()
   }
 
   _checkAlive () {
@@ -86,9 +86,6 @@ class BareWs extends EventEmitter {
     if (this._pongTimeoutId) {
       clearTimeout(this._pongTimeoutId)
       this._pongTimeoutId = null
-    }
-    if (this._ws) {
-      this._ws.off('pong')
     }
   }
 }
