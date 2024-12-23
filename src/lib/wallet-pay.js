@@ -34,22 +34,37 @@ class TxEntry {
 
   static INCOMING = 0
 
+  static INTERNAL = 2
+
   constructor (data) {
     this.from_address = data.from_address
-    this.to_address = data.to_address
+
+    if (!Array.isArray(data.from_address)) {
+      this.to_address = [data.from_address]
+    } else {
+      this.from_address = data.from_address
+    }
+
+    if (!Array.isArray(data.to_address)) {
+      this.to_address = [data.to_address]
+    } else {
+      this.to_address = data.to_address
+    }
+
     this.fee = data.fee
-    this.total_amount = data.total_amount
     this.amount = data.amount
     this.fee_rate = data.fee_rate
     this.txid = data.txid
     this.direction = data.direction
-    this.currency = data.amount.name
+    this.height = data.height
+    this.currency = data.currency || data?.amount?.name || 'unk'
 
     let isValid = true
-    if (!this.txid || !this.from_address || !this.to_address || !this.amount) {
+    if (!this.txid || this.from_address.length === 0 || this.to_address.length === 0 || !this.amount) {
       isValid = false
     }
-    if (this.direction !== TxEntry.OUTGOING && this.direction !== TxEntry.INCOMING) {
+    if (this.direction !== TxEntry.OUTGOING && this.direction !== TxEntry.INCOMING && this.direction !== TxEntry.INTERNAL) {
+      console.trace(this.direction)
       isValid = false
     }
 
