@@ -90,12 +90,11 @@ class Wallet extends EventEmitter {
   async _sync (opts, asset) {
     await asset.syncTransactions(opts)
     this.emit('asset-synced', asset.assetName)
-    if (opts.all) {
-      const tokens = asset.getTokens()
-      for (const [token] of tokens) {
-        await asset.syncTransactions({ ...opts, token })
-        this.emit('asset-synced', asset.assetName, token)
-      }
+    const tokens = asset.getTokens()
+
+    for (const [token] of tokens) {
+      await asset.syncTransactions({ ...opts, token })
+      this.emit('asset-synced', asset.assetName, token)
     }
   }
 
