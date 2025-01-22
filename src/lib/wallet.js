@@ -114,7 +114,7 @@ class Wallet extends EventEmitter {
   }
 
   async exportWallet () {
-    const assets = await this.pay.each(async (asset, key) => {
+    const exportAsset  = await this.pay.each(async (asset, key) => {
       const tokens = asset.getTokens()
       let tokenInstance, tokenConfig, tokenKeys
       if (tokens.size > 0) {
@@ -136,16 +136,28 @@ class Wallet extends EventEmitter {
         tokenConfig
       }
     })
+    
     const seed = {
       module: this.seed.constructor.name,
       ...this.seed.exportSeed({ string: false })
     }
 
+    const assets = []
+    const exportErrors = []
+    const assetKeys = this.pay.keys
+
+    exportAsset.forEach((exp) => {
+      if(exp.value) return assets.push(exp.value)
+      if(exp.reason) return exportErrors.push(exp.reason)
+    })
+
     return {
       store_path: this.store.store_path,
       name: this.walletName,
       seed,
-      assets
+      assets,
+      assetKeys,
+      exportErrors
     }
   }
 

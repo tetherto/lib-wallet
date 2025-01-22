@@ -118,6 +118,7 @@ class WalletPay extends EventEmitter {
     this[mod].on('*', (ev, ...args) => {
       this.emit(ev, ...args)
     })
+
     if (!this[mod].expose) throw new Error('plugin has no expose array')
     this[mod].expose.forEach((fnName) => {
       if (this[fnName]) throw new Error(`module: ${mod} cant expose ${fnName}. Already exists`)
