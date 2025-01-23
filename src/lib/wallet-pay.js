@@ -109,7 +109,7 @@ class WalletPay extends EventEmitter {
     Error.prepareStackTrace = (_, stack) => stack
     const stack = new Error().stack
     Error.prepareStackTrace = prepareStackTrace
-    const mod = require(stack[1].getFileName() + '/../../package.json')
+    const mod = require(stack[depth].getFileName() + '/../../package.json')
     this._module_info = {
       name: mod.name,
       version: mod.version
