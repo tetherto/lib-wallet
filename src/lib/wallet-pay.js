@@ -99,7 +99,7 @@ class WalletPay extends EventEmitter {
   }
 
   _setModuleInfo() {
-    let depth = 0;
+    let depth = 1;
     let proto = Object.getPrototypeOf(this);
     while (proto && proto.constructor !== WalletPay) {
       depth++;
