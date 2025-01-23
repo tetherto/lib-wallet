@@ -64,7 +64,6 @@ class TxEntry {
       isValid = false
     }
     if (this.direction !== TxEntry.OUTGOING && this.direction !== TxEntry.INCOMING && this.direction !== TxEntry.INTERNAL) {
-      console.trace(this.direction)
       isValid = false
     }
 
@@ -95,6 +94,17 @@ class WalletPay extends EventEmitter {
       this.loadToken(config.token)
     }
 
+    this._plugins = new Set()
+    this._setModuleInfo()
+  }
+
+  _setModuleInfo() {
+    let depth = 0;
+    let proto = Object.getPrototypeOf(this);
+    while (proto && proto.constructor !== WalletPay) {
+      depth++;
+      proto = Object.getPrototypeOf(proto);
+    }
     const prepareStackTrace = Error.prepareStackTrace
     Error.prepareStackTrace = (_, stack) => stack
     const stack = new Error().stack
@@ -104,8 +114,6 @@ class WalletPay extends EventEmitter {
       name: mod.name,
       version: mod.version
     }
-
-    this._plugins = new Set()
   }
 
   async _getModuleInfo () {
