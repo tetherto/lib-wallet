@@ -41,6 +41,7 @@ class SyncState {
     return this.gap > this.gapEnd
   }
 
+
   setPath (path) {
     this.path = path
   }
@@ -319,6 +320,24 @@ class HdWallet extends EventEmitter {
     return {
       addrType,
       fn
+    }
+  }
+
+  async eachExtAccount(fn) {
+    const accounts = await this.getAccountIndex()
+    const syncState = await this.getSyncState(EXTERNAL_ADDR)
+
+    for (const account of accounts) {
+      const [purpose, accountIndex] = account
+      if (!syncState.path) {
+        let path = this.INIT_EXTERNAL_PATH 
+        path = HdWallet.setPurpose(path, purpose)
+        path = HdWallet.setAccount(path, accountIndex)
+        syncState.setPath(path)
+      }
+        console.log(syncState)
+      const res = await this._processPath(syncState, fn)
+      if (res === this._signal.stop) return
     }
   }
 

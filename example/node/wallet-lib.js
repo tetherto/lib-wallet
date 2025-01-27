@@ -18,7 +18,9 @@ const Wallet = require('../../src/lib/wallet.js')
 const { WalletStoreHyperbee } = require('lib-wallet-store')
 const BIP39Seed = require('wallet-seed-bip39')
 const { BitcoinPay } = require('lib-wallet-pay-btc')
-const { EthPay, Provider, erc20CurrencyFac, Erc20 } = require('lib-wallet-pay-eth')
+const { EthPay } = require('lib-wallet-pay-eth')
+const { Provider, ERC20 } = require("lib-wallet-pay-evm")
+const { Erc20CurrencyFactory } = require("lib-wallet-util-evm")
 
 /**
 * this function is an example of how to setup various components of the wallet lib.
@@ -53,13 +55,13 @@ async function main (config = {}) {
     indexer: config.web3_indexer,
     indexerWs: config.web3_indexer_ws
   })
-  await provider.init()
+  await provider.connect()
 
   // Create a USDT ERC20 currency instance
-  const USDT = erc20CurrencyFac({
+  const USDT = Erc20CurrencyFactory({
     name: 'USDT',
     base_name: 'USDT',
-    contractAddress: config.token_contract || '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    contract_address: config.token_contract || '0xdac17f958d2ee523a2206206994597c13d831ec7',
     decimal_places: 6
   })
 
@@ -69,7 +71,7 @@ async function main (config = {}) {
     store,
     network: config.network || 'regtest',
     token: [
-      new Erc20({
+      new ERC20({
         currency: USDT
       })
     ]
@@ -79,7 +81,7 @@ async function main (config = {}) {
   const wallet = new Wallet({
     store,
     seed,
-    assets: [btcPay, ethPay]
+    assets: [ethPay]
   })
 
   await wallet.initialize()
