@@ -41,7 +41,6 @@ class SyncState {
     return this.gap > this.gapEnd
   }
 
-
   setPath (path) {
     this.path = path
   }
@@ -99,6 +98,10 @@ class HdWallet extends EventEmitter {
 
   _checkCoinArg (arg) {
     if (!arg || arg[arg.length - 1] !== "'") throw new Error("coinType and purpose are required and must be like: 84' ")
+  }
+
+  setGapLimit(x) {
+    this._gapLimit = x
   }
 
   async getSyncState (addrType) {
@@ -323,22 +326,23 @@ class HdWallet extends EventEmitter {
     }
   }
 
-  async eachExtAccount(fn) {
-    const accounts = await this.getAccountIndex()
-    const syncState = await this.getSyncState(EXTERNAL_ADDR)
-
+  async _processAccount (accounts, syncState, initPath, fn) {
     for (const account of accounts) {
       const [purpose, accountIndex] = account
       if (!syncState.path) {
-        let path = this.INIT_EXTERNAL_PATH 
+        let path = initPath
         path = HdWallet.setPurpose(path, purpose)
         path = HdWallet.setAccount(path, accountIndex)
         syncState.setPath(path)
       }
-        console.log(syncState)
-      const res = await this._processPath(syncState, fn)
-      if (res === this._signal.stop) return
+     return this._processPath(syncState, fn)
     }
+  }
+
+  async eachExtAccount (fn) {
+    const accounts = await this.getAccountIndex()
+    const syncState = await this.getSyncState(EXTERNAL_ADDR)
+    return this._processAccount(accounts, syncState, this.INIT_EXTERNAL_PATH, fn)
   }
 
   async eachAccount (arg1, arg2) {
@@ -346,17 +350,9 @@ class HdWallet extends EventEmitter {
     const accounts = await this.getAccountIndex()
     const syncState = await this.getSyncState(addrType)
 
-    for (const account of accounts) {
-      const [purpose, accountIndex] = account
-      if (!syncState.path) {
-        let path = addrType === EXTERNAL_ADDR ? this.INIT_EXTERNAL_PATH : this.INIT_INTERNAL_PATH
-        path = HdWallet.setPurpose(path, purpose)
-        path = HdWallet.setAccount(path, accountIndex)
-        syncState.setPath(path)
-      }
-      const res = await this._processPath(syncState, fn)
-      if (res === this._signal.stop) return
-    }
+    const initPath = addrType === EXTERNAL_ADDR ? this.INIT_EXTERNAL_PATH : this.INIT_INTERNAL_PATH
+    const res = await this._processAccount(accounts, syncState, initPath, fn)
+    if(res === this._signal.stop) return
 
     if (addrType === EXTERNAL_ADDR) {
       await this._updateSyncAddrType(INTERNAL_ADDR)

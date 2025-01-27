@@ -98,12 +98,12 @@ class WalletPay extends EventEmitter {
     this._setModuleInfo()
   }
 
-  _setModuleInfo() {
-    let depth = 1;
-    let proto = Object.getPrototypeOf(this);
+  _setModuleInfo () {
+    let depth = 1
+    let proto = Object.getPrototypeOf(this)
     while (proto && proto.constructor !== WalletPay) {
-      depth++;
-      proto = Object.getPrototypeOf(proto);
+      depth++
+      proto = Object.getPrototypeOf(proto)
     }
     const prepareStackTrace = Error.prepareStackTrace
     Error.prepareStackTrace = (_, stack) => stack
