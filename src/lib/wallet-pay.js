@@ -37,10 +37,8 @@ class TxEntry {
   static INTERNAL = 2
 
   constructor (data) {
-    this.from_address = data.from_address
-
     if (!Array.isArray(data.from_address)) {
-      this.to_address = [data.from_address]
+      this.from_address = [data.from_address]
     } else {
       this.from_address = data.from_address
     }
