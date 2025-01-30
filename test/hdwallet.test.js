@@ -121,7 +121,7 @@ test('extExtAccount', async function (t) {
   })
   await hd.init({})
   let count = 0
-   let expect = Array.from({ length: 10 }, (_, idx) => {
+  const expect = Array.from({ length: 10 }, (_, idx) => {
     return "m/84'/0'/0'/0/" + idx
   })
   await hd.eachExtAccount(async function (syncState, signal) {
@@ -132,9 +132,7 @@ test('extExtAccount', async function (t) {
     if (count === expect.length) return signal.stop
     return signal.hasTx
   })
-
 })
-
 
 test('eachAccount: gap limit', async function (t) {
   const store = new WalletStoreHyperbee()

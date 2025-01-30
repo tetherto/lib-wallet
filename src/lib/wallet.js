@@ -67,6 +67,9 @@ class Wallet extends EventEmitter {
   async _initAsset (asset) {
     try {
       await asset.initialize({ wallet: this })
+      asset.on('new-tx', (tx) => {
+        this.emit('new-tx', asset.assetName, tx)
+      })
     } catch (err) {
       console.log(err)
     }
@@ -88,9 +91,9 @@ class Wallet extends EventEmitter {
   }
 
   async _sync (opts, asset) {
+    const tokens = asset.getTokens()
     await asset.syncTransactions(opts)
     this.emit('asset-synced', asset.assetName)
-    const tokens = asset.getTokens()
 
     for (const [token] of tokens) {
       await asset.syncTransactions({ ...opts, token })
@@ -114,7 +117,7 @@ class Wallet extends EventEmitter {
   }
 
   async exportWallet () {
-    const exportAsset  = await this.pay.each(async (asset, key) => {
+    const exportAsset = await this.pay.each(async (asset, key) => {
       const tokens = asset.getTokens()
       let tokenInstance, tokenConfig, tokenKeys
       if (tokens.size > 0) {
@@ -136,7 +139,7 @@ class Wallet extends EventEmitter {
         tokenConfig
       }
     })
-    
+
     const seed = {
       module: this.seed.constructor.name,
       ...this.seed.exportSeed({ string: false })
@@ -145,10 +148,9 @@ class Wallet extends EventEmitter {
     const assets = []
     const exportErrors = []
     const assetKeys = this.pay.keys
-
     exportAsset.forEach((exp) => {
-      if(exp.value) return assets.push(exp.value)
-      if(exp.reason) return exportErrors.push(exp.reason)
+      if (exp.value) return assets.push(exp.value)
+      if (exp.reason) return exportErrors.push(exp.reason)
     })
 
     return {

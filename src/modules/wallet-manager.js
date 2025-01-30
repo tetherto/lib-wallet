@@ -5,14 +5,13 @@ const MAX_SUB_SIZE = 10000
 class MultiWalletManager {
   constructor (opts, walletLoader) {
     this._store = new WalletStoreHyperbee({
-      store_path: opts.store_path
+      store_path: opts.store_path + '/wallet-manager'
     })
     this._store_path = opts.store_path
     this._wallets = new Map()
     this._walletLoader = walletLoader
     this._subs = new Map()
     if (!this._walletLoader) throw new Error('wallet loader must be passed')
-    
   }
 
   async init () {
@@ -56,7 +55,7 @@ class MultiWalletManager {
       throw new Error('wallet already exists')
     }
     walletList.push(walletExport.name)
-    
+
     await this._store.put(`wallet-${walletExport.name}`, walletExport)
     await this._updateWalletList(walletList)
   }
@@ -195,7 +194,7 @@ class MultiWalletManager {
       return this._unsubscribe(req, wallet, 'wallet')
     }
 
-    if(!req.resource) {
+    if (!req.resource) {
       return wallet[req.namespace](...req.params)
     }
 

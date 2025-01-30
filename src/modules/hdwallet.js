@@ -100,7 +100,7 @@ class HdWallet extends EventEmitter {
     if (!arg || arg[arg.length - 1] !== "'") throw new Error("coinType and purpose are required and must be like: 84' ")
   }
 
-  setGapLimit(x) {
+  setGapLimit (x) {
     this._gapLimit = x
   }
 
@@ -335,7 +335,7 @@ class HdWallet extends EventEmitter {
         path = HdWallet.setAccount(path, accountIndex)
         syncState.setPath(path)
       }
-     return this._processPath(syncState, fn)
+      return this._processPath(syncState, fn)
     }
   }
 
@@ -352,7 +352,7 @@ class HdWallet extends EventEmitter {
 
     const initPath = addrType === EXTERNAL_ADDR ? this.INIT_EXTERNAL_PATH : this.INIT_INTERNAL_PATH
     const res = await this._processAccount(accounts, syncState, initPath, fn)
-    if(res === this._signal.stop) return
+    if (res === this._signal.stop) return
 
     if (addrType === EXTERNAL_ADDR) {
       await this._updateSyncAddrType(INTERNAL_ADDR)
