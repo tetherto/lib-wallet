@@ -18,6 +18,7 @@ const Wallet = require('./src/lib/wallet.js')
 const WalletPayGeneric = require('./src/lib/wallet-pay-generic.js')
 const Provider = require('./src/modules/provider.js')
 const HdWallet = require('./src/modules/hdwallet.js')
+const StateDb = require('./src/modules/state.js')
 const TetherCurrency = require('./src/tether-currency.js')
 module.exports = {
   Currency,
@@ -26,5 +27,6 @@ module.exports = {
   WalletPayGeneric,
   Wallet,
   HdWallet,
+  StateDb,
   TetherCurrency
 }

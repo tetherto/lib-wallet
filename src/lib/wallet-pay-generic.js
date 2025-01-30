@@ -152,7 +152,12 @@ class WalletPayGeneric extends WalletPay {
   }
 
   _listenToEvents () {
-    this.provider.on('subscribeAccount', async (res) => {
+    this.provider.on('subscribeAccount', async (err, res) => {
+      if (err) {
+        console.trace(err)
+        return
+      }
+
       if (res.token) {
         this._eachToken(async (token) => {
           if (token.tokenContract.toLowerCase() !== res?.token.toLowerCase()) return
@@ -212,7 +217,7 @@ class WalletPayGeneric extends WalletPay {
   /**
    * Get balance of entire wallet or 1 address
    * @param {object} opts options
-   * @param {string} opts.token token name, for getting balance of token
+   * @param {string=} opts.token token name, for getting balance of token
    * @param {string} addr Pass address to get balance of specific address
    * @returns {Promise<Balance>}
    */
@@ -246,7 +251,12 @@ class WalletPayGeneric extends WalletPay {
     return state
   }
 
-  async _syncAddressPath (addr, signal) {
+  /**
+   * @param {string} addr
+   * @param {any} signal
+   * @param {StateDb=} stateInstance
+   */
+  async _syncAddressPath (addr, signal, stateInstance = undefined) {
     const provider = this.provider
     const path = addr.path
     const txs = await provider.getTransactionsByAddress({ address: addr.address })
@@ -257,19 +267,27 @@ class WalletPayGeneric extends WalletPay {
 
     this._hdWallet.addAddress(addr)
     for (const t of txs) {
-      await this._storeTx(t)
+      await this._storeTx(t, stateInstance)
     }
-    await this._setAddrBalance(addr.address)
+    await this._setAddrBalance(addr.address, stateInstance)
+
+    const txIndex = await stateInstance.getTxIndex()
+    console.log('txIndex', txIndex)
+
     return txs.length > 0 ? signal.hasTx : signal.noTx
   }
 
-  async _setAddrBalance (addr) {
-    const balances = await this.state.getBalances()
+  async _setAddrBalance (addr, stateInstance = undefined) {
+    const state = stateInstance ?? this.state
+
+    const balances = await state.getBalances()
     const bal = await this.getBalance({}, addr)
     await balances.setBal(addr, bal.confirmed)
   }
 
-  async _storeTx (tx) {
+  async _storeTx (tx, stateInstance = undefined) {
+    const state = stateInstance ?? this.state
+
     const data = {
       from: tx.from,
       to: tx.to,
@@ -277,14 +295,14 @@ class WalletPayGeneric extends WalletPay {
       height: tx.blockNumber,
       txid: tx.hash
     }
-    await this.state.storeTxHistory(data)
+    await state.storeTxHistory(data)
     return data
   }
 
   /**
    * Crawl HD wallet path, collect transactions and calculate balance of all addresses.
    * @param {object} opts
-   * @param {bool=} opts.reset Reset all state and resync
+   * @param {boolean=} opts.reset Reset all state and resync
    * @param {string=} opts.token Token name
    * @fires sync-path when a hd path is synced
    * @fires sync-end when entire HD path has been traversed, or when syncing is halted
@@ -309,7 +327,7 @@ class WalletPayGeneric extends WalletPay {
         return this.callToken('syncPath', opts.token, [addr, signal])
       }
 
-      const res = await this._syncAddressPath(addr, signal)
+      const res = await this._syncAddressPath(addr, signal, state)
       this.emit('synced-path', syncState._addrType, syncState.path, res === signal.hasTx, syncState.toJSON())
       return res
     })
