@@ -203,7 +203,7 @@ class ConnectionManager extends PluginBase {
   async retryable(operation, config = {}) {
     const defaultRetryConfig = {
       maxRetries: 3,
-      baseDelay: 1000,
+      baseDelay: 3000,
       backoffFactor: 2
     }
 
@@ -219,7 +219,7 @@ class ConnectionManager extends PluginBase {
         }
 
         const delay = baseDelay * Math.pow(backoffFactor, maxRetries - retries)
-        console.warn(`Retry attempt ${maxRetries - retries + 1}. Retrying in ${delay}ms`)
+        console.log(`Retry attempt ${maxRetries - retries + 1}. Retrying in ${delay}ms`)
 
         await new Promise(resolve => setTimeout(resolve, delay))
         return attempt(retries - 1)
