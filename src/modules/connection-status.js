@@ -199,6 +199,37 @@ class ConnectionManager extends PluginBase {
     this._reconnectAttempts = 0
     this._currentReconnectDelay = this.initialReconnectDelay
   }
+
+  async retryable(operation, config = {}) {
+    const defaultRetryConfig = {
+      maxRetries: 3,
+      baseDelay: 1000,
+      backoffFactor: 2
+    }
+
+    const retryConfig = { ...defaultRetryConfig, ...config }
+    const { maxRetries, baseDelay, backoffFactor } = retryConfig
+
+    async function attempt(retries) {
+      try {
+        return await operation()
+      } catch (error) {
+        if (retries === 0) {
+          throw new Error(`Failed after ${maxRetries} retries: ${error.message}`)
+        }
+
+        const delay = baseDelay * Math.pow(backoffFactor, maxRetries - retries)
+        console.warn(`Retry attempt ${maxRetries - retries + 1}. Retrying in ${delay}ms`)
+
+        await new Promise(resolve => setTimeout(resolve, delay))
+        return attempt(retries - 1)
+      }
+    }
+
+    return attempt(maxRetries)
+  }
+
+
 }
 
 module.exports = ConnectionManager
