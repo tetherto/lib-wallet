@@ -129,7 +129,7 @@ class Wallet extends EventEmitter {
         })
       }
       const modInfo = await asset._getModuleInfo()
-      const endpoints = asset.getEndpoint()
+      const endpoints = asset.getProviderEndpoint()
 
       return {
         name: key,
