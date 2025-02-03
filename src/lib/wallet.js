@@ -135,6 +135,7 @@ class Wallet extends EventEmitter {
         name: key,
         module: modInfo.name,
         moduleVersion: modInfo.version,
+        network: asset.network,
         endpoints,
         tokenKeys,
         tokenInstance,
