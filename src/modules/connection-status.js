@@ -90,7 +90,7 @@ class ConnectionManager extends PluginBase {
     this._endpoints = data
   }
 
-  _getEndpoint() {
+  getEndpoint() {
     return this._endpoints
   }
 
