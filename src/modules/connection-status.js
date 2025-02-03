@@ -86,6 +86,14 @@ class ConnectionManager extends PluginBase {
     ])
   }
 
+  _setEndpoint(data) {
+    this._endpoints = data
+  }
+
+  _getEndpoint() {
+    return this._endpoints
+  }
+
   getConnectionStatus () {
     return {
       code: this.status,
@@ -215,7 +223,9 @@ class ConnectionManager extends PluginBase {
         return await operation()
       } catch (error) {
         if (retries === 0) {
-          throw new Error(`Failed after ${maxRetries} retries: ${error.message}`)
+          const retryError = new Error(`Failed after ${maxRetries} retries: ${error.message}`)
+          retryError.cause = error
+          throw retryError
         }
 
         const delay = baseDelay * Math.pow(backoffFactor, maxRetries - retries)
