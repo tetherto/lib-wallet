@@ -19,22 +19,19 @@ const { WalletStoreHyperbee } = require('lib-wallet-store')
 const BIP39Seed = require('wallet-seed-bip39')
 const { BitcoinPay } = require('lib-wallet-pay-btc')
 const { EthPay } = require('lib-wallet-pay-eth')
-const { Provider, ERC20 } = require("lib-wallet-pay-evm")
-const { Erc20CurrencyFactory } = require("lib-wallet-util-evm")
+const { Provider, ERC20 } = require('lib-wallet-pay-evm')
+const { Erc20CurrencyFactory } = require('lib-wallet-util-evm')
 
 /**
 * this function is an example of how to setup various components of the wallet lib.
 */
 async function main (config = {}) {
-  // Generate seed for our wallet, if non exists.
   const seed = await BIP39Seed.generate(config?.seed?.mnemonic)
 
-  // Setup wallet store class. This is our data store abstraction
   const store = new WalletStoreHyperbee({
     store_path: config.store_path
   })
 
-  // Setup Bitcoin asset
 
   const btcPay = new BitcoinPay({
     // Asset name space
@@ -49,7 +46,6 @@ async function main (config = {}) {
     }
   })
 
-  // Ethereum data provider setup
   const provider = new Provider({
     web3: config.web3,
     indexer: config.web3_indexer,
@@ -57,7 +53,6 @@ async function main (config = {}) {
   })
   await provider.connect()
 
-  // Create a USDT ERC20 currency instance
   const USDT = Erc20CurrencyFactory({
     name: 'USDT',
     base_name: 'USDT',
@@ -77,16 +72,14 @@ async function main (config = {}) {
     ]
   })
 
-  // Setup Wallet facade class
   const wallet = new Wallet({
     store,
     seed,
-    assets: [ethPay]
+    assets: [btcPay, ethPay]
   })
 
   await wallet.initialize()
 
-  // Your application can now use this wallet instance within in your app.
   return wallet
 }
 

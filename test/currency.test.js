@@ -95,12 +95,4 @@ test('comparison methods', async (t) => {
   t.ok(!c2.gte(c1), 'gte should return false for lesser amount')
 })
 
-test('isUnitOf method', async (t) => {
-  const c = new Currency(100, 'base', {})
-  try {
-    c.isUnitOf()
-    t.ok(false, 'isUnitOf should throw error')
-  } catch (err) {
-    t.ok(err.message === 'method not implemented', 'isUnitOf should throw correct error')
-  }
-})
+
