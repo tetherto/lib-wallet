@@ -93,7 +93,7 @@ class MultiWalletManager {
     return [wallet]
   }
 
-  async createWallet (opts = {}) {
+  async createWallet (req, opts = {}) {
     opts.name = opts.name || 'default'
     opts.store_path = opts.store_path || this._store_path
     let wallet = this._wallets.get(opts.name)
