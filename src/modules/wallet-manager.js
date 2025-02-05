@@ -49,7 +49,7 @@ class MultiWalletManager {
     }
   }
 
-  async addWallet (walletExport) {
+  async addWallet (req, walletExport) {
     const walletList = await this.getWalletList()
     if (walletList.includes(walletExport.name)) {
       throw new Error('wallet already exists')
@@ -60,7 +60,7 @@ class MultiWalletManager {
     await this._updateWalletList(walletList)
   }
 
-  async removeWallet (name) {
+  async removeWallet (req, name) {
     const walletList = await this.getWalletList()
     delete walletList[name]
     await this._updateWalletList(walletList)
@@ -87,7 +87,7 @@ class MultiWalletManager {
       }))
       return walletList
     }
-    const config = await this.getWallet(opts.name)
+    const config = await this.getWallet({}, opts.name)
     if (!config) throw new Error('cant find wallet data')
     const wallet = await this._load(config, opts)
     return [wallet]
@@ -101,7 +101,7 @@ class MultiWalletManager {
     wallet = await this._walletLoader(opts)
     const walletExport = await wallet.exportWallet()
     this._wallets.set(wallet.walletName, wallet)
-    await this.addWallet(walletExport)
+    await this.addWallet(req, walletExport)
     if (opts.req) {
       this._subBootstrapEvents(wallet, opts.req)
     }

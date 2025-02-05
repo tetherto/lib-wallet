@@ -83,7 +83,8 @@ class ConnectionManager extends PluginBase {
       'connect',
       'reconnect',
       'getConnectionStatus',
-      'getProviderEndpoint'
+      'getProviderEndpoint',
+      'updateEndpoint'
     ])
   }
 
@@ -93,6 +94,11 @@ class ConnectionManager extends PluginBase {
 
   getProviderEndpoint() {
     return this._endpoints
+  }
+
+  updateEndpoint(data){
+    this._setEndpoint(data)
+    this.reconnect()
   }
 
   getConnectionStatus () {
