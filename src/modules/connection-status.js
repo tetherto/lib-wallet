@@ -98,7 +98,7 @@ class ConnectionManager extends PluginBase {
 
   updateEndpoint(data){
     this._setEndpoint(data)
-    this.reconnect()
+    return this.reconnect()
   }
 
   getConnectionStatus () {
