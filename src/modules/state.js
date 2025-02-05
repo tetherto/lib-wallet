@@ -122,7 +122,10 @@ class StateDb {
   async storeTxHistory (data) {
     const i = Number(data.height)
     const blockTx = await this.getTxHistory(i)
-    const exists = blockTx.filter(tx => tx.txid === data.txid).length > 0
+    const exists = blockTx.filter(tx => {
+      // Since there can be multiple txs with the same hash, we compare hash, to and from
+      return tx.txid === data.txid && tx.to === data.to && tx.from === data.from
+    }).length > 0
     if (exists) return
     blockTx.push(data)
     await this.updateTxIndex(i)
