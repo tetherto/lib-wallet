@@ -11,6 +11,8 @@ Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 
 Checkout the website [here](https://wallet.tether.io/)
 
+### ⚠️ Development Process 
+The main branch is under active development and **not safe** for use and may result in loss of funds. Please only use _tagged releases_ for production use as they have been tested more thoroughly.
 
 
 
