@@ -21,7 +21,7 @@ const tokens = {
 const defaultConfig = {
   'lib-wallet-pay-eth': {
     name: 'eth',
-    network : 'mainnet'
+    network: 'mainnet'
   },
   'lib-wallet-pay-btc': {
     name: 'btc',

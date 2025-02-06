@@ -34,6 +34,6 @@ module.exports = {
   TetherCurrency,
   ConnectionManager,
   PluginBase,
-  WalletManager
+  WalletManager,
   StateDb
 }

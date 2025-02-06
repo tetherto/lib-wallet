@@ -94,5 +94,3 @@ test('comparison methods', async (t) => {
   t.ok(c1.gte(c2), 'gte should return true for greater amount')
   t.ok(!c2.gte(c1), 'gte should return false for lesser amount')
 })
-
-

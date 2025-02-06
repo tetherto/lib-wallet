@@ -227,12 +227,10 @@ test('eachAccount: gap limit reset', async function (t) {
   })
   await hd.init({})
 
-  let x = 0
   hd.on('reset-sync', () => {
     t.ok(true, 'sync reset')
   })
   await hd.eachAccount(async (state, signal) => {
-    x++
     return signal.noTx
   })
 

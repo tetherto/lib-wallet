@@ -67,7 +67,7 @@ test('addAsset', async function (t) {
   t.ok(wallet.pay.btc, 'btc is loaded')
   const addr = await wallet.pay.btc.getNewAddress()
   t.ok(addr.address, 'got a new btc addr')
-  wallet.destroy().catch((err)=>{
+  wallet.destroy().catch((err) => {
     throw err
   })
 })
@@ -79,10 +79,8 @@ test('exportWallet', async (t) => {
   t.ok(ex.seed.mnemonic === SEED_PHRASE, 'seed matches')
   t.ok(ex.assets[0].name === 'eth', 'eth export matches')
   t.ok(ex.assets[1].name === 'btc', 'btc export matches')
-  wallet.destroy().catch((err)=>{
+  wallet.destroy().catch((err) => {
     throw err
   })
   t.end()
 })
-
-

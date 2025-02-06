@@ -71,7 +71,6 @@ class Currency {
   }
 
   isUnitOf (_) {
-
     return true
   }
 

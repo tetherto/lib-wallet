@@ -335,7 +335,8 @@ class HdWallet extends EventEmitter {
         path = HdWallet.setAccount(path, accountIndex)
         syncState.setPath(path)
       }
-      return this._processPath(syncState, fn)
+      const signal = await this._processPath(syncState, fn)
+      if (signal === this._signal.stop) return signal
     }
   }
 

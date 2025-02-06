@@ -88,15 +88,15 @@ class ConnectionManager extends PluginBase {
     ])
   }
 
-  _setEndpoint(data) {
+  _setEndpoint (data) {
     this._endpoints = data
   }
 
-  getProviderEndpoint() {
+  getProviderEndpoint () {
     return this._endpoints
   }
 
-  updateEndpoint(data){
+  updateEndpoint (data) {
     this._setEndpoint(data)
     return this.reconnect()
   }
@@ -215,7 +215,7 @@ class ConnectionManager extends PluginBase {
     this._currentReconnectDelay = this.initialReconnectDelay
   }
 
-  async retryable(operation, config = {}) {
+  async retryable (operation, config = {}) {
     const defaultRetryConfig = {
       maxRetries: 3,
       baseDelay: 3000,
@@ -225,7 +225,7 @@ class ConnectionManager extends PluginBase {
     const retryConfig = { ...defaultRetryConfig, ...config }
     const { maxRetries, baseDelay, backoffFactor } = retryConfig
 
-    async function attempt(retries) {
+    async function attempt (retries) {
       try {
         return await operation()
       } catch (error) {
@@ -245,8 +245,6 @@ class ConnectionManager extends PluginBase {
 
     return attempt(maxRetries)
   }
-
-
 }
 
 module.exports = ConnectionManager
