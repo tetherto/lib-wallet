@@ -28,19 +28,10 @@ The main branch is under active development and **not safe** for use and may res
 
 ## 🔗 Blockchains
 
-### [Bitcoin](https://github.com/tetherto/lib-wallet-pay-btc)
-- Electrum block data source. Support for TCP and Websocket on browser. 
-- P2WPKH / BIP84 address support.
-
-### [USDT on Ethereum](https://github.com/tetherto/lib-wallet-pay-eth)
-- Web3 and [Indexer](https://github.com/tetherto/lib-wallet-indexer) block data source.
-- ERC20 support.
-- BIP44 address generation.
-
-| Blockchain   	|  Supported  | Token Protocol
-|---	        |---	      |--
-|  Bitcoin 	    |  ✅ 	      | -
-|  Ethereum  	|  ✅ 	      | ERC20
+| Blockchain   	|  Supported  | Token Protocol |
+|---	        |---	      |--              
+|  [Bitcoin](https://github.com/tetherto/lib-wallet-pay-btc) |  ✅ 	      | -
+|  [Ethereum](https://github.com/tetherto/lib-wallet-pay-eth) |  ✅ 	      | ERC20
 |  Tron 	    |  ⌛ 	      | TRC20
 |  TON 	        |   ⌛	      | Jettons
 |  Avalanche 	|   ⌛	      | C-Chain
