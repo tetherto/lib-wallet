@@ -21,6 +21,7 @@ const HdWallet = require('./src/modules/hdwallet.js')
 const WalletManager = require('./src/modules/wallet-manager.js')
 const ConnectionManager = require('./src/modules/connection-status')
 const PluginBase = require('./src/modules/plugin-base')
+const StateDb = require('./src/modules/state.js')
 const TetherCurrency = require('./src/tether-currency.js')
 
 module.exports = {
@@ -34,4 +35,5 @@ module.exports = {
   ConnectionManager,
   PluginBase,
   WalletManager
+  StateDb
 }

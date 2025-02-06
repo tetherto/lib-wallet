@@ -73,7 +73,7 @@ class Provider extends ConnectionManager {
         }
         const evname = res?.event
         if (!evname) return console.log('event has no name ignored ', res)
-        this.emit(evname, res.data)
+        this.emit(evname, res.error, res.data)
       })
       ws.on('open', resolve)
     })
