@@ -58,8 +58,6 @@ The library  comes with all the components needed to build a wallet. You can als
 - [Blockchain indexer](https://github.com/tetherto/lib-wallet-indexer): Remote blockchain data provider
 - [Test tools](https://github.com/tetherto/wallet-lib-test-tools): Tools for development and testing 
 - [Documentation](https://wallet.tether.io/): Guides, documentation.
-- [Bitcoin](https://github.com/tetherto/lib-wallet-pay-btc): Bitcoin asset integration.
-- [Ethereum/ERC20](https://github.com/tetherto/lib-wallet-pay-eth): Ethereum and ERC20 integration.
 
 
 ### **</>**  Example Usage
