@@ -26,7 +26,7 @@ class MultiWalletManager {
     return this._store.put('wallets', data)
   }
 
-  getWallet (name) {
+  getWallet (opts, name) {
     return this._store.get(`wallet-${name}`)
   }
 
@@ -67,7 +67,7 @@ class MultiWalletManager {
   }
 
   async _load (config) {
-    const walletExp = await this.getWallet(config.name)
+    const walletExp = await this.getWallet({}, config.name)
     const wallet = await this._walletLoader(walletExp)
     this._wallets.set(config.name, wallet)
     return wallet
@@ -82,7 +82,7 @@ class MultiWalletManager {
     const walletList = await this.getWalletList()
     if (opts.all) {
       await Promise.all(walletList.map(async (walletName) => {
-        const config = await this.getWallet(walletName)
+        const config = await this.getWallet({}. walletName)
         await this._load(config)
       }))
       return walletList
