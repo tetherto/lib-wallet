@@ -2,6 +2,7 @@ const { WalletStoreHyperbee } = require('lib-wallet-store')
 
 const MAX_SUB_SIZE = 10000
 
+
 class MultiWalletManager {
   constructor (opts, walletLoader) {
     this._store = new WalletStoreHyperbee({
@@ -49,6 +50,12 @@ class MultiWalletManager {
     }
   }
 
+  _runWalletLoader(walletExp) {
+    return this._walletLoader(walletExp, {
+      store_path : this._store_path
+    })
+  }
+
   async addWallet (req, walletExport) {
     const walletList = await this.getWalletList()
     if (walletList.includes(walletExport.name)) {
@@ -68,7 +75,7 @@ class MultiWalletManager {
 
   async _load (config) {
     const walletExp = await this.getWallet({}, config.name)
-    const wallet = await this._walletLoader(walletExp)
+    const wallet = await this._runWalletLoader(walletExp)
     this._wallets.set(config.name, wallet)
     return wallet
   }
@@ -89,7 +96,7 @@ class MultiWalletManager {
     }
     const config = await this.getWallet({}, opts.name)
     if (!config) throw new Error('cant find wallet data')
-    const wallet = await this._load(config, opts)
+    const wallet = await this._load(config)
     return [wallet]
   }
 
@@ -98,7 +105,7 @@ class MultiWalletManager {
     opts.store_path = opts.store_path || this._store_path
     let wallet = this._wallets.get(opts.name)
     if (wallet) throw new Error('wallet already exists with name')
-    wallet = await this._walletLoader(opts)
+    wallet = await this._runWalletLoader(opts)
     const walletExport = await wallet.exportWallet()
     this._wallets.set(wallet.walletName, wallet)
     await this.addWallet(req, walletExport)
