@@ -76,6 +76,7 @@ class HdWallet extends EventEmitter {
     this.coinType = config.coinType
     this._checkCoinArg(this.coinType)
     this._checkCoinArg(this.purpose)
+    this._isSyncing = false
 
     this.INIT_EXTERNAL_PATH = `m/${this.purpose}/${this.coinType}/0'/0/0`
     this.INIT_INTERNAL_PATH = `m/${this.purpose}/${this.coinType}/0'/1/0`
@@ -143,6 +144,7 @@ class HdWallet extends EventEmitter {
 
   async addAddress (addr) {
     const addrIndex = await this.getAllAddress()
+    if(addrIndex.includes(addr.address)) return 
     addrIndex.push(addr.address)
     await this.store.put('address_index', addrIndex)
     return this.store.put('addr:' + addr.address, addr)
@@ -342,25 +344,47 @@ class HdWallet extends EventEmitter {
     }
   }
 
+  async _runSync(fnSync) {
+    if(this._isSyncing){
+      throw new Error('hd wallet is already syncing')
+    }
+    this._isSyncing = true
+    let res
+    try {
+      res = await fnSync()
+    } catch(e) {
+      console.log('hd sync failed', e)
+    }
+
+    this._isSyncing = false
+    return res
+  }
+
   async eachExtAccount (fn) {
-    const accounts = await this.getAccountIndex()
-    const syncState = await this.getSyncState(EXTERNAL_ADDR)
-    return this._processAccount(accounts, syncState, this.INIT_EXTERNAL_PATH, fn)
+    return this._runSync( async  () => {
+      const accounts = await this.getAccountIndex()
+      const syncState = await this.getSyncState(EXTERNAL_ADDR)
+      await this._processAccount(accounts, syncState, this.INIT_EXTERNAL_PATH, fn)
+    })
   }
 
   async eachAccount (arg1, arg2) {
-    const { addrType, fn } = await this._prepareEachAcct(arg1, arg2)
-    const accounts = await this.getAccountIndex()
-    const syncState = await this.getSyncState(addrType)
 
-    const initPath = addrType === EXTERNAL_ADDR ? this.INIT_EXTERNAL_PATH : this.INIT_INTERNAL_PATH
-    const res = await this._processAccount(accounts, syncState, initPath, fn)
-    if (res === this._signal.stop) return
+    return this._runSync( async  () => {
+      const { addrType, fn } = await this._prepareEachAcct(arg1, arg2)
+      const accounts = await this.getAccountIndex()
+      const syncState = await this.getSyncState(addrType)
 
-    if (addrType === EXTERNAL_ADDR) {
-      await this._updateSyncAddrType(INTERNAL_ADDR)
-      return this.eachAccount(INTERNAL_ADDR, fn)
-    }
+      const initPath = addrType === EXTERNAL_ADDR ? this.INIT_EXTERNAL_PATH : this.INIT_INTERNAL_PATH
+      const res = await this._processAccount(accounts, syncState, initPath, fn)
+      if (res === this._signal.stop) return 
+
+      if (addrType === EXTERNAL_ADDR) {
+        await this._updateSyncAddrType(INTERNAL_ADDR)
+        this._isSyncing = false
+        await  this.eachAccount(INTERNAL_ADDR, fn)
+      }
+    })
   }
 }
 
