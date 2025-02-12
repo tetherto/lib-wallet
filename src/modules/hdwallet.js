@@ -220,6 +220,7 @@ class HdWallet extends EventEmitter {
   }
 
   async getNewAddress (inext, newAddrFn) {
+    if(this._isSyncing) throw new Error('failed to generate address: wallet is syncing')
     let path
     if (inext === 'in') {
       path = await this.getLastIntPath()
