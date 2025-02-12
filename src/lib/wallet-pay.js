@@ -66,7 +66,9 @@ class TxEntry {
       isValid = false
     }
 
-    this.to_address_meta = data.to_address_meta
+    if(data.to_address_meta) {
+      this.to_address_meta = data.to_address_meta
+    }
 
     Object.defineProperty(this, 'isValid', {
       value: isValid,
@@ -74,6 +76,18 @@ class TxEntry {
       enumerable: false,
       configurable: false
     })
+  }
+
+  isOutgoing() {
+    return this.direction === TxEntry.OUTGOING
+  }
+
+  isIncoming() {
+    return this.direction === TxEntry.INCOMING
+  }
+
+  isInternal() {
+    return this.direction === TxEntry.INTERNAL
   }
 }
 
