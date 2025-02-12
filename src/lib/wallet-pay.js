@@ -61,9 +61,12 @@ class TxEntry {
     if (!this.txid || this.from_address.length === 0 || this.to_address.length === 0 || !this.amount) {
       isValid = false
     }
+
     if (this.direction !== TxEntry.OUTGOING && this.direction !== TxEntry.INCOMING && this.direction !== TxEntry.INTERNAL) {
       isValid = false
     }
+
+    this.to_address_meta = data.to_address_meta
 
     Object.defineProperty(this, 'isValid', {
       value: isValid,
