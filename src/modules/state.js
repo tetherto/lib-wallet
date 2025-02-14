@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 'use strict'
+
+/**
+* @desc Class to manage balances across many addresses
+**/
 class Balances {
   constructor (val, state) {
     this.state = state
@@ -71,6 +75,9 @@ class Balances {
   }
 }
 
+/**
+** @desc Helper functions common accross many assets
+**/
 class StateDb {
   constructor (config) {
     this.store = config.store

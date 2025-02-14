@@ -2,7 +2,11 @@ const { WalletStoreHyperbee } = require('lib-wallet-store')
 
 const MAX_SUB_SIZE = 10000
 
-
+/**
+ * @classdesc Manages multiple wallets, providing a unified interface for creating, loading, saving, and interacting with them.
+ * Handles wallet persistence using a db store, manages event subscriptions across wallets, and provides a centralized method for calling methods on individual wallets.
+ * Supports loading all wallets or specific wallets by name.
+ */
 class MultiWalletManager {
   constructor (opts, walletLoader) {
     this._store = new WalletStoreHyperbee({
@@ -27,7 +31,7 @@ class MultiWalletManager {
     return this._store.put('wallets', data)
   }
 
-  getWallet (opts, name) {
+  getWallet (_, name) {
     return this._store.get(`wallet-${name}`)
   }
 
@@ -50,9 +54,9 @@ class MultiWalletManager {
     }
   }
 
-  _runWalletLoader(walletExp) {
+  _runWalletLoader (walletExp) {
     return this._walletLoader(walletExp, {
-      store_path : this._store_path
+      store_path: this._store_path
     })
   }
 
@@ -89,7 +93,7 @@ class MultiWalletManager {
     const walletList = await this.getWalletList()
     if (opts.all) {
       await Promise.all(walletList.map(async (walletName) => {
-        const config = await this.getWallet({}. walletName)
+        const config = await this.getWallet({}.walletName)
         await this._load(config)
       }))
       return walletList

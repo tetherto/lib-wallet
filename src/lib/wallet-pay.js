@@ -66,7 +66,7 @@ class TxEntry {
       isValid = false
     }
 
-    if(data.to_address_meta) {
+    if (data.to_address_meta) {
       this.to_address_meta = data.to_address_meta
     }
 
@@ -78,15 +78,15 @@ class TxEntry {
     })
   }
 
-  isOutgoing() {
+  isOutgoing () {
     return this.direction === TxEntry.OUTGOING
   }
 
-  isIncoming() {
+  isIncoming () {
     return this.direction === TxEntry.INCOMING
   }
 
-  isInternal() {
+  isInternal () {
     return this.direction === TxEntry.INTERNAL
   }
 }

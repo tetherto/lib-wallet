@@ -15,6 +15,11 @@
 
 const { EventEmitter } = require('events')
 
+/**
+ * @desc Base class for WalletPay plugins.
+ * Provides methods accessible from the WalletPay class and intercepts events, re-emitting them with a plugin-specific prefix.
+ * This class provides a foundation for creating custom plugins that extend the functionality of WalletPay.
+ */
 class PluginBase extends EventEmitter {
   constructor (opts = {}) {
     super()

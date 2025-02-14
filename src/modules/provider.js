@@ -17,6 +17,12 @@ const WS = require('./ws-client')
 const ConnectionManager = require('./connection-status')
 const { ConnectionStatus } = ConnectionManager
 
+/**
+ * @classdesc Manages communication with a remote indexer service.
+ * This class handles both HTTP JSON-RPC calls and WebSocket connections for fetching transaction
+ * data and subscribing to real-time account updates.
+ * It extends the ConnectionManager class to manage connection status and reconnection attempts.
+ */
 class Provider extends ConnectionManager {
   constructor (config) {
     super()
