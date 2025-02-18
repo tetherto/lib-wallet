@@ -13,10 +13,17 @@
 // limitations under the License.
 'use strict'
 
-const { EventEmitter } = require('events')
 const WS = require('./ws-client')
+const ConnectionManager = require('./connection-status')
+const { ConnectionStatus } = ConnectionManager
 
-class Provider extends EventEmitter {
+/**
+ * @classdesc Manages communication with a remote indexer service.
+ * This class handles both HTTP JSON-RPC calls and WebSocket connections for fetching transaction
+ * data and subscribing to real-time account updates.
+ * It extends the ConnectionManager class to manage connection status and reconnection attempts.
+ */
+class Provider extends ConnectionManager {
   constructor (config) {
     super()
 
@@ -39,11 +46,12 @@ class Provider extends EventEmitter {
     return response.json()
   }
 
-  async init () {
-    await this._startWs()
+  async connect () {
+    return this._startWs()
   }
 
   async stop () {
+    super.destroy()
     this._ws?.close()
   }
 
@@ -56,7 +64,10 @@ class Provider extends EventEmitter {
         reject(new Error('failed to connected to indexer websocket: ' + err.message))
       })
 
-      ws.on('close', () => this.emit('close'))
+      ws.on('close', () => {
+        this.setStatus(ConnectionStatus.STATUS.DISCONNECTED)
+        this.emit('close')
+      })
 
       ws.on('data', data => {
         let res

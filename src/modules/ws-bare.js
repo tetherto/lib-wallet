@@ -17,8 +17,13 @@ const { EventEmitter } = require('events')
 const { Socket } = require('bare-ws')
 
 class BareWs extends EventEmitter {
-  constructor (url, cb) {
+  constructor (url) {
     super()
+    this._pingInterval = 5000
+    this._pongTimeout = 10000
+    this._intervalId = null
+    this._pongTimeoutId = null
+
     const client = new Socket(url)
 
     client.on('data', (data) => {
@@ -30,6 +35,18 @@ class BareWs extends EventEmitter {
     client.on('close', (data) => {
       this.emit('close', data)
     })
+
+    client.on('open', (err) => {
+      if (err) return this.emit('error')
+      this.emit('open')
+      this._startHeartbeat()
+    })
+
+    client.on('pong', () => {
+      clearTimeout(this._pongTimeoutId)
+      this._pongTimeoutId = null
+    })
+
     this._ws = client
   }
 
@@ -38,7 +55,38 @@ class BareWs extends EventEmitter {
   }
 
   end () {
-    this._ws.close()
+    this.close()
+  }
+
+  close () {
+    this._ws.end()
+    this._stopHeartbeat()
+  }
+
+  _checkAlive () {
+    if (this._pongTimeoutId) return // Previous ping hasn't been answered yet
+
+    this._pongTimeoutId = setTimeout(() => {
+      this.close()
+    }, this._pongTimeout)
+
+    this._ws.ping()
+  }
+
+  _startHeartbeat () {
+    this._stopHeartbeat()
+    this._intervalId = setInterval(() => this._checkAlive(), this._pingInterval)
+  }
+
+  _stopHeartbeat () {
+    if (this._intervalId) {
+      clearInterval(this._intervalId)
+      this._intervalId = null
+    }
+    if (this._pongTimeoutId) {
+      clearTimeout(this._pongTimeoutId)
+      this._pongTimeoutId = null
+    }
   }
 }
 

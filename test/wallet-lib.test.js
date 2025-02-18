@@ -1,8 +1,7 @@
 'use strict'
 
 const { test } = require('brittle')
-const fs = require('fs')
-const newWallet = require('../src/wallet-lib.js')
+const newWallet = require('../example/node/wallet-lib.js')
 const { BitcoinPay } = require('lib-wallet-pay-btc')
 const BIP39Seed = require('wallet-seed-bip39')
 const Wallet = require('../src/lib/wallet.js')
@@ -13,13 +12,9 @@ const SEED_PHRASE = 'sell clock better horn digital prevent image toward sort fi
 function expectedWallet () {
   return newWallet({
     seed: { mnemonic: SEED_PHRASE },
-    store_path: './tmp',
+    store_path: null,
     ...ops
   })
-}
-
-function clearWalletLib () {
-  fs.rmSync('./tmp', { recursive: true })
 }
 
 test('Load wallet with bitcoin asset', async function (t) {
@@ -32,9 +27,6 @@ test('Load wallet with bitcoin asset', async function (t) {
   t.ok(wallet.seed === null, 'Seed destroyed')
   t.ok(!wallet.pay, 'Wallet asset list is destroyed')
   t.pass('Wallet destroyed')
-  t.teardown(async function () {
-    await clearWalletLib()
-  })
 })
 
 test('generate bitcoin address that match as expected', async function (t) {
@@ -42,7 +34,7 @@ test('generate bitcoin address that match as expected', async function (t) {
   const address = await wallet.pay.btc.getNewAddress()
   t.ok(address.address === 'bcrt1q2g8ruxp58fs9g34uj535tret0c03u2jkkzkj0w', 'Address matches')
   t.ok(address.publicKey === '03455b95b0ecea8bfb93ce8310e16d9315b2afe660b23ce69bc78c4966a8fd282f', 'WIF matches ')
-  t.ok(address.WIF === 'cNgxAUw3gPjyJXcMe2e8h4qTZQ6YGYbHssrQfVByRoSXWJ6hTMKc', 'WIF matches ')
+  t.ok(address.privateKey === 'cNgxAUw3gPjyJXcMe2e8h4qTZQ6YGYbHssrQfVByRoSXWJ6hTMKc', 'WIF matches ')
   t.ok(address.path === "m/84'/1'/0'/0/0", 'path matches')
   await wallet.destroy()
 })
@@ -75,5 +67,20 @@ test('addAsset', async function (t) {
   t.ok(wallet.pay.btc, 'btc is loaded')
   const addr = await wallet.pay.btc.getNewAddress()
   t.ok(addr.address, 'got a new btc addr')
-  await wallet.destroy()
+  wallet.destroy().catch((err) => {
+    throw err
+  })
+})
+
+test('exportWallet', async (t) => {
+  const wallet = await expectedWallet()
+  const ex = await wallet.exportWallet()
+  t.ok(typeof ex.name === 'string', 'wallet name is exported')
+  t.ok(ex.seed.mnemonic === SEED_PHRASE, 'seed matches')
+  t.ok(ex.assets[0].name === 'eth', 'eth export matches')
+  t.ok(ex.assets[1].name === 'btc', 'btc export matches')
+  wallet.destroy().catch((err) => {
+    throw err
+  })
+  t.end()
 })

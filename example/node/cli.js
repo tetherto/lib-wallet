@@ -38,7 +38,7 @@ async function main (opts) {
     if (!config.store_path) {
       config.store_path = process.argv[3] || './data'
     }
-    createWallet = require('../../src/wallet-lib.js')
+    createWallet = require('./wallet-lib.js')
   }
 
   config.network = config.network || 'regtest'
@@ -190,9 +190,10 @@ function startcli (wallet) {
         if (err) return console.log(err)
         const opts = {}
         if (token) opts.token = token
-        wallet.pay[name].getTransactions(opts, (tx) => {
+        const res = await wallet.pay[name].getTransactions(opts, (tx) => {
           console.log(tx)
         })
+        console.log(res)
       }
     ]
   ]

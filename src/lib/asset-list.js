@@ -39,8 +39,8 @@ class AssetList {
 
   async each (fn) {
     const data = Object.keys(this)
-    return Promise.all(data.map((k) => {
-      return fn(this[k])
+    return Promise.allSettled(data.map((k) => {
+      return fn(this[k], k)
     }))
   }
 

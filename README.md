@@ -11,6 +11,8 @@ Supported on 3 platforms:  Node.js, Browser, Bare Runtime
 
 Checkout the website [here](https://wallet.tether.io/)
 
+### ⚠️ Development Process 
+The main branch is under active development and **not safe** for use and may result in loss of funds. Please only use _tagged releases_ for production use as they have been tested more thoroughly.
 
 
 
@@ -26,19 +28,10 @@ Checkout the website [here](https://wallet.tether.io/)
 
 ## 🔗 Blockchains
 
-### [Bitcoin](https://github.com/tetherto/lib-wallet-pay-btc)
-- Electrum block data source. Support for TCP and Websocket on browser. 
-- P2WPKH / BIP84 address support.
-
-### [USDT on Ethereum](https://github.com/tetherto/lib-wallet-pay-eth)
-- Web3 and [Indexer](https://github.com/tetherto/lib-wallet-indexer) block data source.
-- ERC20 support.
-- BIP44 address generation.
-
-| Blockchain   	|  Supported  | Token Protocol
-|---	        |---	      |--
-|  Bitcoin 	    |  ✅ 	      | -
-|  Ethereum  	|  ✅ 	      | ERC20
+| Blockchain   	|  Supported  | Token Protocol |
+|---	        |---	      |--              
+|  [Bitcoin](https://github.com/tetherto/lib-wallet-pay-btc) |  ✅ 	      | -
+|  [Ethereum](https://github.com/tetherto/lib-wallet-pay-eth) |  ✅ 	      | ERC20
 |  Tron 	    |  ⌛ 	      | TRC20
 |  TON 	        |   ⌛	      | Jettons
 |  Avalanche 	|   ⌛	      | C-Chain
@@ -65,8 +58,6 @@ The library  comes with all the components needed to build a wallet. You can als
 - [Blockchain indexer](https://github.com/tetherto/lib-wallet-indexer): Remote blockchain data provider
 - [Test tools](https://github.com/tetherto/wallet-lib-test-tools): Tools for development and testing 
 - [Documentation](https://wallet.tether.io/): Guides, documentation.
-- [Bitcoin](https://github.com/tetherto/lib-wallet-pay-btc): Bitcoin asset integration.
-- [Ethereum/ERC20](https://github.com/tetherto/lib-wallet-pay-eth): Ethereum and ERC20 integration.
 
 
 ### **</>**  Example Usage

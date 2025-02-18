@@ -30,6 +30,7 @@ class WalletPayGeneric extends WalletPay {
   async initialize (ctx) {
     if (!this.provider) {
       this.provider = await this._getDefaultProvider()
+      this._loadPlugin('provider')
     }
 
     if (!this.keyManager) {

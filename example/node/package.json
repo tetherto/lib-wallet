@@ -1,0 +1,17 @@
+{
+  "name": "node-example",
+  "version": "1.0.0",
+  "description": "An example cli wallet used to demo the wallet lib.",
+  "main": "cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "lib-wallet-pay-btc": "github:rbndg/lib-wallet-pay-btc-main",
+    "lib-wallet-pay-eth": "github:rbndg/lib-wallet-pay-eth-main",
+    "lib-wallet-store": "github:tetherto/lib-wallet-store#v0.0.1",
+    "wallet-seed-bip39": "github:tetherto/lib-wallet-seed-bip39#v0.0.1"
+  },
+  "author": "",
+  "license": "Apache-2.0"
+}

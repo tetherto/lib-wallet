@@ -70,7 +70,7 @@ class Currency {
     return BN(amount).shiftedBy(decimal * -1).dp(decimal).toString()
   }
 
-  isUnitOf (amount) {
+  isUnitOf (_) {
     return true
   }
 

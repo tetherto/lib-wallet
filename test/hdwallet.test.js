@@ -112,6 +112,28 @@ test('eachAccount: path', async function (t) {
   await tester(expect, 'internal')
 })
 
+test('extExtAccount', async function (t) {
+  const store = new WalletStoreHyperbee()
+  const hd = new HdWallet({
+    store,
+    coinType: "0'",
+    purpose: "84'"
+  })
+  await hd.init({})
+  let count = 0
+  const expect = Array.from({ length: 10 }, (_, idx) => {
+    return "m/84'/0'/0'/0/" + idx
+  })
+  await hd.eachExtAccount(async function (syncState, signal) {
+    if (count > expect.length) throw new Error('count exceeded')
+    const path = syncState.path
+    t.ok(path === expect[count], ' ext paths match: ' + expect[count])
+    count++
+    if (count === expect.length) return signal.stop
+    return signal.hasTx
+  })
+})
+
 test('eachAccount: gap limit', async function (t) {
   const store = new WalletStoreHyperbee()
   const hd = new HdWallet({
@@ -196,7 +218,7 @@ test('HdWallet static methods', (t) => {
   })
 })
 
-test('eachAccount: gap limit', async function (t) {
+test('eachAccount: gap limit reset', async function (t) {
   const store = new WalletStoreHyperbee()
   const hd = new HdWallet({
     store,
@@ -204,6 +226,15 @@ test('eachAccount: gap limit', async function (t) {
     purpose: "84'"
   })
   await hd.init({})
+
+  hd.on('reset-sync', () => {
+    t.ok(true, 'sync reset')
+  })
+  await hd.eachAccount(async (state, signal) => {
+    return signal.noTx
+  })
+
+  hd.setGapLimit(5)
 
   hd.on('reset-sync', () => {
     t.ok(true, 'sync reset')

@@ -13,26 +13,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-const Wallet = require('./lib/wallet.js')
+const Wallet = require('../../src/lib/wallet.js')
 
 const { WalletStoreHyperbee } = require('lib-wallet-store')
 const BIP39Seed = require('wallet-seed-bip39')
 const { BitcoinPay } = require('lib-wallet-pay-btc')
-const { EthPay, Provider, erc20CurrencyFac, Erc20 } = require('lib-wallet-pay-eth')
+const { EthPay } = require('lib-wallet-pay-eth')
+const { Provider, ERC20 } = require('lib-wallet-pay-evm')
+const { Erc20CurrencyFactory } = require('lib-wallet-util-evm')
 
 /**
 * this function is an example of how to setup various components of the wallet lib.
 */
 async function main (config = {}) {
-  // Generate seed for our wallet, if non exists.
   const seed = await BIP39Seed.generate(config?.seed?.mnemonic)
 
-  // Setup wallet store class. This is our data store abstraction
   const store = new WalletStoreHyperbee({
     store_path: config.store_path
   })
 
-  // Setup Bitcoin asset
 
   const btcPay = new BitcoinPay({
     // Asset name space
@@ -41,25 +40,23 @@ async function main (config = {}) {
     network: config.network || 'regtest',
     electrum: {
       // optional TCP to Websocket adaptor. This will allow you to connect to a websocket electrum node
-      net: require('./modules/ws-net.js'),
+      net: require('../../src/modules/ws-net.js'),
       host: config.electrum_host,
       port: config.electrum_port
     }
   })
 
-  // Ethereum data provider setup
   const provider = new Provider({
     web3: config.web3,
     indexer: config.web3_indexer,
     indexerWs: config.web3_indexer_ws
   })
-  await provider.init()
+  await provider.connect()
 
-  // Create a USDT ERC20 currency instance
-  const USDT = erc20CurrencyFac({
+  const USDT = Erc20CurrencyFactory({
     name: 'USDT',
     base_name: 'USDT',
-    contractAddress: config.token_contract || '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    contract_address: config.token_contract || '0xdac17f958d2ee523a2206206994597c13d831ec7',
     decimal_places: 6
   })
 
@@ -69,13 +66,12 @@ async function main (config = {}) {
     store,
     network: config.network || 'regtest',
     token: [
-      new Erc20({
+      new ERC20({
         currency: USDT
       })
     ]
   })
 
-  // Setup Wallet facade class
   const wallet = new Wallet({
     store,
     seed,
@@ -84,7 +80,6 @@ async function main (config = {}) {
 
   await wallet.initialize()
 
-  // Your application can now use this wallet instance within in your app.
   return wallet
 }
 

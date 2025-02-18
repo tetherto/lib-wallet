@@ -29,6 +29,68 @@ function createBalance (Currency) {
   }
 }
 
+class TxEntry {
+  static OUTGOING = 1
+
+  static INCOMING = 0
+
+  static INTERNAL = 2
+
+  constructor (data) {
+    if (!Array.isArray(data.from_address)) {
+      this.from_address = [data.from_address]
+    } else {
+      this.from_address = data.from_address
+    }
+
+    if (!Array.isArray(data.to_address)) {
+      this.to_address = [data.to_address]
+    } else {
+      this.to_address = data.to_address
+    }
+
+    this.fee = data.fee
+    this.amount = data.amount
+    this.fee_rate = data.fee_rate
+    this.txid = data.txid
+    this.direction = data.direction
+    this.height = data.height
+    this.currency = data.currency || data?.amount?.name || 'unk'
+
+    let isValid = true
+    if (!this.txid || this.from_address.length === 0 || this.to_address.length === 0 || !this.amount) {
+      isValid = false
+    }
+
+    if (this.direction !== TxEntry.OUTGOING && this.direction !== TxEntry.INCOMING && this.direction !== TxEntry.INTERNAL) {
+      isValid = false
+    }
+
+    if (data.to_address_meta) {
+      this.to_address_meta = data.to_address_meta
+    }
+
+    Object.defineProperty(this, 'isValid', {
+      value: isValid,
+      writable: false,
+      enumerable: false,
+      configurable: false
+    })
+  }
+
+  isOutgoing () {
+    return this.direction === TxEntry.OUTGOING
+  }
+
+  isIncoming () {
+    return this.direction === TxEntry.INCOMING
+  }
+
+  isInternal () {
+    return this.direction === TxEntry.INTERNAL
+  }
+}
+
 class WalletPay extends EventEmitter {
   constructor (config) {
     super()
@@ -46,6 +108,45 @@ class WalletPay extends EventEmitter {
     if (config.token) {
       this.loadToken(config.token)
     }
+
+    this._plugins = new Set()
+    this._setModuleInfo()
+  }
+
+  _setModuleInfo () {
+    let depth = 1
+    let proto = Object.getPrototypeOf(this)
+    while (proto && proto.constructor !== WalletPay) {
+      depth++
+      proto = Object.getPrototypeOf(proto)
+    }
+    const prepareStackTrace = Error.prepareStackTrace
+    Error.prepareStackTrace = (_, stack) => stack
+    const stack = new Error().stack
+    Error.prepareStackTrace = prepareStackTrace
+    const mod = require(stack[depth].getFileName() + '/../../package.json')
+    this._module_info = {
+      name: mod.name,
+      version: mod.version
+    }
+  }
+
+  async _getModuleInfo () {
+    return this._module_info
+  }
+
+  _loadPlugin (mod) {
+    if (this._plugins.has(mod)) throw new Error(`plugin ${mod} exists`)
+    this._plugins.add(mod)
+    this[mod].on('*', (ev, ...args) => {
+      this.emit(ev, ...args)
+    })
+
+    if (!this[mod].expose) throw new Error('plugin has no expose array')
+    this[mod].expose.forEach((fnName) => {
+      if (this[fnName]) throw new Error(`module: ${mod} cant expose ${fnName}. Already exists`)
+      this[fnName] = this[mod][fnName].bind(this[mod])
+    })
   }
 
   async initialize (ctx = {}) {
@@ -65,6 +166,12 @@ class WalletPay extends EventEmitter {
     this.provider = new this.provider.constructor(config)
     await this.provider.connect()
     return this.provider
+  }
+
+  async callExt (mod, method, ...args) {
+    if (!this[mod]) throw new Error(`Module ${mod} is not defined`)
+    if (!this[mod][method]) throw new Error(`Module ${mod} has no method ${method}`)
+    return this[mod][method](...args)
   }
 
   async destroy () {
@@ -100,6 +207,10 @@ class WalletPay extends EventEmitter {
     throw new WalletPayError('Method not implemented')
   }
 
+  async getFeeEstimate () {
+    throw new WalletPayError('Method not implemented')
+  }
+
   parsePath () {
     throw new WalletPayError('Method not implemented')
   }
@@ -114,6 +225,10 @@ class WalletPay extends EventEmitter {
       if (!t.name) throw new Error('token class missing name')
       this._tokens.set(t.name, t)
     })
+  }
+
+  getTokensKeys () {
+    return Array.from(this._tokens.keys())
   }
 
   async _eachToken (fn) {
@@ -154,6 +269,8 @@ class WalletPay extends EventEmitter {
   static createBalance (Currency) {
     return createBalance(Currency)
   }
+
+  static TxEntry = TxEntry
 
   getTokens () {
     return this._tokens
