@@ -165,11 +165,11 @@ class WalletPayGeneric extends WalletPay {
           const tx = await token.updateTxEvent(res)
           this.emit('new-tx', {
             token: token.name,
-            address: res.address,
+            address: res.addr,
             value: tx.value,
             from: tx.from,
             to: tx.to,
-            height: res.height,
+            height: tx.height,
             txid: tx.txid
           })
         })
