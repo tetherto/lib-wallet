@@ -147,9 +147,13 @@ class WalletPayGeneric extends WalletPay {
   async _listenToLastAddress () {
     const addrs = await this._hdWallet.getAllAddress()
     const tokens = this._getTokenAddrs()
-    return Promise.all(addrs.slice(this._maxAddrsWatch * -1).map((addr) => {
-      return this.provider.subscribeToAccount(addr, tokens)
-    }))
+
+    return Promise.all(
+      (addrs || [])
+        .filter(Boolean)
+        .slice(this._maxAddrsWatch * -1)
+        .map((addr) => this.provider.subscribeToAccount(addr, tokens))
+    )
   }
 
   _listenToEvents () {
