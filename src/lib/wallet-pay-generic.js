@@ -290,8 +290,8 @@ class WalletPayGeneric extends WalletPay {
       from: tx.from,
       to: tx.to,
       value: new this._Curr(tx.value, 'base'),
-      height: tx.blockNumber,
-      txid: tx.hash
+      height: tx.height,
+      txid: tx.txid
     }
     await state.storeTxHistory(data)
     return data
