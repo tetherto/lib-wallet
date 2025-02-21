@@ -361,7 +361,7 @@ class WalletPayGeneric extends WalletPay {
     for (const [addr, bal] of token) {
       const addrBal = activeAddresses.get(addr)
       const data = [bal]
-      if (tronBal && tronBal.toNumber() > 0) data.push(tronBal)
+      if (addrBal && addrBal.toNumber() > 0) data.push(addrBal)
       accounts.set(addr, data)
     }
 
