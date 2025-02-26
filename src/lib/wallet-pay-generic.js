@@ -52,9 +52,9 @@ class WalletPayGeneric extends WalletPay {
   }
 
   async _finishInit () {
+    await this._initTokens(this)
     await this.state.init()
     await this._hdWallet.init()
-    await this._initTokens(this)
     this._listenToEvents()
     await this._listenToLastAddress()
   }
@@ -67,7 +67,7 @@ class WalletPayGeneric extends WalletPay {
       indexer: this.config.indexer,
       indexerWs: this.config.indexerWs
     })
-    await provider.init()
+    await provider.connect()
 
     return provider
   }
@@ -147,9 +147,13 @@ class WalletPayGeneric extends WalletPay {
   async _listenToLastAddress () {
     const addrs = await this._hdWallet.getAllAddress()
     const tokens = this._getTokenAddrs()
-    return Promise.all(addrs.slice(this._maxAddrsWatch * -1).map((addr) => {
-      return this.provider.subscribeToAccount(addr, tokens)
-    }))
+
+    return Promise.all(
+      (addrs || [])
+        .filter(Boolean)
+        .slice(this._maxAddrsWatch * -1)
+        .map((addr) => this.provider.subscribeToAccount(addr, tokens))
+    )
   }
 
   _listenToEvents () {
@@ -165,11 +169,11 @@ class WalletPayGeneric extends WalletPay {
           const tx = await token.updateTxEvent(res)
           this.emit('new-tx', {
             token: token.name,
-            address: res.address,
+            address: res.addr,
             value: tx.value,
             from: tx.from,
             to: tx.to,
-            height: res.height,
+            height: tx.height,
             txid: tx.txid
           })
         })
@@ -257,10 +261,10 @@ class WalletPayGeneric extends WalletPay {
    * @param {any} signal
    * @param {StateDb=} stateInstance
    */
-  async _syncAddressPath (addr, signal, stateInstance = undefined) {
+  async _syncAddressPath ({ addr, opts }, signal, stateInstance = undefined) {
     const provider = this.provider
     const path = addr.path
-    const txs = await provider.getTransactionsByAddress({ address: addr.address })
+    const txs = await provider.getTransactionsByAddress({ address: addr.address, ...opts })
     if (txs.length === 0) {
       this.emit('synced-path', path)
       return signal.noTx
@@ -271,9 +275,6 @@ class WalletPayGeneric extends WalletPay {
       await this._storeTx(t, stateInstance)
     }
     await this._setAddrBalance(addr.address, stateInstance)
-
-    const txIndex = await stateInstance.getTxIndex()
-    console.log('txIndex', txIndex)
 
     return txs.length > 0 ? signal.hasTx : signal.noTx
   }
@@ -293,8 +294,8 @@ class WalletPayGeneric extends WalletPay {
       from: tx.from,
       to: tx.to,
       value: new this._Curr(tx.value, 'base'),
-      height: tx.blockNumber,
-      txid: tx.hash
+      height: tx.height,
+      txid: tx.txid
     }
     await state.storeTxHistory(data)
     return data
@@ -325,10 +326,10 @@ class WalletPayGeneric extends WalletPay {
       if (this._halt) return signal.stop
       const { addr } = await keyManager.addrFromPath(syncState.path)
       if (opts.token) {
-        return this.callToken('syncPath', opts.token, [addr, signal])
+        return this.callToken('syncPath', opts.token, [{ addr, opts }, signal])
       }
 
-      const res = await this._syncAddressPath(addr, signal, state)
+      const res = await this._syncAddressPath({ addr, opts }, signal, state)
       this.emit('synced-path', syncState._addrType, syncState.path, res === signal.hasTx, syncState.toJSON())
       return res
     })
@@ -340,6 +341,35 @@ class WalletPayGeneric extends WalletPay {
     }
     this.resumeSync()
     this.emit('sync-end')
+  }
+
+  /**
+   * @desc get all addrs that have had a balance at some point and their current balance
+   */
+  async getActiveAddresses (opts) {
+    const state = await this._getState(opts)
+    const bal = await state.getBalances()
+    return bal.getAll()
+  }
+
+  /**
+   * @desc get all addrs that have balance
+   */
+  async getFundedTokenAddresses (opts) {
+    if (!opts.token) return this.getActiveAddresses()
+
+    const token = await this.getActiveAddresses(opts)
+    const activeAddresses = await this.getActiveAddresses()
+    const accounts = new Map()
+
+    for (const [addr, bal] of token) {
+      const addrBal = activeAddresses.get(addr)
+      const data = [bal]
+      if (addrBal && addrBal.toNumber() > 0) data.push(addrBal)
+      accounts.set(addr, data)
+    }
+
+    return accounts
   }
 }
 
