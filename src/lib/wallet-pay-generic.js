@@ -47,7 +47,7 @@ class WalletPayGeneric extends WalletPay {
       this.state = await this._getDefaultState()
     }
 
-    this._finishInit()
+    await this._finishInit()
     this.ready = true
   }
 
